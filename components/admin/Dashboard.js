@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase'
 import PrijaveList from './PrijaveList'
 import PrijavaDetalj from './PrijavaDetalj'
 import Mapa from './Mapa'
+import { createClient } from '../../lib/supabase-browser'
 
 export default function Dashboard() {
   const [tab, setTab] = useState('prijave')
@@ -14,10 +15,20 @@ export default function Dashboard() {
   const [odabraniRadnikAdmin, setOdabraniRadnikAdmin] = useState(null)
   const [montazaZahtjevi, setMontazaZahtjevi] = useState([])
   const [ucitava, setUcitava] = useState(true)
+  const [adminIme, setAdminIme] = useState('')
 
+  const supabaseBrowser = createClient()
   const montazaBadge = montazaZahtjevi.filter(m => m.status === 'pending').length
 
+  const handleLogout = async () => {
+    await supabaseBrowser.auth.signOut()
+    window.location.href = '/admin/login'
+  }
+
   useEffect(() => {
+    supabaseBrowser.auth.getUser().then(({ data: { user } }) => {
+      if (user) setAdminIme(user.email.split('@')[0])
+    })
     ucitajPodatke()
     const kanal = supabase
       .channel('prijave')
@@ -78,11 +89,20 @@ export default function Dashboard() {
             <div style={{ fontSize: 10, color: '#7B96B2' }}>Admin Panel</div>
           </div>
         </div>
-        {nova > 0 && (
-          <div style={{ background: '#E63946', color: '#fff', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 700 }}>
-            🔔 {nova} nova prijava
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {nova > 0 && (
+            <div style={{ background: '#E63946', color: '#fff', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 700 }}>
+              🔔 {nova} nova prijava
+            </div>
+          )}
+          <div style={{ color: '#7B96B2', fontSize: 13 }}>👤 {adminIme}</div>
+          <button onClick={handleLogout} style={{
+            background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2',
+            padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 12
+          }}>
+            Odjava
+          </button>
+        </div>
       </div>
 
       <div style={s.nav}>
