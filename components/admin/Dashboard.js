@@ -252,12 +252,13 @@ export default function Dashboard() {
   )
 }
 function RadniciTab({ radnici, prijave, onRefresh }) {
-  const [forma, setForma] = useState(null) // null | 'dodaj' | radnik_id
+  const [forma, setForma] = useState(null)
   const [ime, setIme] = useState('')
   const [telefon, setTelefon] = useState('')
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [poruka, setPoruka] = useState(null)
+  const [odabraniRadnik, setOdabraniRadnik] = useState(null)
 
   const otvoriDodaj = () => {
     setForma('dodaj'); setIme(''); setTelefon(''); setEmail(''); setPoruka(null)
@@ -306,7 +307,6 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: r.id, ime: r.ime, telefon: r.telefon, aktivan })
     })
-    // Ažuriraj status u bazi
     const { createClient } = await import('../../lib/supabase-browser')
     const sb = createClient()
     await sb.from('radnici').update({ status: aktivan ? 'slobodan' : 'deaktiviran' }).eq('id', r.id)
@@ -323,7 +323,6 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
         }}>+ Dodaj radnika</button>
       </div>
 
-      {/* Forma */}
       {forma && (
         <div style={{ background: '#1A2E45', border: '1px solid #1B85B8', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>
@@ -354,12 +353,12 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
         </div>
       )}
 
-      {/* Lista */}
       {radnici.length === 0 && (
         <div style={{ color: '#7B96B2', textAlign: 'center', padding: 40 }}>Nema radnika.</div>
       )}
       {radnici.map(r => (
-        <div key={r.id} style={{ ...s.card, marginBottom: 10, opacity: r.status === 'deaktiviran' ? 0.5 : 1 }}>
+        <div key={r.id} style={{ ...s.card, marginBottom: 10, opacity: r.status === 'deaktiviran' ? 0.5 : 1, cursor: 'pointer' }}
+          onClick={(e) => { if (e.target.closest('button')) return; setOdabraniRadnik(odabraniRadnik === r.id ? null : r.id) }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontWeight: 700 }}>{r.ime}</div>
@@ -390,6 +389,23 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
               {prijave.filter(p => p.radnik_id === r.id && p.status !== 'riješena').length}
             </span>
           </div>
+          {odabraniRadnik === r.id && (
+            <div style={{ marginTop: 12, borderTop: '1px solid #1E3A5A', paddingTop: 12 }}>
+              <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 8 }}>ISTORIJA PRIJAVA</div>
+              {prijave.filter(p => p.radnik_id === r.id).length === 0 && (
+                <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema prijava.</div>
+              )}
+              {prijave.filter(p => p.radnik_id === r.id).map(p => (
+                <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #0D1B2A' }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 13 }}>{p.lokal}</div>
+                    <div style={{ color: '#7B96B2', fontSize: 11 }}>{new Date(p.created_at).toLocaleDateString('bs-BA')}</div>
+                  </div>
+                  <StatusBadge status={p.status} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ))}
     </div>
