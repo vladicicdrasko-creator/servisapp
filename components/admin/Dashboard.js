@@ -6,6 +6,7 @@ import PrijaveList from './PrijaveList'
 import PrijavaDetalj from './PrijavaDetalj'
 import Mapa from './Mapa'
 import { createClient } from '../../lib/supabase-browser'
+import AparatiTab from './AparatiTab'
 
 export default function Dashboard() {
   const [tab, setTab] = useState('prijave')
@@ -111,6 +112,7 @@ export default function Dashboard() {
         <TabBtn id="mapa" label="Mapa" />
         <TabBtn id="radnici" label="Radnici" />
         <TabBtn id="montaza" label="Montaža" badge={montazaBadge} />
+        <TabBtn id="aparati" label="Aparati" />
       </div>
 
       <div style={s.sadrzaj}>
@@ -149,6 +151,11 @@ export default function Dashboard() {
 {tab === 'radnici' && (
   <RadniciTab radnici={radnici} prijave={prijave} onRefresh={ucitajPodatke} />
 )}
+        {/* APARATI */}
+        {tab === 'aparati' && (
+          <AparatiTab />
+)}
+
 
         {/* MONTAŽA */}
         {tab === 'montaza' && (
