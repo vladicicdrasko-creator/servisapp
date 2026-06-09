@@ -115,36 +115,10 @@ export default function Dashboard() {
 
       <div style={s.sadrzaj}>
         {/* DASHBOARD */}
-        {tab === 'dashboard' && (
-          <div>
-            <h2 style={s.naslov}>Pregled danas</h2>
-            <div style={s.grid4}>
-              {[
-                { label: 'Nove', val: nova, color: '#1B85B8' },
-                { label: 'Dodijeljene', val: dodijeljena, color: '#F4A261' },
-                { label: 'U toku', val: uToku, color: '#9B59B6' },
-                { label: 'Riješene', val: rijesena, color: '#2A9D8F' },
-              ].map(k => (
-                <div key={k.label} style={s.statCard}>
-                  <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>{k.label.toUpperCase()}</div>
-                  <div style={{ fontSize: 36, fontWeight: 800, color: k.color }}>{k.val}</div>
-                </div>
-              ))}
-            </div>
-            <h3 style={{ color: '#7B96B2', fontSize: 13, marginBottom: 10 }}>NEDAVNE PRIJAVE</h3>
-            {prijave.slice(0, 5).map(p => (
-              <div key={p.id} onClick={() => { setOdabranaP(p); setTab('prijave') }}
-                style={{ ...s.card, cursor: 'pointer', marginBottom: 8 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <span style={{ color: '#1B85B8', fontWeight: 700, fontSize: 12 }}>{p.id}</span>
-                  <StatusBadge status={p.status} />
-                </div>
-                <div style={{ fontWeight: 600 }}>{p.lokal}</div>
-                <div style={{ color: '#7B96B2', fontSize: 12 }}>{p.opis}</div>
-              </div>
-            ))}
-          </div>
-        )}
+       {/* DASHBOARD */}
+{tab === 'dashboard' && (
+  <DashboardTab prijave={prijave} onOdaberi={(p) => { setOdabranaP(p); setTab('prijave') }} />
+)}
 
         {/* PRIJAVE */}
         {tab === 'prijave' && !odabranaP && (
@@ -251,6 +225,93 @@ export default function Dashboard() {
     </div>
   )
 }
+function DashboardTab({ prijave, onOdaberi }) {
+  const [odabraniStatus, setOdabraniStatus] = useState(null)
+
+  const danas = new Date().toDateString()
+  const prijaveToday = prijave.filter(p => new Date(p.created_at).toDateString() === danas)
+
+  const nova = prijaveToday.filter(p => p.status === 'nova').length
+  const dodijeljena = prijaveToday.filter(p => p.status === 'dodijeljena').length
+  const uToku = prijaveToday.filter(p => p.status === 'u_toku').length
+  const rijesena = prijaveToday.filter(p => p.status === 'riješena').length
+
+  const filtrirane = odabraniStatus ? prijave.filter(p => p.status === odabraniStatus) : []
+
+  const exportExcel = () => {
+    const XLSX = require('xlsx')
+    const podaci = filtrirane.map(p => ({
+      'ID': p.id,
+      'Lokal': p.lokal,
+      'Opis': p.opis,
+      'Status': p.status,
+      'Prioritet': p.prioritet,
+      'Datum': new Date(p.created_at).toLocaleDateString('bs-BA')
+    }))
+    const ws = XLSX.utils.json_to_sheet(podaci)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Prijave')
+    XLSX.writeFile(wb, `prijave-${odabraniStatus}-${new Date().toLocaleDateString('bs-BA')}.xlsx`)
+  }
+
+  const statusi = [
+    { key: 'nova', label: 'Nove', val: nova, color: '#1B85B8' },
+    { key: 'dodijeljena', label: 'Dodijeljene', val: dodijeljena, color: '#F4A261' },
+    { key: 'u_toku', label: 'U toku', val: uToku, color: '#9B59B6' },
+    { key: 'riješena', label: 'Riješene', val: rijesena, color: '#2A9D8F' },
+  ]
+
+  return (
+    <div>
+      <h2 style={s.naslov}>Pregled danas</h2>
+      <div style={s.grid4}>
+        {statusi.map(k => (
+          <div key={k.key} onClick={() => setOdabraniStatus(odabraniStatus === k.key ? null : k.key)}
+            style={{ ...s.statCard, cursor: 'pointer', border: odabraniStatus === k.key ? `1px solid ${k.color}` : '1px solid #1E3A5A' }}>
+            <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>{k.label.toUpperCase()}</div>
+            <div style={{ fontSize: 36, fontWeight: 800, color: k.color }}>{k.val}</div>
+          </div>
+        ))}
+      </div>
+
+      {odabraniStatus && (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <h3 style={{ color: '#7B96B2', fontSize: 13, margin: 0 }}>
+              {statusi.find(s => s.key === odabraniStatus)?.label.toUpperCase()} – SVE ({filtrirane.length})
+            </h3>
+            {filtrirane.length > 5 && (
+              <button onClick={exportExcel} style={{
+                background: '#2A9D8F', border: 'none', color: '#fff',
+                padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
+              }}>
+                📥 Export Excel
+              </button>
+            )}
+          </div>
+          {filtrirane.length === 0 && (
+            <div style={{ color: '#7B96B2', textAlign: 'center', padding: 20 }}>Nema prijava.</div>
+          )}
+          {filtrirane.map(p => (
+            <div key={p.id} onClick={() => onOdaberi(p)}
+              style={{ ...s.card, cursor: 'pointer', marginBottom: 8 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ color: '#1B85B8', fontWeight: 700, fontSize: 12 }}>{p.id}</span>
+                <StatusBadge status={p.status} />
+              </div>
+              <div style={{ fontWeight: 600 }}>{p.lokal}</div>
+              <div style={{ color: '#7B96B2', fontSize: 12 }}>{p.opis}</div>
+              <div style={{ color: '#7B96B2', fontSize: 11, marginTop: 4 }}>
+                {new Date(p.created_at).toLocaleDateString('bs-BA')}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function RadniciTab({ radnici, prijave, onRefresh }) {
   const [forma, setForma] = useState(null)
   const [ime, setIme] = useState('')
