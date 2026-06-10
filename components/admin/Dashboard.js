@@ -288,12 +288,12 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
           style={{ background: filterDatum === 'datum' ? '#1B85B8' : '#1A2E45', border: '1px solid #1E3A5A', color: '#E8F4FD', padding: '6px 10px', borderRadius: 8, fontSize: 12 }} />
       </div>
       <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
-  {['svi', 'prijava', 'montaza', 'demontaza', 'kvar', 'ostalo'].map(t => (
+ {['svi', 'prijava', 'montaza', 'demontaza', 'kvar', 'ostalo', 'rijesena'].map(t => (
     <button key={t} onClick={() => setFilterTip(t)} style={{
-      background: filterTip === t ? '#1B85B8' : 'transparent',
+      background: filterTip === t ? (t === 'rijesena' ? '#2A9D8F' : '#1B85B8') : 'transparent',
       border: '1px solid #1E3A5A', color: filterTip === t ? '#fff' : '#7B96B2',
       padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontSize: 11, fontWeight: 600
-    }}>{t === 'svi' ? 'Svi' : tipBoja[t]?.label || t.toUpperCase()}</button>
+    }}>{t === 'svi' ? 'Svi' : t === 'rijesena' ? 'RIJEŠENO' : tipBoja[t]?.label || t.toUpperCase()}</button>
   ))}
 </div>
 
