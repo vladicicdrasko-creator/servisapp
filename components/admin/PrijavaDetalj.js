@@ -58,18 +58,19 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
           <span>🕐 {new Date(prijava.created_at).toLocaleString('bs-BA')}</span>
         </div>
 
-        {prijava.kontakt && (
+     {prijava.kontakt && (
           <div style={{ marginTop: 8, fontSize: 12, color: '#7B96B2' }}>
             📞 {prijava.kontakt}
-        </div>
-          {prijava.slika_url && (
+          </div>
+        )}
+
+        {prijava.slika_url && (
           <div style={{ marginTop: 12 }}>
             <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>SLIKA</div>
             <img src={prijava.slika_url} alt="slika prijave"
               style={{ width: '100%', borderRadius: 8, maxHeight: 300, objectFit: 'cover', cursor: 'pointer' }}
               onClick={() => window.open(prijava.slika_url, '_blank')} />
           </div>
-        )}
         )}
       </div>
 
