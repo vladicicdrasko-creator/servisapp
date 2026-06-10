@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 import QRCode from 'qrcode'
+import { StatusBadge } from './Dashboard'
 
 export default function AparatiTab() {
   const [aparati, setAparati] = useState([])
@@ -23,7 +24,7 @@ export default function AparatiTab() {
   const ucitaj = async () => {
     const [{ data: a }, { data: p }] = await Promise.all([
       supabase.from('aparati').select('*').order('created_at', { ascending: false }),
-      supabase.from('prijave').select('id, aparat_id, status')
+      supabase.from('prijave').select('id, aparat_id, status, created_at, opis').order('created_at', { ascending: false })
     ])
     setAparati(a || [])
     setPrijave(p || [])
@@ -155,6 +156,18 @@ export default function AparatiTab() {
                   <button onClick={preuzmiQR} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
                     📥 Preuzmi QR
                   </button>
+                  <div style={{ marginTop: 12 }}>
+                    <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>ISTORIJA PRIJAVA</div>
+                    {prijave.filter(p => p.aparat_id === a.id).length === 0 && (
+                      <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema prijava.</div>
+                    )}
+                    {prijave.filter(p => p.aparat_id === a.id).map(p => (
+                      <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A' }}>
+                        <div style={{ fontSize: 12, color: '#E8F4FD' }}>{p.id}</div>
+                        <StatusBadge status={p.status} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
