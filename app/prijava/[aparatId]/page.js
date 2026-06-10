@@ -16,12 +16,14 @@ export default function PrijavaPage({ params }) {
   const [poslato, setPoslato] = useState(false)
   const [brojPrijave, setBrojPrijave] = useState('')
 
-  const kategorije = [
-    'Mehanički kvar', 'Elektronski kvar',
-    'Rashladni sistem', 'Ekran / displej',
-    'Plaćanje / novčanice', 'Ostalo'
-  ]
-
+ const kategorije = [
+  'Curi voda',
+  'Ne grije',
+  'Buka / vibracije',
+  'Mlin ne radi',
+  'Pušta paru',
+  'Ostalo'
+]
   useEffect(() => {
     const ucitajAparat = async () => {
       const { data, error } = await supabase
