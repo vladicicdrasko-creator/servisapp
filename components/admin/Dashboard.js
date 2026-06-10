@@ -150,6 +150,7 @@ const tipBoja = {
   demontaza: { bg: '#F4A261', label: 'DEMONTAŽA', color: '#0D1B2A' },
   kvar: { bg: '#E63946', label: 'KVAR' },
   ostalo: { bg: '#7B96B2', label: 'OSTALO', color: '#0D1B2A' },
+  prijava: { bg: '#E63946', label: 'PRIJAVA' },
 }
 
 function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
@@ -225,10 +226,9 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>NOVI NALOG</h3>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-            {Object.entries(tipBoja).map(([key, val]) => (
+        {Object.entries(tipBoja).filter(([key]) => key !== 'prijava').map(([key, val]) => (
               <button key={key} onClick={() => setTip(key)} style={{
                 background: tip === key ? val.bg : '#0D1B2A',
-                prijava: { bg: '#E63946', label: 'PRIJAVA' },
                 border: `2px solid ${val.bg}`,
                 color: tip === key ? (val.color || '#fff') : val.bg,
                 borderRadius: 8, padding: '10px', cursor: 'pointer', fontWeight: 700, fontSize: 13
