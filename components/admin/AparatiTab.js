@@ -17,6 +17,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [poruka, setPoruka] = useState(null)
   const [qrUrl, setQrUrl] = useState(null)
   const [pokaziMapu, setPokaziMapu] = useState(false)
+  const [pokaziIstoriju, setPokaziIstoriju] = useState({})
   const [noviAparat, setNoviAparat] = useState({
     naziv: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null
   })
@@ -159,8 +160,16 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       )}
 
       {aparati.map(a => {
-        const ukupno = prijave.filter(p => p.aparat_id === a.id).length
-        const aktivne = prijave.filter(p => p.aparat_id === a.id && p.status !== 'riješena').length
+        const svePrijave = prijave.filter(p => p.aparat_id === a.id)
+        const montazaDatum = a.montaza_datum ? new Date(a.montaza_datum) : null
+        const aktuelne = montazaDatum
+          ? svePrijave.filter(p => new Date(p.created_at) >= montazaDatum)
+          : svePrijave
+        const historijske = montazaDatum
+          ? svePrijave.filter(p => new Date(p.created_at) < montazaDatum)
+          : []
+        const aktivne = aktuelne.filter(p => p.status !== 'riješena').length
+
         return (
           <div key={a.id} style={{ background: '#1A2E45', border: `1px solid ${odabrani?.id === a.id ? '#1B85B8' : '#1E3A5A'}`, borderRadius: 10, padding: 14, marginBottom: 10, cursor: 'pointer', opacity: a.status === 'neaktivan' ? 0.5 : 1 }}
             onClick={(e) => { if (e.target.closest('button')) return; odaberiAparat(a) }}>
@@ -186,29 +195,46 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             </div>
 
             {odabrani?.id === a.id && qrUrl && (
-              <div style={{ marginTop: 12, borderTop: '1px solid #1E3A5A', paddingTop: 12, display: 'flex', alignItems: 'center', gap: 16 }}>
-                <img src={qrUrl} alt="QR kod" style={{ width: 100, height: 100, borderRadius: 8 }} />
-                <div>
-                  <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>QR KOD</div>
-                  <div style={{ color: '#E8F4FD', fontSize: 12, marginBottom: 8 }}>/prijava/{a.id}</div>
-                  <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 8 }}>Ukupno prijava: {ukupno}</div>
-                  <button onClick={preuzmiQR} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
-                    📥 Preuzmi QR
-                  </button>
-                  <div style={{ marginTop: 12 }}>
-                    <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>ISTORIJA PRIJAVA</div>
-                    {prijave.filter(p => p.aparat_id === a.id).length === 0 && (
-                      <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema prijava.</div>
-                    )}
-                    {prijave.filter(p => p.aparat_id === a.id).map(p => (
+              <div style={{ marginTop: 12, borderTop: '1px solid #1E3A5A', paddingTop: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+                  <img src={qrUrl} alt="QR kod" style={{ width: 100, height: 100, borderRadius: 8 }} />
+                  <div>
+                    <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>QR KOD</div>
+                    <div style={{ color: '#E8F4FD', fontSize: 12, marginBottom: 8 }}>/prijava/{a.id}</div>
+                    <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 8 }}>Ukupno prijava: {svePrijave.length}</div>
+                    <button onClick={preuzmiQR} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+                      📥 Preuzmi QR
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>
+                  AKTUELNE PRIJAVE {montazaDatum && `(od ${montazaDatum.toLocaleDateString('bs-BA')})`}
+                </div>
+                {aktuelne.length === 0 && <div style={{ color: '#7B96B2', fontSize: 12, marginBottom: 8 }}>Nema prijava.</div>}
+                {aktuelne.map(p => (
+                  <div key={p.id} onClick={() => onOdaberiPrijavu(p)}
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A', cursor: 'pointer' }}>
+                    <div style={{ fontSize: 12, color: '#E8F4FD' }}>{p.id}</div>
+                    <StatusBadge status={p.status} />
+                  </div>
+                ))}
+
+                {historijske.length > 0 && (
+                  <div style={{ marginTop: 8 }}>
+                    <button onClick={() => setPokaziIstoriju(prev => ({ ...prev, [a.id]: !prev[a.id] }))}
+                      style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 11, marginBottom: 6 }}>
+                      {pokaziIstoriju[a.id] ? '▲ Sakrij istoriju' : `▼ Istorija (${historijske.length})`}
+                    </button>
+                    {pokaziIstoriju[a.id] && historijske.map(p => (
                       <div key={p.id} onClick={() => onOdaberiPrijavu(p)}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A', cursor: 'pointer' }}>
+                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A', cursor: 'pointer', opacity: 0.6 }}>
                         <div style={{ fontSize: 12, color: '#E8F4FD' }}>{p.id}</div>
                         <StatusBadge status={p.status} />
                       </div>
                     ))}
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>
