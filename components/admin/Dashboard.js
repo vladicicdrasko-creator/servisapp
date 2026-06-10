@@ -228,6 +228,7 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
             {Object.entries(tipBoja).map(([key, val]) => (
               <button key={key} onClick={() => setTip(key)} style={{
                 background: tip === key ? val.bg : '#0D1B2A',
+                prijava: { bg: '#E63946', label: 'PRIJAVA' },
                 border: `2px solid ${val.bg}`,
                 color: tip === key ? (val.color || '#fff') : val.bg,
                 borderRadius: 8, padding: '10px', cursor: 'pointer', fontWeight: 700, fontSize: 13
@@ -289,7 +290,7 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
       )}
 
       {prijaveF.map(p => {
-        const t = tipBoja[p.kategorija] || tipBoja.ostalo
+       const t = tipBoja[p.kategorija] || (p.kategorija ? tipBoja.ostalo : tipBoja.prijava)
         return (
           <div key={p.id} onClick={() => onOdaberi(p)} style={{
             background: '#1A2E45',
