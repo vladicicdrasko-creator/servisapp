@@ -75,10 +75,19 @@ export default function PrijavaPage({ params }) {
     hitnost: 'srednja'
   })
 
-  if (!error) {
-    setBrojPrijave(id)
-    setPoslato(true)
-  }
+ if (!error) {
+  setBrojPrijave(id)
+  setPoslato(true)
+  fetch('/api/push', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      title: '🔔 Nova prijava',
+      body: aparat.lokal + ' – ' + kategorija,
+      url: '/admin'
+    })
+  })
+}
   setSaljem(false)
 }
 

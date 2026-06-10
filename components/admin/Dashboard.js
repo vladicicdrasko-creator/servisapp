@@ -22,6 +22,28 @@ export default function Dashboard() {
     await supabaseBrowser.auth.signOut()
     window.location.href = '/admin/login'
   }
+  const registrujPush = async () => {
+  try {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+
+    const registration = await navigator.serviceWorker.register('/sw.js')
+    const permission = await Notification.requestPermission()
+    if (permission !== 'granted') return
+
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+    })
+
+    await fetch('/api/push-subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(subscription)
+    })
+  } catch (e) {
+    console.error('Push registracija greška:', e)
+  }
+}
 
   useEffect(() => {
     supabaseBrowser.auth.getUser().then(({ data: { user } }) => {
