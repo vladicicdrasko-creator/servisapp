@@ -226,7 +226,7 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>NOVI NALOG</h3>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-        {Object.entries(tipBoja).filter(([key]) => key !== 'prijava').map(([key, val]) => (
+             {Object.entries(tipBoja).filter(([key]) => key !== 'prijava').map(([key, val]) => (
               <button key={key} onClick={() => setTip(key)} style={{
                 background: tip === key ? val.bg : '#0D1B2A',
                 border: `2px solid ${val.bg}`,
