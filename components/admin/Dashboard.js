@@ -175,13 +175,16 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
 
   const aparatiFiltrirani = filterGrad === 'svi' ? aparati : aparati.filter(a => a.adresa?.endsWith(filterGrad))
 
+ const [filterTip, setFilterTip] = useState('svi')
+
   const prijaveF = prijave.filter(p => {
     const d = new Date(p.created_at).toISOString().split('T')[0]
-    if (filterDatum === 'danas') return d === danas
-    if (filterDatum === 'datum') return d === datum
+    if (filterDatum === 'danas' && d !== danas) return false
+    if (filterDatum === 'datum' && d !== datum) return false
+    if (filterDatum === 'danas' && p.status === 'riješena') return false
+    if (filterTip !== 'svi' && (tipBoja[p.kategorija] ? p.kategorija : 'prijava') !== filterTip) return false
     return true
   })
-
   const dodajNalog = async () => {
     if (!tip || !aparatId) return
     setLoading(true)
@@ -284,6 +287,15 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
         <input type="date" value={datum} onChange={e => { setDatum(e.target.value); setFilterDatum('datum') }}
           style={{ background: filterDatum === 'datum' ? '#1B85B8' : '#1A2E45', border: '1px solid #1E3A5A', color: '#E8F4FD', padding: '6px 10px', borderRadius: 8, fontSize: 12 }} />
       </div>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+  {['svi', 'prijava', 'montaza', 'demontaza', 'kvar', 'ostalo'].map(t => (
+    <button key={t} onClick={() => setFilterTip(t)} style={{
+      background: filterTip === t ? '#1B85B8' : 'transparent',
+      border: '1px solid #1E3A5A', color: filterTip === t ? '#fff' : '#7B96B2',
+      padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontSize: 11, fontWeight: 600
+    }}>{t === 'svi' ? 'Svi' : tipBoja[t]?.label || t.toUpperCase()}</button>
+  ))}
+</div>
 
       {prijaveF.length === 0 && (
         <div style={{ color: '#7B96B2', textAlign: 'center', padding: 40 }}>Nema naloga.</div>
@@ -294,7 +306,7 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
         return (
           <div key={p.id} onClick={() => onOdaberi(p)} style={{
             background: '#1A2E45',
-            border: `2px solid ${t.bg}`,
+            border: '1px solid #1E3A5A',
             borderRadius: 10, padding: 14, marginBottom: 10, cursor: 'pointer'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
