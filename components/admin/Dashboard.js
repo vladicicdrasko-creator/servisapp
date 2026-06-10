@@ -182,7 +182,11 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
     if (filterDatum === 'danas' && d !== danas) return false
     if (filterDatum === 'datum' && d !== datum) return false
     if (filterDatum === 'danas' && p.status === 'riješena') return false
-    if (filterTip !== 'svi' && (tipBoja[p.kategorija] ? p.kategorija : 'prijava') !== filterTip) return false
+    if (filterTip === 'rijesena') return p.status === 'riješena'
+    if (filterTip !== 'svi') {
+    const pTip = tipBoja[p.kategorija] ? p.kategorija : 'prijava'
+    if (pTip !== filterTip) return false
+}
     return true
   })
   const dodajNalog = async () => {
