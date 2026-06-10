@@ -1,9 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import QRCode from 'qrcode'
 import { StatusBadge } from './Dashboard'
+import dynamic from 'next/dynamic'
+
+const MapaPicker = dynamic(() => import('./MapaPicker'), { ssr: false })
 
 export default function AparatiTab({ onOdaberiPrijavu }) {
   const [aparati, setAparati] = useState([])
@@ -13,13 +16,12 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [loading, setLoading] = useState(true)
   const [poruka, setPoruka] = useState(null)
   const [qrUrl, setQrUrl] = useState(null)
+  const [pokaziMapu, setPokaziMapu] = useState(false)
   const [noviAparat, setNoviAparat] = useState({
-    naziv: '', lokal: '', adresa: '', tip: '', serijski_broj: ''
+    naziv: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null
   })
 
-  useEffect(() => {
-    ucitaj()
-  }, [])
+  useEffect(() => { ucitaj() }, [])
 
   const ucitaj = async () => {
     const [{ data: a }, { data: p }] = await Promise.all([
@@ -47,8 +49,9 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       naziv: noviAparat.naziv,
       lokal: noviAparat.lokal,
       adresa: noviAparat.adresa,
-      tip: noviAparat.tip || null,
-      serijski_broj: noviAparat.serijski_broj || null,
+      serijski_broj: noviAparat.ostecen ? 'OŠTEĆEN' : (noviAparat.serijski_broj || null),
+      lat: noviAparat.lat,
+      lng: noviAparat.lng,
       status: 'aktivan',
       verifikacija: 'aktivan'
     })
@@ -56,7 +59,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     if (error) { setPoruka({ tip: 'greska', tekst: error.message }); return }
     setPoruka({ tip: 'ok', tekst: 'Aparat dodan!' })
     setForma(false)
-    setNoviAparat({ naziv: '', lokal: '', adresa: '', tip: '', serijski_broj: '' })
+    setNoviAparat({ naziv: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null })
     ucitaj()
     setTimeout(() => setPoruka(null), 2000)
   }
@@ -95,24 +98,60 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       {forma && (
         <div style={{ background: '#1A2E45', border: '1px solid #1B85B8', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>NOVI APARAT</h3>
-          {[
-            { key: 'naziv', placeholder: 'Naziv aparata *', required: true },
-            { key: 'lokal', placeholder: 'Lokal (gdje se nalazi) *', required: true },
-            { key: 'adresa', placeholder: 'Adresa *', required: true },
-            { key: 'tip', placeholder: 'Tip / marka (opcionalno)' },
-            { key: 'serijski_broj', placeholder: 'Serijski broj (opcionalno)' },
-          ].map(f => (
-            <input key={f.key} value={noviAparat[f.key]}
-              onChange={e => setNoviAparat({ ...noviAparat, [f.key]: e.target.value })}
-              placeholder={f.placeholder}
-              style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
-          ))}
+
+          <input value={noviAparat.naziv} onChange={e => setNoviAparat({ ...noviAparat, naziv: e.target.value })}
+            placeholder="Naziv aparata *"
+            style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+
+          <input value={noviAparat.lokal} onChange={e => setNoviAparat({ ...noviAparat, lokal: e.target.value })}
+            placeholder="Lokal (gdje se nalazi) *"
+            style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+            <input value={noviAparat.adresa} onChange={e => setNoviAparat({ ...noviAparat, adresa: e.target.value })}
+              placeholder="Adresa *"
+              style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <button onClick={() => setPokaziMapu(!pokaziMapu)} style={{
+              background: pokaziMapu ? '#1B85B8' : '#0D1B2A', border: '1px solid #1B85B8',
+              color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', cursor: 'pointer', fontSize: 12, whiteSpace: 'nowrap'
+            }}>
+              📍 {noviAparat.lat ? `${noviAparat.lat.toFixed(4)}, ${noviAparat.lng.toFixed(4)}` : 'Odaberi na mapi'}
+            </button>
+          </div>
+
+          {pokaziMapu && (
+            <div style={{ marginBottom: 8, borderRadius: 8, overflow: 'hidden', height: 250 }}>
+              <MapaPicker
+                lat={noviAparat.lat || 44.0}
+                lng={noviAparat.lng || 17.0}
+                onOdaberi={(lat, lng) => {
+                  setNoviAparat({ ...noviAparat, lat, lng })
+                  setPokaziMapu(false)
+                }}
+              />
+            </div>
+          )}
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+            <input value={noviAparat.serijski_broj}
+              onChange={e => setNoviAparat({ ...noviAparat, serijski_broj: e.target.value })}
+              placeholder="Serijski broj (opcionalno)"
+              disabled={noviAparat.ostecen}
+              style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: noviAparat.ostecen ? '#555' : '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#E63946', fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+              <input type="checkbox" checked={noviAparat.ostecen}
+                onChange={e => setNoviAparat({ ...noviAparat, ostecen: e.target.checked, serijski_broj: '' })}
+                style={{ accentColor: '#E63946' }} />
+              Oštećen
+            </label>
+          </div>
+
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={dodajAparat} disabled={!noviAparat.naziv || !noviAparat.lokal || !noviAparat.adresa}
               style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!noviAparat.naziv || !noviAparat.lokal || !noviAparat.adresa) ? 0.5 : 1 }}>
               Dodaj
             </button>
-            <button onClick={() => setForma(false)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
+            <button onClick={() => { setForma(false); setPokaziMapu(false) }} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
               Odustani
             </button>
           </div>
@@ -129,7 +168,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
               <div>
                 <div style={{ fontWeight: 700 }}>{a.lokal}</div>
                 <div style={{ color: '#7B96B2', fontSize: 12 }}>{a.adresa}</div>
-                {a.tip && <div style={{ color: '#7B96B2', fontSize: 11 }}>{a.tip}{a.serijski_broj && ` · SN: ${a.serijski_broj}`}</div>}
+                {a.serijski_broj && <div style={{ color: a.serijski_broj === 'OŠTEĆEN' ? '#E63946' : '#7B96B2', fontSize: 11 }}>SN: {a.serijski_broj}</div>}
                 <div style={{ color: '#1B85B8', fontSize: 11, marginTop: 2 }}>{a.id}</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -161,7 +200,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                     {prijave.filter(p => p.aparat_id === a.id).length === 0 && (
                       <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema prijava.</div>
                     )}
-                {prijave.filter(p => p.aparat_id === a.id).map(p => (
+                    {prijave.filter(p => p.aparat_id === a.id).map(p => (
                       <div key={p.id} onClick={() => onOdaberiPrijavu(p)}
                         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A', cursor: 'pointer' }}>
                         <div style={{ fontSize: 12, color: '#E8F4FD' }}>{p.id}</div>
