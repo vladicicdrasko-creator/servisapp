@@ -152,8 +152,8 @@ export default function Dashboard() {
   <RadniciTab radnici={radnici} prijave={prijave} onRefresh={ucitajPodatke} />
 )}
         {/* APARATI */}
-        {tab === 'aparati' && (
-          <AparatiTab />
+       {tab === 'aparati' && (
+  <AparatiTab onOdaberiPrijavu={(p) => { setOdabranaP(p); setTab('prijave') }} />
 )}
 
 

@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase'
 import QRCode from 'qrcode'
 import { StatusBadge } from './Dashboard'
 
-export default function AparatiTab() {
+export default function AparatiTab({ onOdaberiPrijavu }) {
   const [aparati, setAparati] = useState([])
   const [prijave, setPrijave] = useState([])
   const [odabrani, setOdabrani] = useState(null)
@@ -161,8 +161,9 @@ export default function AparatiTab() {
                     {prijave.filter(p => p.aparat_id === a.id).length === 0 && (
                       <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema prijava.</div>
                     )}
-                    {prijave.filter(p => p.aparat_id === a.id).map(p => (
-                      <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A' }}>
+                {prijave.filter(p => p.aparat_id === a.id).map(p => (
+                      <div key={p.id} onClick={() => onOdaberiPrijavu(p)}
+                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A', cursor: 'pointer' }}>
                         <div style={{ fontSize: 12, color: '#E8F4FD' }}>{p.id}</div>
                         <StatusBadge status={p.status} />
                       </div>
