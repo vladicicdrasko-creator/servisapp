@@ -82,6 +82,9 @@ export default function PrijavaPage({ params }) {
         <h2 style={{ color: '#E8F4FD', marginBottom: 8 }}>Prijava poslata!</h2>
         <p style={{ color: '#7B96B2', marginBottom: 8 }}>Vaš broj prijave:</p>
         <div style={s.brojPrijave}>{brojPrijave}</div>
+        <p style={{ color: '#7B96B2', fontSize: 12 }}>
+          {new Date().toLocaleString('bs-BA')}
+        </p>
         <p style={{ color: '#7B96B2', fontSize: 13 }}>
           Tehničar će biti upućen u najkraćem roku.
         </p>
