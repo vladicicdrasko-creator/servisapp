@@ -57,6 +57,7 @@ export default function Dashboard() {
       })
       .subscribe()
     return () => supabase.removeChannel(kanal)
+    ucitajPodatke()
   }, [])
 
   const ucitajPodatke = async () => {
