@@ -502,7 +502,7 @@ const s = {
   centar: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Segoe UI', sans-serif" },
   topbar: { background: '#132338', borderBottom: '1px solid #1E3A5A', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
   logo: { width: 32, height: 32, background: '#1B85B8', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  nav: { background: '#132338', borderBottom: '1px solid #1E3A5A', padding: '6px 16px', display: 'flex', gap: 4 },
+ nav: { background: '#132338', borderBottom: '1px solid #1E3A5A', padding: '6px 8px', display: 'flex', gap: 2, overflowX: 'auto', WebkitOverflowScrolling: 'touch' },
   sadrzaj: { flex: 1, overflow: 'auto', padding: 16, maxWidth: 900, width: '100%', margin: '0 auto' },
   naslov: { marginBottom: 16, fontSize: 18 },
   grid4: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 },
