@@ -12,6 +12,8 @@ export default function PrijavaPage({ params }) {
   const [kategorija, setKategorija] = useState('')
   const [opis, setOpis] = useState('')
   const [kontakt, setKontakt] = useState('')
+  const [slika, setSlika] = useState(null)
+  const [slikaPreview, setSlikaPreview] = useState(null)
   const [saljem, setSaljem] = useState(false)
   const [poslato, setPoslato] = useState(false)
   const [brojPrijave, setBrojPrijave] = useState('')
@@ -38,32 +40,47 @@ export default function PrijavaPage({ params }) {
     ucitajAparat()
   }, [aparatId])
 
-  const posaljiPrijavu = async () => {
-    if (!kategorija || !opis) return
-    setSaljem(true)
+ const posaljiPrijavu = async () => {
+  if (!kategorija || !opis) return
+  setSaljem(true)
 
-    const id = 'PR-' + Date.now().toString().slice(-6)
+  const id = 'PR-' + Date.now().toString().slice(-6)
 
-    const { error } = await supabase.from('prijave').insert({
-      id,
-      aparat_id: aparatId,
-      lokal: aparat.lokal,
-      adresa: aparat.adresa,
-      lat: aparat.lat,
-      lng: aparat.lng,
-      opis,
-      kategorija,
-      kontakt: kontakt || null,
-      status: 'nova',
-      hitnost: 'srednja'
-    })
-
-    if (!error) {
-      setBrojPrijave(id)
-      setPoslato(true)
+  let slikaUrl = null
+  if (slika) {
+    const ext = slika.name.split('.').pop()
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('prijave-slike')
+      .upload(id + '.' + ext, slika)
+    if (!uploadError) {
+      const { data: urlData } = supabase.storage
+        .from('prijave-slike')
+        .getPublicUrl(id + '.' + ext)
+      slikaUrl = urlData.publicUrl
     }
-    setSaljem(false)
   }
+
+  const { error } = await supabase.from('prijave').insert({
+    id,
+    aparat_id: aparatId,
+    lokal: aparat.lokal,
+    adresa: aparat.adresa,
+    lat: aparat.lat,
+    lng: aparat.lng,
+    opis,
+    kategorija,
+    kontakt: kontakt || null,
+    slika_url: slikaUrl,
+    status: 'nova',
+    hitnost: 'srednja'
+  })
+
+  if (!error) {
+    setBrojPrijave(id)
+    setPoslato(true)
+  }
+  setSaljem(false)
+}
 
   if (ucitava) return (
     <div style={s.centar}>
@@ -140,7 +157,33 @@ export default function PrijavaPage({ params }) {
             placeholder="Opišite problem što detaljnije..."
             style={s.textarea} />
         </div>
-
+        {/* Slika */}
+<div style={{ marginBottom: 14 }}>
+  <label style={s.label}>DODAJ SLIKU (opciono)</label>
+  {slikaPreview && (
+    <div style={{ marginBottom: 8, position: 'relative' }}>
+      <img src={slikaPreview} alt="preview" style={{ width: '100%', borderRadius: 8, maxHeight: 200, objectFit: 'cover' }} />
+      <button onClick={() => { setSlika(null); setSlikaPreview(null) }}
+        style={{ position: 'absolute', top: 8, right: 8, background: '#E63946', border: 'none', color: '#fff', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 16 }}>
+        ×
+      </button>
+    </div>
+  )}
+  {!slikaPreview && (
+    <label style={{ display: 'block', background: '#132338', border: '1px dashed #1E3A5A', borderRadius: 8, padding: '20px', textAlign: 'center', cursor: 'pointer', color: '#7B96B2', fontSize: 13 }}>
+      📷 Klikni za dodavanje slike
+      <input type="file" accept="image/*" capture="environment"
+        onChange={e => {
+          const f = e.target.files[0]
+          if (f) {
+            setSlika(f)
+            setSlikaPreview(URL.createObjectURL(f))
+          }
+        }}
+        style={{ display: 'none' }} />
+    </label>
+  )}
+</div>
         {/* Kontakt */}
         <div style={{ marginBottom: 20 }}>
           <label style={s.label}>VAŠ KONTAKT (opciono)</label>
