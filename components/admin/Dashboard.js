@@ -290,7 +290,7 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
       )}
 
       {prijaveF.map(p => {
-       const t = tipBoja[p.kategorija] || (p.kategorija ? tipBoja.ostalo : tipBoja.prijava)
+      const t = tipBoja[p.kategorija] || tipBoja.prijava
         return (
           <div key={p.id} onClick={() => onOdaberi(p)} style={{
             background: '#1A2E45',
