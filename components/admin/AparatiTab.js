@@ -18,6 +18,8 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [qrUrl, setQrUrl] = useState(null)
   const [pokaziMapu, setPokaziMapu] = useState(false)
   const [pokaziIstoriju, setPokaziIstoriju] = useState({})
+  const [editAparat, setEditAparat] = useState(null)
+  const [pokaziEditMapu, setPokaziEditMapu] = useState(false)
   const [noviAparat, setNoviAparat] = useState({
     naziv: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null
   })
@@ -65,9 +67,23 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     setTimeout(() => setPoruka(null), 2000)
   }
 
-  const toggleStatus = async (a) => {
-    const noviStatus = a.status === 'aktivan' ? 'neaktivan' : 'aktivan'
-    await supabase.from('aparati').update({ status: noviStatus }).eq('id', a.id)
+  const otvoriEdit = (e, a) => {
+    e.stopPropagation()
+    setEditAparat({ ...a, ostecen: a.serijski_broj === 'OŠTEĆEN' })
+    setPokaziEditMapu(false)
+  }
+
+  const snimiEdit = async () => {
+    const { ostecen, ...rest } = editAparat
+    await supabase.from('aparati').update({
+      naziv: rest.naziv,
+      lokal: rest.lokal,
+      adresa: rest.adresa,
+      serijski_broj: ostecen ? 'OŠTEĆEN' : (rest.serijski_broj || null),
+      lat: rest.lat,
+      lng: rest.lng,
+    }).eq('id', rest.id)
+    setEditAparat(null)
     ucitaj()
   }
 
@@ -159,6 +175,69 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
         </div>
       )}
 
+      {editAparat && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div style={{ background: '#1A2E45', border: '1px solid #1B85B8', borderRadius: 12, padding: 20, width: '100%', maxWidth: 480 }}>
+            <h3 style={{ margin: '0 0 14px', fontSize: 14, color: '#7B96B2' }}>UREDI APARAT — {editAparat.id}</h3>
+
+            <input value={editAparat.naziv} onChange={e => setEditAparat({ ...editAparat, naziv: e.target.value })}
+              placeholder="Naziv aparata *"
+              style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+
+            <input value={editAparat.lokal} onChange={e => setEditAparat({ ...editAparat, lokal: e.target.value })}
+              placeholder="Lokal *"
+              style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+              <input value={editAparat.adresa} onChange={e => setEditAparat({ ...editAparat, adresa: e.target.value })}
+                placeholder="Adresa *"
+                style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+              <button onClick={() => setPokaziEditMapu(!pokaziEditMapu)} style={{
+                background: pokaziEditMapu ? '#1B85B8' : '#0D1B2A', border: '1px solid #1B85B8',
+                color: '#E8F4FD', borderRadius: 8, padding: '8px 10px', cursor: 'pointer', fontSize: 11, whiteSpace: 'nowrap'
+              }}>
+                📍 {editAparat.lat ? `${Number(editAparat.lat).toFixed(4)}, ${Number(editAparat.lng).toFixed(4)}` : 'Mapa'}
+              </button>
+            </div>
+
+            {pokaziEditMapu && (
+              <div style={{ marginBottom: 8, borderRadius: 8, overflow: 'hidden', height: 220 }}>
+                <MapaPicker
+                  lat={editAparat.lat || 44.0}
+                  lng={editAparat.lng || 17.0}
+                  onOdaberi={(lat, lng) => { setEditAparat({ ...editAparat, lat, lng }); setPokaziEditMapu(false) }}
+                />
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 8, marginBottom: 14, alignItems: 'center' }}>
+              <input value={editAparat.ostecen ? '' : (editAparat.serijski_broj || '')}
+                onChange={e => setEditAparat({ ...editAparat, serijski_broj: e.target.value })}
+                placeholder="Serijski broj (opcionalno)"
+                disabled={editAparat.ostecen}
+                style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: editAparat.ostecen ? '#555' : '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#E63946', fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                <input type="checkbox" checked={editAparat.ostecen}
+                  onChange={e => setEditAparat({ ...editAparat, ostecen: e.target.checked, serijski_broj: '' })}
+                  style={{ accentColor: '#E63946' }} />
+                Oštećen
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={snimiEdit} disabled={!editAparat.naziv || !editAparat.lokal || !editAparat.adresa}
+                style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!editAparat.naziv || !editAparat.lokal || !editAparat.adresa) ? 0.5 : 1 }}>
+                Snimi
+              </button>
+              <button onClick={() => { setEditAparat(null); setPokaziEditMapu(false) }}
+                style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
+                Odustani
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {aparati.map(a => {
         const svePrijave = prijave.filter(p => p.aparat_id === a.id)
         const montazaDatum = a.montaza_datum ? new Date(a.montaza_datum) : null
@@ -184,12 +263,11 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                 <span style={{ background: aktivne > 0 ? '#E63946' : '#2A9D8F', color: '#fff', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>
                   {aktivne > 0 ? `${aktivne} aktivnih` : 'OK'}
                 </span>
-                <button onClick={() => toggleStatus(a)} style={{
-                  background: 'transparent', border: `1px solid ${a.status === 'aktivan' ? '#E63946' : '#2A9D8F'}`,
-                  color: a.status === 'aktivan' ? '#E63946' : '#2A9D8F',
-                  borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12
+                <button onClick={(e) => otvoriEdit(e, a)} style={{
+                  background: 'transparent', border: '1px solid #1B85B8',
+                  color: '#1B85B8', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12
                 }}>
-                  {a.status === 'aktivan' ? 'Deaktiviraj' : 'Aktiviraj'}
+                  ✏️ Edit
                 </button>
               </div>
             </div>
