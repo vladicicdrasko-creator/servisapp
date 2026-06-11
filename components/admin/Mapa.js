@@ -56,7 +56,7 @@ export default function Mapa({ prijave = [], radnici = [] }) {
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
       })
 
-      mapInstanceRef.current = L.default.map(mapaRef.current, { preferCanvas: true }).setView([44.817, 20.457], 12)
+      mapInstanceRef.current = L.default.map(mapaRef.current, { preferCanvas: true }).setView([42.708, 19.374], 8)
       L.default.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
       }).addTo(mapInstanceRef.current)
