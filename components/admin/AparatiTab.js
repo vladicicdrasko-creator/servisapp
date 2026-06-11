@@ -39,6 +39,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [pokaziIstoriju, setPokaziIstoriju] = useState({})
   const [editAparat, setEditAparat] = useState(null)
   const [pokaziEditMapu, setPokaziEditMapu] = useState(false)
+  const [pokaziNeaktivne, setPokaziNeaktivne] = useState(false)
   const [noviAparat, setNoviAparat] = useState({
     naziv: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null
   })
@@ -127,7 +128,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     <>
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <h2 style={{ fontSize: 18, margin: 0 }}>Aparati ({aparati.length})</h2>
+        <h2 style={{ fontSize: 18, margin: 0 }}>Aparati ({aparati.filter(a => a.status !== 'neaktivan').length})</h2>
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={exportExcel} style={{
             background: 'transparent', border: '1px solid #2A9D8F', color: '#2A9D8F',
@@ -358,6 +359,28 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
           </div>
         )
       })}
+
+      {aparati.filter(a => a.status === 'neaktivan').length > 0 && (
+        <div style={{ marginTop: 8 }}>
+          <button onClick={() => setPokaziNeaktivne(p => !p)}
+            style={{ background: 'transparent', border: 'none', color: '#7B96B2', cursor: 'pointer', fontSize: 12, padding: '4px 0' }}>
+            {pokaziNeaktivne ? '▲ Sakrij deaktivirane' : `▼ Deaktivirani aparati (${aparati.filter(a => a.status === 'neaktivan').length})`}
+          </button>
+          {pokaziNeaktivne && aparati.filter(a => a.status === 'neaktivan').map(a => (
+            <div key={a.id} style={{ background: '#1A2E45', border: '1px solid #1E3A5A', borderRadius: 10, padding: '10px 14px', marginTop: 6, opacity: 0.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 14 }}>{a.naziv || a.lokal}</div>
+                <div style={{ color: '#7B96B2', fontSize: 12 }}>{a.adresa}</div>
+                <div style={{ color: '#1B85B8', fontSize: 11 }}>{a.id}</div>
+              </div>
+              <button onClick={e => toggleStatus(e, a)} style={{
+                background: 'transparent', border: '1px solid #2A9D8F',
+                color: '#2A9D8F', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12
+              }}>Aktiviraj</button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
 
     {/* Modal za historijsku prijavu */}
