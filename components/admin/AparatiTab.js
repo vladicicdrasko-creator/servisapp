@@ -23,8 +23,6 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       'Serijski broj': a.serijski_broj || '',
       'Status': a.status || '',
       'Oštećen': a.ostecen ? 'Da' : 'Ne',
-      'Lat': a.lat || '',
-      'Lng': a.lng || '',
       'Datum montaže': a.montaza_datum ? new Date(a.montaza_datum).toLocaleDateString('bs-BA') : '',
       'Ukupno prijava': prijave.filter(p => p.aparat_id === a.id).length,
     }))
