@@ -184,6 +184,7 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
   const [filterGrad, setFilterGrad] = useState('svi')
   const [filterDatum, setFilterDatum] = useState('danas')
   const [datum, setDatum] = useState(new Date().toISOString().split('T')[0])
+  const [zakazanoDatum, setZakazanoDatum] = useState(new Date().toISOString().split('T')[0])
   const [loading, setLoading] = useState(false)
   const [poruka, setPoruka] = useState(null)
 
@@ -200,15 +201,15 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
  const [filterTip, setFilterTip] = useState('svi')
 
   const prijaveF = prijave.filter(p => {
-    const d = new Date(p.created_at).toISOString().split('T')[0]
+    const d = (p.zakazano_za || new Date(p.created_at).toISOString().split('T')[0])
     if (filterDatum === 'danas' && d !== danas) return false
     if (filterDatum === 'datum' && d !== datum) return false
     if (filterDatum === 'danas' && p.status === 'riješena') return false
     if (filterTip === 'rijesena') return p.status === 'riješena' || p.status === 'zatvorena'
     if (filterTip !== 'svi') {
-    const pTip = tipBoja[p.kategorija] ? p.kategorija : 'prijava'
-    if (pTip !== filterTip) return false
-}
+      const pTip = tipBoja[p.kategorija] ? p.kategorija : 'prijava'
+      if (pTip !== filterTip) return false
+    }
     return true
   })
   const exportExcel = () => {
@@ -257,12 +258,13 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
       status: radnikId ? 'dodijeljena' : 'nova',
       radnik_id: radnikId || null,
       hitnost: 'srednja',
+      zakazano_za: zakazanoDatum,
     })
     setLoading(false)
     if (error) { setPoruka({ tip: 'greska', tekst: error.message }); return }
     setPoruka({ tip: 'ok', tekst: 'Nalog kreiran!' })
     setPokaziFormu(false)
-    setTip(null); setAparatId(''); setRadnikId(''); setNapomena('')
+    setTip(null); setAparatId(''); setRadnikId(''); setNapomena(''); setZakazanoDatum(new Date().toISOString().split('T')[0])
     onRefresh()
     setTimeout(() => setPoruka(null), 2000)
   }
@@ -322,6 +324,18 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
             {radnici.filter(r => r.status !== 'deaktiviran').map(r => <option key={r.id} value={r.id}>{r.ime}</option>)}
           </select>
 
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>ZAKAZANO ZA</div>
+            <input type="date" value={zakazanoDatum} min={danas}
+              onChange={e => setZakazanoDatum(e.target.value)}
+              style={{ width: '100%', background: '#0D1B2A', border: `1px solid ${zakazanoDatum > danas ? '#F4A261' : '#1E3A5A'}`, color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            {zakazanoDatum > danas && (
+              <div style={{ color: '#F4A261', fontSize: 11, marginTop: 4 }}>
+                📅 Zakazano za budući datum — radnik neće vidjeti dok ne dođe taj dan
+              </div>
+            )}
+          </div>
+
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={dodajNalog} disabled={!tip || !aparatId || loading}
               style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!tip || !aparatId) ? 0.5 : 1 }}>
@@ -378,6 +392,11 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
               </div>
             </div>
             <div style={{ fontWeight: 700, marginBottom: 4 }}>{p.lokal}</div>
+            {p.zakazano_za && p.zakazano_za > danas && (
+              <div style={{ display: 'inline-block', background: '#F4A261', color: '#0D1B2A', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, marginBottom: 6 }}>
+                📅 {new Date(p.zakazano_za + 'T00:00:00').toLocaleDateString('bs-BA')}
+              </div>
+            )}
             <div style={{ color: '#7B96B2', fontSize: 12, marginBottom: 6 }}>{p.opis}</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ color: '#7B96B2', fontSize: 11 }}>{p.adresa}</span>
