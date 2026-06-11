@@ -292,7 +292,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                 </div>
                 {aktuelne.length === 0 && <div style={{ color: '#7B96B2', fontSize: 12, marginBottom: 8 }}>Nema prijava.</div>}
                 {aktuelne.map(p => (
-                  <div key={p.id} onClick={() => onOdaberiPrijavu(p)}
+                  <div key={p.id} onClick={() => setPovijestModal(p)}
                     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A', cursor: 'pointer' }}>
                     <div style={{ fontSize: 12, color: '#E8F4FD' }}>{p.id}</div>
                     <StatusBadge status={p.status} />
