@@ -211,6 +211,13 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
 }
     return true
   })
+  const obrisiNalog = async (e, id) => {
+    e.stopPropagation()
+    if (!window.confirm(`Obrisati nalog ${id}?`)) return
+    await supabase.from('prijave').delete().eq('id', id)
+    onRefresh()
+  }
+
   const dodajNalog = async () => {
     if (!tip || !aparatId) return
     setLoading(true)
@@ -346,7 +353,14 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
             <div style={{ color: '#7B96B2', fontSize: 12, marginBottom: 6 }}>{p.opis}</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ color: '#7B96B2', fontSize: 11 }}>{p.adresa}</span>
-              <span style={{ color: '#7B96B2', fontSize: 11 }}>{new Date(p.created_at).toLocaleString('bs-BA')}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ color: '#7B96B2', fontSize: 11 }}>{new Date(p.created_at).toLocaleString('bs-BA')}</span>
+                <button onClick={(e) => obrisiNalog(e, p.id)} style={{
+                  background: 'transparent', border: '1px solid #E63946',
+                  color: '#E63946', borderRadius: 6, padding: '3px 8px',
+                  cursor: 'pointer', fontSize: 11
+                }}>🗑</button>
+              </div>
             </div>
           </div>
         )
