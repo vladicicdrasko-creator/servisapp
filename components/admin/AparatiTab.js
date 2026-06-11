@@ -13,6 +13,26 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [prijave, setPrijave] = useState([])
   const [odabrani, setOdabrani] = useState(null)
   const [povijestModal, setPovijestModal] = useState(null)
+
+  const exportExcel = async () => {
+    const { utils, writeFile } = await import('xlsx')
+    const podaci = aparati.map(a => ({
+      'ID': a.id,
+      'Lokal': a.lokal || '',
+      'Adresa': a.adresa || '',
+      'Serijski broj': a.serijski_broj || '',
+      'Status': a.status || '',
+      'Oštećen': a.ostecen ? 'Da' : 'Ne',
+      'Lat': a.lat || '',
+      'Lng': a.lng || '',
+      'Datum montaže': a.montaza_datum ? new Date(a.montaza_datum).toLocaleDateString('bs-BA') : '',
+      'Ukupno prijava': prijave.filter(p => p.aparat_id === a.id).length,
+    }))
+    const ws = utils.json_to_sheet(podaci)
+    const wb = utils.book_new()
+    utils.book_append_sheet(wb, ws, 'Aparati')
+    writeFile(wb, `aparati_${new Date().toISOString().split('T')[0]}.xlsx`)
+  }
   const [forma, setForma] = useState(false)
   const [loading, setLoading] = useState(true)
   const [poruka, setPoruka] = useState(null)
@@ -102,10 +122,16 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h2 style={{ fontSize: 18, margin: 0 }}>Aparati ({aparati.length})</h2>
-        <button onClick={() => setForma(!forma)} style={{
-          background: '#1B85B8', border: 'none', color: '#fff',
-          padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600
-        }}>+ Dodaj aparat</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={exportExcel} style={{
+            background: 'transparent', border: '1px solid #2A9D8F', color: '#2A9D8F',
+            padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13
+          }}>↓ Export</button>
+          <button onClick={() => setForma(!forma)} style={{
+            background: '#1B85B8', border: 'none', color: '#fff',
+            padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600
+          }}>+ Dodaj aparat</button>
+        </div>
       </div>
 
       {poruka && (
