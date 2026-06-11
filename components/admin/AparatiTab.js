@@ -12,6 +12,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [aparati, setAparati] = useState([])
   const [prijave, setPrijave] = useState([])
   const [odabrani, setOdabrani] = useState(null)
+  const [povijestModal, setPovijestModal] = useState(null)
   const [forma, setForma] = useState(false)
   const [loading, setLoading] = useState(true)
   const [poruka, setPoruka] = useState(null)
@@ -305,7 +306,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                       {pokaziIstoriju[a.id] ? '▲ Sakrij istoriju' : `▼ Istorija (${historijske.length})`}
                     </button>
                     {pokaziIstoriju[a.id] && historijske.map(p => (
-                      <div key={p.id} onClick={() => onOdaberiPrijavu(p)}
+                      <div key={p.id} onClick={() => setPovijestModal(p)}
                         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A', cursor: 'pointer', opacity: 0.6 }}>
                         <div style={{ fontSize: 12, color: '#E8F4FD' }}>{p.id}</div>
                         <StatusBadge status={p.status} />
@@ -319,5 +320,39 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
         )
       })}
     </div>
+
+    {/* Modal za historijsku prijavu */}
+    {povijestModal && (
+      <div onClick={() => setPovijestModal(null)}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div onClick={e => e.stopPropagation()}
+          style={{ background: '#1A2E45', border: '1px solid #1E3A5A', borderRadius: 12, padding: 20, width: 340, maxWidth: '90vw' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+            <span style={{ color: '#1B85B8', fontWeight: 700, fontSize: 13 }}>{povijestModal.id}</span>
+            <StatusBadge status={povijestModal.status} />
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 3 }}>LOKAL</div>
+            <div style={{ fontSize: 14, fontWeight: 600 }}>{povijestModal.lokal || '—'}</div>
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 3 }}>ADRESA</div>
+            <div style={{ fontSize: 13 }}>{povijestModal.adresa || '—'}</div>
+          </div>
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 3 }}>OPIS</div>
+            <div style={{ fontSize: 13, background: '#0D1B2A', borderRadius: 8, padding: 10 }}>{povijestModal.opis || '—'}</div>
+          </div>
+          <div style={{ display: 'flex', gap: 12, fontSize: 11, color: '#7B96B2', marginBottom: 16 }}>
+            <span>📂 {povijestModal.kategorija}</span>
+            <span>🕐 {new Date(povijestModal.created_at).toLocaleDateString('bs-BA')}</span>
+          </div>
+          <button onClick={() => setPovijestModal(null)}
+            style={{ width: '100%', background: '#0F4C75', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>
+            Zatvori
+          </button>
+        </div>
+      </div>
+    )}
   )
 }
