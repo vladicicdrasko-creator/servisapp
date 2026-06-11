@@ -535,6 +535,30 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
   const [odabraniRadnik, setOdabraniRadnik] = useState(null)
   const [radnikLog, setRadnikLog] = useState({})
   const [radnikLogTab, setRadnikLogTab] = useState({})
+  const [radniciAktivni, setRadniciAktivni] = useState(new Set())
+
+  useEffect(() => {
+    const provjeriAktivne = async () => {
+      const { data } = await supabase
+        .from('radnik_aktivnost_log')
+        .select('radnik_id, nalog_id, akcija')
+        .order('created_at', { ascending: false })
+      if (!data) return
+      // Za svaki nalog uzmi posljednju akciju
+      const poslijednje = {}
+      data.forEach(log => {
+        const kljuc = `${log.radnik_id}_${log.nalog_id}`
+        if (!poslijednje[kljuc]) poslijednje[kljuc] = log
+      })
+      const aktivni = new Set(
+        Object.values(poslijednje)
+          .filter(l => l.akcija === 'otvorio')
+          .map(l => l.radnik_id)
+      )
+      setRadniciAktivni(aktivni)
+    }
+    provjeriAktivne()
+  }, [])
 
   const ucitajLog = async (radnikId) => {
     if (radnikLog[radnikId]) return
@@ -613,12 +637,12 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
               <div style={{ color: '#7B96B2', fontSize: 12 }}>{r.telefon} {r.email && `· ${r.email}`}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              {(() => {
-                const aktivnih = prijave.filter(p => p.radnik_id === r.id && p.status !== 'riješena' && p.status !== 'zatvorena').length
-                if (r.status === 'deaktiviran') return <span style={{ background: '#555', color: '#fff', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>DEAKTIVIRAN</span>
-                if (aktivnih > 0) return <span style={{ background: '#F4A261', color: '#0D1B2A', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>RADI</span>
-                return null
-              })()}
+              {r.status === 'deaktiviran'
+                ? <span style={{ background: '#555', color: '#fff', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>DEAKTIVIRAN</span>
+                : radniciAktivni.has(r.id)
+                  ? <span style={{ background: '#F4A261', color: '#0D1B2A', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>RADI</span>
+                  : null
+              }
               <button onClick={() => otvoriEdit(r)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Uredi</button>
               <button onClick={() => toggleAktivan(r)} style={{ background: 'transparent', border: `1px solid ${r.status === 'deaktiviran' ? '#2A9D8F' : '#E63946'}`, color: r.status === 'deaktiviran' ? '#2A9D8F' : '#E63946', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>
                 {r.status === 'deaktiviran' ? 'Aktiviraj' : 'Deaktiviraj'}
