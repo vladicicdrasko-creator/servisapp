@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
-
 import { use } from 'react'
 
 export default function PrijavaPage({ params }) {
@@ -17,6 +16,7 @@ export default function PrijavaPage({ params }) {
   const [saljem, setSaljem] = useState(false)
   const [poslato, setPoslato] = useState(false)
   const [brojPrijave, setBrojPrijave] = useState('')
+  const vrijemePrijaveRef = useRef(null)
 
  const kategorije = [
   'Curi voda',
@@ -76,6 +76,7 @@ export default function PrijavaPage({ params }) {
   })
 
  if (!error) {
+  vrijemePrijaveRef.current = new Date()
   setBrojPrijave(id)
   setPoslato(true)
   fetch('/api/push', {
@@ -103,6 +104,85 @@ export default function PrijavaPage({ params }) {
     </div>
   )
 
+  const preuzmiPDF = async () => {
+    const { jsPDF } = await import('jspdf')
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+
+    const vrijeme = vrijemePrijaveRef.current
+    const datumStr = vrijeme ? vrijeme.toLocaleString('bs-BA') : new Date().toLocaleString('bs-BA')
+
+    // Header traka
+    doc.setFillColor(15, 76, 117)
+    doc.rect(0, 0, 210, 28, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(18)
+    doc.setFont('helvetica', 'bold')
+    doc.text('ServisApp', 14, 12)
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'normal')
+    doc.text('Potvrda o prijavi kvara', 14, 20)
+
+    // Zelena traka uspjeha
+    doc.setFillColor(42, 157, 143)
+    doc.rect(0, 28, 210, 16, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(12)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Prijava je uspješno primljena', 14, 38)
+
+    // Broj prijave — istaknuto
+    doc.setFillColor(19, 35, 56)
+    doc.roundedRect(14, 52, 182, 22, 4, 4, 'F')
+    doc.setTextColor(27, 133, 184)
+    doc.setFontSize(22)
+    doc.setFont('helvetica', 'bold')
+    doc.text(brojPrijave, 105, 66, { align: 'center' })
+
+    doc.setTextColor(123, 150, 178)
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'normal')
+    doc.text('Broj prijave', 105, 58, { align: 'center' })
+
+    // Detalji prijave
+    const detalji = [
+      ['Datum i vrijeme', datumStr],
+      ['Lokacija', aparat.lokal],
+      ['Adresa', aparat.adresa],
+      ['Aparat ID', aparat.id],
+      ['Vrsta kvara', kategorija],
+      ['Opis', opis],
+    ]
+    if (kontakt) detalji.push(['Kontakt', kontakt])
+
+    let y = 84
+    doc.setFontSize(10)
+    detalji.forEach(([label, value], i) => {
+      if (i % 2 === 0) {
+        doc.setFillColor(245, 247, 250)
+        doc.rect(14, y - 5, 182, 10, 'F')
+      }
+      doc.setTextColor(100, 120, 140)
+      doc.setFont('helvetica', 'normal')
+      doc.text(label + ':', 16, y)
+      doc.setTextColor(20, 40, 60)
+      doc.setFont('helvetica', 'bold')
+      const lines = doc.splitTextToSize(value || '—', 120)
+      doc.text(lines, 70, y)
+      y += lines.length > 1 ? lines.length * 6 + 4 : 10
+    })
+
+    // Footer
+    doc.setFillColor(230, 235, 240)
+    doc.rect(0, 275, 210, 22, 'F')
+    doc.setTextColor(100, 120, 140)
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'normal')
+    doc.text('Tehničar će biti upućen u najkraćem roku. Čuvajte ovaj dokument kao potvrdu vaše prijave.', 105, 283, { align: 'center' })
+    doc.text('ServisApp © ' + new Date().getFullYear(), 105, 290, { align: 'center' })
+
+    doc.save('prijava-' + brojPrijave + '.pdf')
+  }
+
   if (poslato) return (
     <div style={s.centar}>
       <div style={{ textAlign: 'center' }}>
@@ -111,11 +191,14 @@ export default function PrijavaPage({ params }) {
         <p style={{ color: '#7B96B2', marginBottom: 8 }}>Vaš broj prijave:</p>
         <div style={s.brojPrijave}>{brojPrijave}</div>
         <p style={{ color: '#7B96B2', fontSize: 12 }}>
-          {new Date().toLocaleString('bs-BA')}
+          {vrijemePrijaveRef.current?.toLocaleString('bs-BA')}
         </p>
-        <p style={{ color: '#7B96B2', fontSize: 13 }}>
+        <p style={{ color: '#7B96B2', fontSize: 13, marginBottom: 24 }}>
           Tehničar će biti upućen u najkraćem roku.
         </p>
+        <button onClick={preuzmiPDF} style={s.pdfBtn}>
+          ⬇ Preuzmi potvrdu (PDF)
+        </button>
       </div>
     </div>
   )
@@ -224,4 +307,5 @@ const s = {
   btn: { width: '100%', border: 'none', color: '#fff', borderRadius: 10, padding: 14, fontSize: 15, fontWeight: 700 },
   uspjehKrug: { width: 80, height: 80, background: '#2A9D8F', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: 36, color: '#fff' },
   brojPrijave: { background: '#132338', border: '1px solid #1E3A5A', borderRadius: 10, padding: '12px 24px', display: 'inline-block', color: '#1B85B8', fontSize: 20, fontWeight: 700, letterSpacing: 2, marginBottom: 20 },
+  pdfBtn: { background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 10, padding: '13px 28px', fontSize: 14, fontWeight: 700, cursor: 'pointer' },
 }
