@@ -266,6 +266,18 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
     })
     setLoading(false)
     if (error) { setPoruka({ tip: 'greska', tekst: error.message }); return }
+    // Pošalji push radniku ako je dodijeljen
+    if (radnikId) {
+      fetch('/api/push-radnik', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          radnik_id: radnikId,
+          title: 'Novi zadatak',
+          body: `${tip?.toUpperCase()} — ${aparat?.lokal || aparat?.adresa}`,
+        }),
+      }).catch(() => {})
+    }
     setPoruka({ tip: 'ok', tekst: 'Nalog kreiran!' })
     setPokaziFormu(false)
     setTip(null); setAparatId(''); setRadnikId(''); setNapomena(''); setZakazanoDatum(new Date().toISOString().split('T')[0])
