@@ -247,7 +247,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
         const historijske = montazaDatum
           ? svePrijave.filter(p => new Date(p.created_at) < montazaDatum)
           : []
-        const aktivne = aktuelne.filter(p => p.status !== 'riješena').length
+        const aktivne = aktuelne.filter(p => p.status !== 'riješena' && p.status !== 'zatvorena').length
 
         return (
           <div key={a.id} style={{ background: '#1A2E45', border: `1px solid ${odabrani?.id === a.id ? '#1B85B8' : '#1E3A5A'}`, borderRadius: 10, padding: 14, marginBottom: 10, cursor: 'pointer', opacity: a.status === 'neaktivan' ? 0.5 : 1 }}
