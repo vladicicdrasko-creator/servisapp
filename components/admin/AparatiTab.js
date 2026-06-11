@@ -67,10 +67,10 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const uploadSlika = async (fajl, aparatId) => {
     const ext = fajl.name.split('.').pop()
     const path = `aparati/${aparatId}.${ext}`
-    await supabase.storage.from('slike').remove([path])
-    const { error } = await supabase.storage.from('slike').upload(path, fajl, { upsert: true })
+    await supabase.storage.from('aparati-slike').remove([path])
+    const { error } = await supabase.storage.from('aparati-slike').upload(path, fajl, { upsert: true })
     if (error) return null
-    const { data } = supabase.storage.from('slike').getPublicUrl(path)
+    const { data } = supabase.storage.from('aparati-slike').getPublicUrl(path)
     return data.publicUrl
   }
 
