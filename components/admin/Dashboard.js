@@ -543,24 +543,22 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
         .from('radnik_aktivnost_log')
         .select('radnik_id, nalog_id, akcija')
         .order('created_at', { ascending: false })
-      console.log('LOG DATA:', data, 'ERROR:', error)
       if (!data) return
-      // Za svaki nalog uzmi posljednju akciju
       const poslijednje = {}
       data.forEach(log => {
         const kljuc = `${log.radnik_id}_${log.nalog_id}`
         if (!poslijednje[kljuc]) poslijednje[kljuc] = log
       })
-      console.log('POSLIJEDNJE:', poslijednje)
       const aktivni = new Set(
         Object.values(poslijednje)
           .filter(l => l.akcija === 'otvorio')
           .map(l => l.radnik_id)
       )
-      console.log('AKTIVNI:', [...aktivni])
       setRadniciAktivni(aktivni)
     }
     provjeriAktivne()
+    const interval = setInterval(provjeriAktivne, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const ucitajLog = async (radnikId) => {
