@@ -533,6 +533,19 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
   const [loading, setLoading] = useState(false)
   const [poruka, setPoruka] = useState(null)
   const [odabraniRadnik, setOdabraniRadnik] = useState(null)
+  const [radnikLog, setRadnikLog] = useState({})
+  const [radnikLogTab, setRadnikLogTab] = useState({})
+
+  const ucitajLog = async (radnikId) => {
+    if (radnikLog[radnikId]) return
+    const { data } = await supabase
+      .from('radnik_aktivnost_log')
+      .select('*')
+      .eq('radnik_id', radnikId)
+      .order('created_at', { ascending: false })
+      .limit(50)
+    setRadnikLog(prev => ({ ...prev, [radnikId]: data || [] }))
+  }
 
   const otvoriDodaj = () => { setForma('dodaj'); setIme(''); setTelefon(''); setEmail(''); setPoruka(null) }
   const otvoriEdit = (r) => { setForma(r.id); setIme(r.ime); setTelefon(r.telefon || ''); setEmail(r.email || ''); setPoruka(null) }
@@ -593,7 +606,7 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
       {radnici.length === 0 && <div style={{ color: '#7B96B2', textAlign: 'center', padding: 40 }}>Nema radnika.</div>}
       {radnici.map(r => (
         <div key={r.id} style={{ ...s.card, marginBottom: 10, opacity: r.status === 'deaktiviran' ? 0.5 : 1, cursor: 'pointer' }}
-          onClick={(e) => { if (e.target.closest('button')) return; setOdabraniRadnik(odabraniRadnik === r.id ? null : r.id) }}>
+          onClick={(e) => { if (e.target.closest('button')) return; const novi = odabraniRadnik === r.id ? null : r.id; setOdabraniRadnik(novi); if (novi) ucitajLog(novi) }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontWeight: 700 }}>{r.ime}</div>
@@ -614,17 +627,55 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
           </div>
           {odabraniRadnik === r.id && (
             <div style={{ marginTop: 12, borderTop: '1px solid #1E3A5A', paddingTop: 12 }}>
-              <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 8 }}>ISTORIJA NALOGA</div>
-              {prijave.filter(p => p.radnik_id === r.id).length === 0 && <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema naloga.</div>}
-              {prijave.filter(p => p.radnik_id === r.id).map(p => (
-                <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #0D1B2A' }}>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 13 }}>{p.lokal}</div>
-                    <div style={{ color: '#7B96B2', fontSize: 11 }}>{new Date(p.created_at).toLocaleDateString('bs-BA')}</div>
-                  </div>
-                  <StatusBadge status={p.status} />
-                </div>
-              ))}
+              <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                {['nalozi', 'aktivnost'].map(t => (
+                  <button key={t} onClick={e => { e.stopPropagation(); setRadnikLogTab(prev => ({ ...prev, [r.id]: t })) }}
+                    style={{ background: (radnikLogTab[r.id] || 'nalozi') === t ? '#1B85B8' : '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontSize: 11, fontWeight: 600 }}>
+                    {t === 'nalozi' ? 'Nalozi' : 'Aktivnost'}
+                  </button>
+                ))}
+              </div>
+
+              {(radnikLogTab[r.id] || 'nalozi') === 'nalozi' && (
+                <>
+                  {prijave.filter(p => p.radnik_id === r.id).length === 0 && <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema naloga.</div>}
+                  {prijave.filter(p => p.radnik_id === r.id).map(p => (
+                    <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #0D1B2A' }}>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 13 }}>{p.lokal}</div>
+                        <div style={{ color: '#7B96B2', fontSize: 11 }}>{new Date(p.created_at).toLocaleDateString('bs-BA')}</div>
+                      </div>
+                      <StatusBadge status={p.status} />
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {(radnikLogTab[r.id] || 'nalozi') === 'aktivnost' && (
+                <>
+                  {!radnikLog[r.id] && <div style={{ color: '#7B96B2', fontSize: 12 }}>Učitavam...</div>}
+                  {radnikLog[r.id]?.length === 0 && <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema zabilježene aktivnosti.</div>}
+                  {radnikLog[r.id]?.map((log, i) => {
+                    const dt = new Date(log.created_at)
+                    const datumStr = dt.toLocaleDateString('bs-BA')
+                    const vrijemeStr = dt.toLocaleTimeString('bs-BA', { hour: '2-digit', minute: '2-digit' })
+                    return (
+                      <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #0D1B2A' }}>
+                        <div>
+                          <div style={{ fontSize: 12, color: log.akcija === 'otvorio' ? '#1B85B8' : '#2A9D8F', fontWeight: 700 }}>
+                            {log.akcija === 'otvorio' ? '▶ Otvorio' : '■ Zatvorio'} nalog
+                          </div>
+                          <div style={{ fontSize: 11, color: '#7B96B2' }}>{log.nalog_id}</div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: 11, color: '#E8F4FD' }}>{vrijemeStr}</div>
+                          <div style={{ fontSize: 10, color: '#7B96B2' }}>{datumStr}</div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </>
+              )}
             </div>
           )}
         </div>
