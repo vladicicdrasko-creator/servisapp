@@ -86,6 +86,14 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     setTimeout(() => setPoruka(null), 2000)
   }
 
+  const toggleStatus = async (e, a) => {
+    e.stopPropagation()
+    const noviStatus = a.status === 'neaktivan' ? 'aktivan' : 'neaktivan'
+    if (!window.confirm(`${noviStatus === 'neaktivan' ? 'Deaktiviraj' : 'Aktiviraj'} aparat "${a.naziv}"?`)) return
+    await supabase.from('aparati').update({ status: noviStatus }).eq('id', a.id)
+    ucitaj()
+  }
+
   const otvoriEdit = (e, a) => {
     e.stopPropagation()
     setEditAparat({ ...a, ostecen: a.serijski_broj === 'OŠTEĆEN' })
@@ -289,6 +297,12 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                 <span style={{ background: aktivne > 0 ? '#E63946' : '#2A9D8F', color: '#fff', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>
                   {aktivne > 0 ? `${aktivne} aktivnih` : 'OK'}
                 </span>
+                <button onClick={(e) => toggleStatus(e, a)} style={{
+                  background: 'transparent', border: `1px solid ${a.status === 'neaktivan' ? '#2A9D8F' : '#E63946'}`,
+                  color: a.status === 'neaktivan' ? '#2A9D8F' : '#E63946', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12
+                }}>
+                  {a.status === 'neaktivan' ? 'Aktiviraj' : 'Deaktiviraj'}
+                </button>
                 <button onClick={(e) => otvoriEdit(e, a)} style={{
                   background: 'transparent', border: '1px solid #1B85B8',
                   color: '#1B85B8', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12
