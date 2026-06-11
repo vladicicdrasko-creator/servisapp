@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [prijave, setPrijave] = useState([])
   const [aparati, setAparati] = useState([])
   const [radnici, setRadnici] = useState([])
+  const [pendingMontaza, setPendingMontaza] = useState([])
   const [odabranaP, setOdabranaP] = useState(null)
   const [ucitava, setUcitava] = useState(true)
   const [adminIme, setAdminIme] = useState('')
@@ -62,14 +63,16 @@ export default function Dashboard() {
   }, [])
 
   const ucitajPodatke = async () => {
-    const [{ data: p }, { data: r }, { data: a }] = await Promise.all([
+    const [{ data: p }, { data: r }, { data: a }, { data: mz }] = await Promise.all([
       supabase.from('prijave').select('*').order('created_at', { ascending: false }),
       supabase.from('radnici').select('*').order('ime'),
       supabase.from('aparati').select('*').order('lokal'),
+      supabase.from('montaza_zahtjevi').select('nalog_id').eq('status', 'pending'),
     ])
     setPrijave(p || [])
     setRadnici(r || [])
     setAparati(a || [])
+    setPendingMontaza((mz || []).map(m => m.nalog_id))
     setUcitava(false)
   }
 
@@ -135,7 +138,7 @@ export default function Dashboard() {
         )}
 
         {tab === 'nalozi' && !odabranaP && (
-          <NaloziTab prijave={prijave} aparati={aparati} radnici={radnici} onOdaberi={p => setOdabranaP(p)} onRefresh={ucitajPodatke} />
+          <NaloziTab prijave={prijave} aparati={aparati} radnici={radnici} pendingMontaza={pendingMontaza} onOdaberi={p => setOdabranaP(p)} onRefresh={ucitajPodatke} />
         )}
         {tab === 'nalozi' && odabranaP && (
           <PrijavaDetalj
@@ -176,7 +179,7 @@ const tipBoja = {
   prijava: { bg: '#E63946', label: 'PRIJAVA' },
 }
 
-function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
+function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, onRefresh }) {
   const [pokaziFormu, setPokaziFormu] = useState(false)
   const [tip, setTip] = useState(null)
   const [aparatId, setAparatId] = useState('')
@@ -401,7 +404,14 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
                 <StatusBadge status={p.status} />
               </div>
             </div>
-            <div style={{ fontWeight: 700, marginBottom: 4 }}>{p.lokal}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <div style={{ fontWeight: 700 }}>{p.lokal}</div>
+              {pendingMontaza.includes(p.id) && (
+                <span style={{ background: '#E63946', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, animation: 'pulse 1.5s infinite' }}>
+                  🔔 Čeka odgovor
+                </span>
+              )}
+            </div>
             {p.zakazano_za && p.zakazano_za > danas && (
               <div style={{ display: 'inline-block', background: '#F4A261', color: '#0D1B2A', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, marginBottom: 6 }}>
                 📅 {new Date(p.zakazano_za + 'T00:00:00').toLocaleDateString('bs-BA')}

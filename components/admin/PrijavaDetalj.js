@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 import { StatusBadge } from './Dashboard'
 
@@ -10,6 +10,10 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
   const [saljem, setSaljem] = useState(false)
   const [poruka, setPoruka] = useState('')
   const [montazaZahtjev, setMontazaZahtjev] = useState(null)
+  const [editLokal, setEditLokal] = useState('')
+  const [editAdresa, setEditAdresa] = useState('')
+  const mapaRef = useRef(null)
+  const mapInstanceRef = useRef(null)
 
   useEffect(() => {
     if (prijava.kategorija === 'montaza') {
@@ -18,7 +22,10 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
         .eq('nalog_id', prijava.id)
         .eq('status', 'pending')
         .maybeSingle()
-        .then(({ data }) => setMontazaZahtjev(data))
+        .then(({ data }) => {
+          setMontazaZahtjev(data)
+          if (data) { setEditLokal(data.novi_lokal || ''); setEditAdresa(data.nova_adresa || '') }
+        })
     }
   }, [prijava.id, prijava.kategorija])
 
@@ -39,13 +46,49 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
     setSaljem(false)
   }
 
+  useEffect(() => {
+    if (!montazaZahtjev?.novi_lat || !mapaRef.current) return
+    if (mapInstanceRef.current) return
+
+    import('leaflet').then(L => {
+      const lat = Number(montazaZahtjev.novi_lat)
+      const lng = Number(montazaZahtjev.novi_lng)
+
+      delete L.default.Icon.Default.prototype._getIconUrl
+      L.default.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+      })
+
+      const map = L.default.map(mapaRef.current, { zoomControl: true, attributionControl: false })
+        .setView([lat, lng], 16)
+      mapInstanceRef.current = map
+
+      L.default.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+
+      const ikona = L.default.divIcon({
+        html: `<div style="width:14px;height:14px;border-radius:50%;background:#2A9D8F;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.5)"></div>`,
+        className: '', iconSize: [14, 14], iconAnchor: [7, 7],
+      })
+      L.default.marker([lat, lng], { icon: ikona }).addTo(map)
+
+      // Krug 200m
+      L.default.circle([lat, lng], { radius: 200, color: '#2A9D8F', fillColor: '#2A9D8F', fillOpacity: 0.08, weight: 1.5 }).addTo(map)
+    })
+
+    return () => {
+      if (mapInstanceRef.current) { mapInstanceRef.current.remove(); mapInstanceRef.current = null }
+    }
+  }, [montazaZahtjev])
+
   const potvrdiMontazu = async () => {
     if (!montazaZahtjev) return
     setSaljem(true)
     // Ažuriraj aparat
     await supabase.from('aparati').update({
-      lokal: montazaZahtjev.novi_lokal,
-      adresa: montazaZahtjev.nova_adresa,
+      lokal: editLokal || montazaZahtjev.novi_lokal,
+      adresa: editAdresa || montazaZahtjev.nova_adresa,
       lat: montazaZahtjev.novi_lat,
       lng: montazaZahtjev.novi_lng,
       montaza_datum: new Date().toISOString(),
@@ -125,11 +168,16 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
             </div>
             <div style={{ background: '#0D2A1A', border: '1px solid #2A9D8F', borderRadius: 8, padding: 12 }}>
               <div style={{ color: '#2A9D8F', fontSize: 10, fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>NOVI PODACI</div>
-              <div style={{ fontSize: 12, marginBottom: 4 }}><span style={{ color: '#7B96B2' }}>Lokal: </span>{montazaZahtjev.novi_lokal}</div>
-              <div style={{ fontSize: 12, marginBottom: 4 }}><span style={{ color: '#7B96B2' }}>Adresa: </span>{montazaZahtjev.nova_adresa}</div>
-              <div style={{ fontSize: 11, color: '#7B96B2' }}>
+              <div style={{ fontSize: 11, color: '#7B96B2', marginBottom: 3 }}>LOKAL</div>
+              <input value={editLokal} onChange={e => setEditLokal(e.target.value)}
+                style={{ width: '100%', background: '#0D1B2A', border: '1px solid #2A9D8F', color: '#E8F4FD', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
+              <div style={{ fontSize: 11, color: '#7B96B2', marginBottom: 3 }}>ADRESA</div>
+              <input value={editAdresa} onChange={e => setEditAdresa(e.target.value)}
+                style={{ width: '100%', background: '#0D1B2A', border: '1px solid #2A9D8F', color: '#E8F4FD', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
+              <div style={{ fontSize: 11, color: '#7B96B2', marginBottom: 4 }}>
                 GPS: {Number(montazaZahtjev.novi_lat).toFixed(5)}, {Number(montazaZahtjev.novi_lng).toFixed(5)}
               </div>
+              <div ref={mapaRef} style={{ height: 200, borderRadius: 8, overflow: 'hidden', border: '1px solid #2A9D8F' }} />
             </div>
           </div>
 
