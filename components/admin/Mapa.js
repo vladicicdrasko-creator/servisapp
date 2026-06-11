@@ -85,17 +85,15 @@ export default function Mapa({ prijave = [], radnici = [] }) {
   return (
     <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #1E3A5A' }}>
       {/* Filter bar */}
-      <div style={{ background: '#132338', padding: '10px 14px', display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-        {KATEGORIJE.map(k => (
-          <button key={k.id} onClick={() => setFilter(k.id)} style={{
-            background: filter === k.id ? '#1B85B8' : '#0D1B2A',
-            border: `1px solid ${filter === k.id ? '#1B85B8' : '#1E3A5A'}`,
-            color: filter === k.id ? '#fff' : '#7B96B2',
-            borderRadius: 20, padding: '4px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 600
-          }}>
-            {k.label}
-          </button>
-        ))}
+      <div style={{ background: '#132338', padding: '10px 14px', display: 'flex', gap: 12, alignItems: 'center' }}>
+        <select value={filter} onChange={e => setFilter(e.target.value)} style={{
+          background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD',
+          borderRadius: 8, padding: '6px 12px', fontSize: 13, cursor: 'pointer', outline: 'none'
+        }}>
+          {KATEGORIJE.map(k => (
+            <option key={k.id} value={k.id}>{k.label}</option>
+          ))}
+        </select>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, fontSize: 11 }}>
           {[
             { boja: '#E63946', label: 'Nova' },
