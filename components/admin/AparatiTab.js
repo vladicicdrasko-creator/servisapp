@@ -272,7 +272,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
         </div>
       )}
 
-      {aparati.map(a => {
+      {aparati.filter(a => a.status !== 'neaktivan').map(a => {
         const svePrijave = prijave.filter(p => p.aparat_id === a.id)
         const montazaDatum = a.montaza_datum ? new Date(a.montaza_datum) : null
         const aktuelne = montazaDatum
