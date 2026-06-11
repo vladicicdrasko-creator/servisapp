@@ -98,6 +98,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   if (loading) return <div style={{ color: '#7B96B2', padding: 40, textAlign: 'center' }}>Učitavam...</div>
 
   return (
+    <>
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h2 style={{ fontSize: 18, margin: 0 }}>Aparati ({aparati.length})</h2>
@@ -354,5 +355,6 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
         </div>
       </div>
     )}
+    </>
   )
 }
