@@ -18,6 +18,8 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     const { utils, writeFile } = await import('xlsx')
     const podaci = aparati.map(a => ({
       'ID': a.id,
+      'Naziv': a.naziv || '',
+      'Vlasnik': a.vlasnik || '',
       'Lokal': a.lokal || '',
       'Adresa': a.adresa || '',
       'Serijski broj': a.serijski_broj || '',
@@ -41,7 +43,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [pokaziEditMapu, setPokaziEditMapu] = useState(false)
   const [pokaziNeaktivne, setPokaziNeaktivne] = useState(false)
   const [noviAparat, setNoviAparat] = useState({
-    naziv: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null
+    naziv: '', vlasnik: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null
   })
 
   useEffect(() => { ucitaj() }, [])
@@ -82,8 +84,9 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     const { error } = await supabase.from('aparati').insert({
       id,
       naziv: noviAparat.naziv,
-      lokal: noviAparat.lokal,
-      adresa: noviAparat.adresa,
+      vlasnik: noviAparat.vlasnik || null,
+      lokal: noviAparat.lokal || null,
+      adresa: noviAparat.adresa || null,
       serijski_broj: noviAparat.ostecen ? 'OŠTEĆEN' : (noviAparat.serijski_broj || null),
       lat: noviAparat.lat,
       lng: noviAparat.lng,
@@ -95,7 +98,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     if (error) { setPoruka({ tip: 'greska', tekst: error.message }); return }
     setPoruka({ tip: 'ok', tekst: 'Aparat dodan!' })
     setForma(false)
-    setNoviAparat({ naziv: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null })
+    setNoviAparat({ naziv: '', vlasnik: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null })
     ucitaj()
     setTimeout(() => setPoruka(null), 2000)
   }
@@ -120,8 +123,9 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     if (novaSlika) slikaUrl = await uploadSlika(novaSlika, rest.id)
     await supabase.from('aparati').update({
       naziv: rest.naziv,
-      lokal: rest.lokal,
-      adresa: rest.adresa,
+      vlasnik: rest.vlasnik || null,
+      lokal: rest.lokal || null,
+      adresa: rest.adresa || null,
       serijski_broj: ostecen ? 'OŠTEĆEN' : (rest.serijski_broj || null),
       lat: rest.lat,
       lng: rest.lng,
@@ -171,13 +175,17 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             placeholder="Naziv aparata *"
             style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
+          <input value={noviAparat.vlasnik} onChange={e => setNoviAparat({ ...noviAparat, vlasnik: e.target.value })}
+            placeholder="Vlasnik aparata (opcionalno)"
+            style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+
           <input value={noviAparat.lokal} onChange={e => setNoviAparat({ ...noviAparat, lokal: e.target.value })}
-            placeholder="Lokal (gdje se nalazi) *"
+            placeholder="Lokal (popunjava se pri montaži)"
             style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
           <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
             <input value={noviAparat.adresa} onChange={e => setNoviAparat({ ...noviAparat, adresa: e.target.value })}
-              placeholder="Adresa *"
+              placeholder="Adresa (popunjava se pri montaži)"
               style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <button onClick={() => setPokaziMapu(!pokaziMapu)} style={{
               background: pokaziMapu ? '#1B85B8' : '#0D1B2A', border: '1px solid #1B85B8',
@@ -225,8 +233,8 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
           </div>
 
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={dodajAparat} disabled={!noviAparat.naziv || !noviAparat.lokal || !noviAparat.adresa}
-              style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!noviAparat.naziv || !noviAparat.lokal || !noviAparat.adresa) ? 0.5 : 1 }}>
+            <button onClick={dodajAparat} disabled={!noviAparat.naziv}
+              style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: !noviAparat.naziv ? 0.5 : 1 }}>
               Dodaj
             </button>
             <button onClick={() => { setForma(false); setPokaziMapu(false) }} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
@@ -245,13 +253,17 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
               placeholder="Naziv aparata *"
               style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
-            <input value={editAparat.lokal} onChange={e => setEditAparat({ ...editAparat, lokal: e.target.value })}
-              placeholder="Lokal *"
+            <input value={editAparat.vlasnik || ''} onChange={e => setEditAparat({ ...editAparat, vlasnik: e.target.value })}
+              placeholder="Vlasnik aparata (opcionalno)"
+              style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+
+            <input value={editAparat.lokal || ''} onChange={e => setEditAparat({ ...editAparat, lokal: e.target.value })}
+              placeholder="Lokal"
               style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
             <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-              <input value={editAparat.adresa} onChange={e => setEditAparat({ ...editAparat, adresa: e.target.value })}
-                placeholder="Adresa *"
+              <input value={editAparat.adresa || ''} onChange={e => setEditAparat({ ...editAparat, adresa: e.target.value })}
+                placeholder="Adresa"
                 style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
               <button onClick={() => setPokaziEditMapu(!pokaziEditMapu)} style={{
                 background: pokaziEditMapu ? '#1B85B8' : '#0D1B2A', border: '1px solid #1B85B8',
@@ -300,8 +312,8 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             </div>
 
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={snimiEdit} disabled={!editAparat.naziv || !editAparat.lokal || !editAparat.adresa}
-                style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!editAparat.naziv || !editAparat.lokal || !editAparat.adresa) ? 0.5 : 1 }}>
+              <button onClick={snimiEdit} disabled={!editAparat.naziv}
+                style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: !editAparat.naziv ? 0.5 : 1 }}>
                 Snimi
               </button>
               <button onClick={() => { setEditAparat(null); setPokaziEditMapu(false) }}
@@ -329,8 +341,10 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             onClick={(e) => { if (e.target.closest('button')) return; odaberiAparat(a) }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <div style={{ fontWeight: 700 }}>{a.lokal}</div>
-                <div style={{ color: '#7B96B2', fontSize: 12 }}>{a.adresa}</div>
+                <div style={{ fontWeight: 700 }}>{a.naziv || a.lokal}</div>
+                {a.vlasnik && <div style={{ color: '#E8F4FD', fontSize: 12 }}>{a.vlasnik}</div>}
+                {a.lokal && <div style={{ color: '#7B96B2', fontSize: 12 }}>{a.lokal}</div>}
+                {a.adresa && <div style={{ color: '#7B96B2', fontSize: 11 }}>{a.adresa}</div>}
                 {a.serijski_broj && <div style={{ color: a.serijski_broj === 'OŠTEĆEN' ? '#E63946' : '#7B96B2', fontSize: 11 }}>SN: {a.serijski_broj}</div>}
                 <div style={{ color: '#1B85B8', fontSize: 11, marginTop: 2 }}>{a.id}</div>
               </div>
