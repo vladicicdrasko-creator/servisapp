@@ -613,9 +613,12 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
               <div style={{ color: '#7B96B2', fontSize: 12 }}>{r.telefon} {r.email && `· ${r.email}`}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ background: r.status === 'na_terenu' ? '#F4A261' : r.status === 'slobodan' ? '#2A9D8F' : '#555', color: r.status === 'na_terenu' ? '#0D1B2A' : '#fff', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>
-                {r.status === 'na_terenu' ? 'NA TERENU' : r.status === 'slobodan' ? 'SLOBODAN' : 'DEAKTIVIRAN'}
-              </span>
+              {(() => {
+                const aktivnih = prijave.filter(p => p.radnik_id === r.id && p.status !== 'riješena' && p.status !== 'zatvorena').length
+                if (r.status === 'deaktiviran') return <span style={{ background: '#555', color: '#fff', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>DEAKTIVIRAN</span>
+                if (aktivnih > 0) return <span style={{ background: '#F4A261', color: '#0D1B2A', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>RADI</span>
+                return null
+              })()}
               <button onClick={() => otvoriEdit(r)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Uredi</button>
               <button onClick={() => toggleAktivan(r)} style={{ background: 'transparent', border: `1px solid ${r.status === 'deaktiviran' ? '#2A9D8F' : '#E63946'}`, color: r.status === 'deaktiviran' ? '#2A9D8F' : '#E63946', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>
                 {r.status === 'deaktiviran' ? 'Aktiviraj' : 'Deaktiviraj'}
