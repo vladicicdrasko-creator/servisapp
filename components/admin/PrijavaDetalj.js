@@ -39,6 +39,16 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
       updated_at: new Date().toISOString()
     }).eq('id', prijava.id)
     if (!error) {
+      // Pošalji push notifikaciju radniku
+      fetch('/api/push-radnik', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          radnik_id: odabraniRadnik,
+          title: 'Novi zadatak',
+          body: `${prijava.kategorija?.toUpperCase()} — ${prijava.lokal || prijava.adresa}`,
+        }),
+      }).catch(() => {})
       setPoruka('✓ Prijava dodijeljena!')
       onAzuriraj()
       setTimeout(() => { setPoruka(''); onNazad() }, 1500)
