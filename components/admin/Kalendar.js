@@ -3,8 +3,8 @@
 import { useState } from 'react'
 
 const DANI = ['Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub', 'Ned']
-const MJESECI = ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Juni',
-  'Juli', 'August', 'Septembar', 'Oktobar', 'Novembar', 'Decembar']
+const MJESECI = ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Jun',
+  'Jul', 'Avgust', 'Septembar', 'Oktobar', 'Novembar', 'Decembar']
 
 export default function Kalendar({ prijave = [], odabraniDan, onOdaberi }) {
   const danas = new Date()
