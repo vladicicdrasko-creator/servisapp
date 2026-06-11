@@ -6,6 +6,7 @@ import PrijavaDetalj from './PrijavaDetalj'
 import Mapa from './Mapa'
 import { createClient } from '../../lib/supabase-browser'
 import AparatiTab from './AparatiTab'
+import Kalendar from './Kalendar'
 
 export default function Dashboard() {
   const [tab, setTab] = useState('nalozi')
@@ -348,6 +349,12 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
         </div>
       )}
 
+      <Kalendar
+        prijave={prijave}
+        odabraniDan={filterDatum === 'datum' ? datum : filterDatum === 'danas' ? danas : null}
+        onOdaberi={d => { setDatum(d); setZakazanoDatum(d); setFilterDatum('datum') }}
+      />
+
       <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center' }}>
         <button onClick={() => setFilterDatum('danas')} style={{
           background: filterDatum === 'danas' ? '#1B85B8' : 'transparent',
@@ -359,8 +366,11 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
           border: '1px solid #1E3A5A', color: filterDatum === 'sve' ? '#fff' : '#7B96B2',
           padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
         }}>Sve</button>
-        <input type="date" value={datum} onChange={e => { setDatum(e.target.value); setFilterDatum('datum') }}
-          style={{ background: filterDatum === 'datum' ? '#1B85B8' : '#1A2E45', border: '1px solid #1E3A5A', color: '#E8F4FD', padding: '6px 10px', borderRadius: 8, fontSize: 12 }} />
+        {filterDatum === 'datum' && (
+          <span style={{ color: '#1B85B8', fontSize: 12, fontWeight: 600 }}>
+            📅 {new Date(datum + 'T00:00:00').toLocaleDateString('bs-BA')}
+          </span>
+        )}
       </div>
       <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
  {['svi', 'prijava', 'montaza', 'demontaza', 'kvar', 'ostalo', 'rijesena'].map(t => (
