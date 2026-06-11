@@ -211,6 +211,28 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
 }
     return true
   })
+  const exportExcel = () => {
+    import('xlsx').then(XLSX => {
+      const podaci = prijaveF.map(p => ({
+        'ID': p.id,
+        'Lokal': p.lokal,
+        'Adresa': p.adresa,
+        'Kategorija': p.kategorija,
+        'Opis': p.opis,
+        'Status': p.status,
+        'Hitnost': p.hitnost,
+        'Radnik': radnici.find(r => r.id === p.radnik_id)?.ime || '',
+        'Ishod': p.ishod || '',
+        'Napomena radnika': p.napomena_radnika || '',
+        'Datum': new Date(p.created_at).toLocaleString('bs-BA'),
+      }))
+      const ws = XLSX.utils.json_to_sheet(podaci)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Nalozi')
+      XLSX.writeFile(wb, `nalozi-${new Date().toISOString().split('T')[0]}.xlsx`)
+    })
+  }
+
   const zatvoriNalog = async (e, id) => {
     e.stopPropagation()
     if (!window.confirm(`Označiti nalog ${id} kao zatvoren?`)) return
@@ -249,10 +271,16 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <h2 style={{ fontSize: 18, margin: 0 }}>Nalozi</h2>
-        <button onClick={() => setPokaziFormu(!pokaziFormu)} style={{
-          background: '#1B85B8', border: 'none', color: '#fff',
-          padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600
-        }}>+ Dodaj nalog</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={exportExcel} style={{
+            background: 'transparent', border: '1px solid #2A9D8F', color: '#2A9D8F',
+            padding: '8px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13
+          }}>⬇ Export</button>
+          <button onClick={() => setPokaziFormu(!pokaziFormu)} style={{
+            background: '#1B85B8', border: 'none', color: '#fff',
+            padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600
+          }}>+ Dodaj nalog</button>
+        </div>
       </div>
 
       {poruka && <div style={{ color: poruka.tip === 'ok' ? '#2A9D8F' : '#E63946', fontSize: 13, marginBottom: 12 }}>{poruka.tekst}</div>}
