@@ -370,7 +370,7 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
         onOdaberi={d => { setDatum(d); setZakazanoDatum(d); setFilterDatum('datum') }}
       />
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <button onClick={() => setFilterDatum('danas')} style={{
           background: filterDatum === 'danas' ? '#1B85B8' : 'transparent',
           border: '1px solid #1B85B8', color: filterDatum === 'danas' ? '#fff' : '#1B85B8',
@@ -386,16 +386,19 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
             📅 {new Date(datum + 'T00:00:00').toLocaleDateString('bs-BA')}
           </span>
         )}
+        <select value={filterTip} onChange={e => setFilterTip(e.target.value)} style={{
+          background: '#0D1B2A', border: '1px solid #1E3A5A', color: filterTip === 'svi' ? '#7B96B2' : '#E8F4FD',
+          padding: '6px 10px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600, marginLeft: 'auto'
+        }}>
+          <option value="svi">Sve kategorije</option>
+          <option value="prijava">PRIJAVA</option>
+          <option value="montaza">MONTAŽA</option>
+          <option value="demontaza">DEMONTAŽA</option>
+          <option value="kvar">KVAR</option>
+          <option value="ostalo">OSTALO</option>
+          <option value="rijesena">RIJEŠENO</option>
+        </select>
       </div>
-      <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
- {['svi', 'prijava', 'montaza', 'demontaza', 'kvar', 'ostalo', 'rijesena'].map(t => (
-    <button key={t} onClick={() => setFilterTip(t)} style={{
-      background: filterTip === t ? (t === 'rijesena' ? '#2A9D8F' : '#1B85B8') : 'transparent',
-      border: '1px solid #1E3A5A', color: filterTip === t ? '#fff' : '#7B96B2',
-      padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontSize: 11, fontWeight: 600
-    }}>{t === 'svi' ? 'Svi' : t === 'rijesena' ? 'RIJEŠENO' : tipBoja[t]?.label || t.toUpperCase()}</button>
-  ))}
-</div>
 
       {prijaveF.length === 0 && (
         <div style={{ color: '#7B96B2', textAlign: 'center', padding: 40 }}>Nema naloga.</div>
