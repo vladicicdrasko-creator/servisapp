@@ -32,20 +32,28 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
   const dodijeliRadnika = async () => {
     if (!odabraniRadnik) return
     setSaljem(true)
-    const { error } = await supabase.from('prijave').update({
+    const jeReaasignacija = prijava.radnik_id && prijava.radnik_id !== odabraniRadnik
+    const noviRadnik = radnici.find(r => r.id === odabraniRadnik)
+
+    const updateData = {
       radnik_id: odabraniRadnik,
       hitnost,
       status: 'dodijeljena',
-      updated_at: new Date().toISOString()
-    }).eq('id', prijava.id)
+      updated_at: new Date().toISOString(),
+    }
+    if (jeReaasignacija) {
+      updateData.preneseno_sa_radnik_id = prijava.radnik_id
+      updateData.napomena_prenosa = `Zadatak prenesen na ${noviRadnik?.ime || 'drugog radnika'}`
+    }
+
+    const { error } = await supabase.from('prijave').update(updateData).eq('id', prijava.id)
     if (!error) {
-      // Pošalji push notifikaciju radniku
       fetch('/api/push-radnik', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           radnik_id: odabraniRadnik,
-          title: 'Novi zadatak',
+          title: jeReaasignacija ? 'Zadatak prenesen tebi' : 'Novi zadatak',
           body: `${prijava.kategorija?.toUpperCase()} — ${prijava.lokal || prijava.adresa}`,
         }),
       }).catch(() => {})
