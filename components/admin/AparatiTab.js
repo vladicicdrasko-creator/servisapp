@@ -30,7 +30,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const ucitaj = async () => {
     const [{ data: a }, { data: p }] = await Promise.all([
       supabase.from('aparati').select('*').order('created_at', { ascending: false }),
-      supabase.from('prijave').select('id, aparat_id, status, created_at, opis').order('created_at', { ascending: false })
+      supabase.from('prijave').select('id, aparat_id, status, created_at, opis, lokal, adresa, kategorija').order('created_at', { ascending: false })
     ])
     setAparati(a || [])
     setPrijave(p || [])
