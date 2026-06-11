@@ -110,6 +110,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
       lat: montazaZahtjev.novi_lat,
       lng: montazaZahtjev.novi_lng,
       montaza_datum: new Date().toISOString(),
+      ...(montazaZahtjev.slika_url ? { slika_url: montazaZahtjev.slika_url } : {}),
     }).eq('id', montazaZahtjev.aparat_id)
     // Zatvori zahtjev
     await supabase.from('montaza_zahtjevi').update({ status: 'odobren' }).eq('id', montazaZahtjev.id)
@@ -196,6 +197,14 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
                 GPS: {Number(montazaZahtjev.novi_lat).toFixed(5)}, {Number(montazaZahtjev.novi_lng).toFixed(5)}
               </div>
               <div ref={mapaRef} style={{ height: 200, borderRadius: 8, overflow: 'hidden', border: '1px solid #2A9D8F' }} />
+              {montazaZahtjev.slika_url && (
+                <div style={{ marginTop: 8 }}>
+                  <div style={{ color: '#2A9D8F', fontSize: 10, fontWeight: 700, marginBottom: 4, letterSpacing: 1 }}>SLIKA APARATA</div>
+                  <img src={montazaZahtjev.slika_url} alt="slika aparata"
+                    onClick={() => window.open(montazaZahtjev.slika_url, '_blank')}
+                    style={{ width: '100%', borderRadius: 8, maxHeight: 200, objectFit: 'cover', cursor: 'pointer' }} />
+                </div>
+              )}
             </div>
           </div>
 
