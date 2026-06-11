@@ -681,6 +681,36 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
 
               {(radnikLogTab[r.id] || 'nalozi') === 'aktivnost' && (
                 <>
+                  {radnikLog[r.id]?.length > 0 && (
+                    <button onClick={async e => {
+                      e.stopPropagation()
+                      const { utils, writeFile } = await import('xlsx')
+                      const logovi = radnikLog[r.id]
+                      const poNalogu = {}
+                      logovi.forEach(l => {
+                        if (!poNalogu[l.nalog_id]) poNalogu[l.nalog_id] = {}
+                        poNalogu[l.nalog_id][l.akcija] = new Date(l.created_at)
+                      })
+                      const podaci = Object.entries(poNalogu).map(([nalogId, n]) => {
+                        const trajMs = n.otvorio && n.zatvorio ? n.zatvorio - n.otvorio : null
+                        const trajMin = trajMs ? Math.round(trajMs / 60000) : null
+                        return {
+                          'Datum': n.otvorio ? n.otvorio.toLocaleDateString('bs-BA') : '',
+                          'Nalog ID': nalogId,
+                          'Otvorio': n.otvorio ? n.otvorio.toLocaleTimeString('bs-BA', { hour: '2-digit', minute: '2-digit' }) : '',
+                          'Zatvorio': n.zatvorio ? n.zatvorio.toLocaleTimeString('bs-BA', { hour: '2-digit', minute: '2-digit' }) : 'u toku',
+                          'Trajanje (min)': trajMin || '',
+                          'Trajanje': trajMin ? `${Math.floor(trajMin/60)}h ${trajMin%60}min` : 'u toku',
+                        }
+                      })
+                      const ws = utils.json_to_sheet(podaci)
+                      const wb = utils.book_new()
+                      utils.book_append_sheet(wb, ws, 'Aktivnost')
+                      writeFile(wb, `aktivnost_${r.ime.replace(' ', '_')}_${new Date().toISOString().split('T')[0]}.xlsx`)
+                    }} style={{ background: 'transparent', border: '1px solid #2A9D8F', color: '#2A9D8F', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontSize: 11, fontWeight: 600, marginBottom: 10 }}>
+                      ↓ Export Excel
+                    </button>
+                  )}
                   {!radnikLog[r.id] && <div style={{ color: '#7B96B2', fontSize: 12 }}>Učitavam...</div>}
                   {radnikLog[r.id]?.length === 0 && <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema zabilježene aktivnosti.</div>}
                   {radnikLog[r.id] && (() => {
