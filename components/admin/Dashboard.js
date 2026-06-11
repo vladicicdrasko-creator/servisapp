@@ -204,17 +204,17 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
     if (filterDatum === 'danas' && d !== danas) return false
     if (filterDatum === 'datum' && d !== datum) return false
     if (filterDatum === 'danas' && p.status === 'riješena') return false
-    if (filterTip === 'rijesena') return p.status === 'riješena'
+    if (filterTip === 'rijesena') return p.status === 'riješena' || p.status === 'zatvorena'
     if (filterTip !== 'svi') {
     const pTip = tipBoja[p.kategorija] ? p.kategorija : 'prijava'
     if (pTip !== filterTip) return false
 }
     return true
   })
-  const obrisiNalog = async (e, id) => {
+  const zatvoriNalog = async (e, id) => {
     e.stopPropagation()
-    if (!window.confirm(`Obrisati nalog ${id}?`)) return
-    await supabase.from('prijave').delete().eq('id', id)
+    if (!window.confirm(`Označiti nalog ${id} kao zatvoren?`)) return
+    await supabase.from('prijave').update({ status: 'zatvorena' }).eq('id', id)
     onRefresh()
   }
 
@@ -355,11 +355,13 @@ function NaloziTab({ prijave, aparati, radnici, onOdaberi, onRefresh }) {
               <span style={{ color: '#7B96B2', fontSize: 11 }}>{p.adresa}</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ color: '#7B96B2', fontSize: 11 }}>{new Date(p.created_at).toLocaleString('bs-BA')}</span>
-                <button onClick={(e) => obrisiNalog(e, p.id)} style={{
-                  background: 'transparent', border: '1px solid #E63946',
-                  color: '#E63946', borderRadius: 6, padding: '3px 8px',
-                  cursor: 'pointer', fontSize: 11
-                }}>🗑</button>
+                {p.status !== 'riješena' && p.status !== 'zatvorena' && (
+                  <button onClick={(e) => zatvoriNalog(e, p.id)} style={{
+                    background: 'transparent', border: '1px solid #2A9D8F',
+                    color: '#2A9D8F', borderRadius: 6, padding: '3px 8px',
+                    cursor: 'pointer', fontSize: 11, fontWeight: 600
+                  }}>✓ Zatvori</button>
+                )}
               </div>
             </div>
           </div>
@@ -555,7 +557,7 @@ export function StatusBadge({ status }) {
     dodijeljena: { label: 'DODIJELJENA', bg: '#F4A261', color: '#0D1B2A' },
     u_toku: { label: 'U TOKU', bg: '#9B59B6' },
     'riješena': { label: 'RIJEŠENA', bg: '#2A9D8F' },
-    zatvorena: { label: 'ZATVORENA', bg: '#7B96B2', color: '#0D1B2A' },
+    zatvorena: { label: 'ZATVORIO ADMIN', bg: '#7B96B2', color: '#0D1B2A' },
   }
   const s = mapa[status] || mapa.nova
   return (
