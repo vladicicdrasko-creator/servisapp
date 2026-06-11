@@ -683,25 +683,59 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
                 <>
                   {!radnikLog[r.id] && <div style={{ color: '#7B96B2', fontSize: 12 }}>Učitavam...</div>}
                   {radnikLog[r.id]?.length === 0 && <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema zabilježene aktivnosti.</div>}
-                  {radnikLog[r.id]?.map((log, i) => {
-                    const dt = new Date(log.created_at)
-                    const datumStr = dt.toLocaleDateString('bs-BA')
-                    const vrijemeStr = dt.toLocaleTimeString('bs-BA', { hour: '2-digit', minute: '2-digit' })
-                    return (
-                      <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #0D1B2A' }}>
-                        <div>
-                          <div style={{ fontSize: 12, color: log.akcija === 'otvorio' ? '#1B85B8' : '#2A9D8F', fontWeight: 700 }}>
-                            {log.akcija === 'otvorio' ? '▶ Otvorio' : '■ Zatvorio'} nalog
+                  {radnikLog[r.id] && (() => {
+                    // Grupiraj po danu
+                    const poDanu = {}
+                    radnikLog[r.id].forEach(log => {
+                      const dan = new Date(log.created_at).toLocaleDateString('bs-BA')
+                      if (!poDanu[dan]) poDanu[dan] = []
+                      poDanu[dan].push(log)
+                    })
+
+                    return Object.entries(poDanu).map(([dan, logovi]) => {
+                      // Izračunaj ukupno trajanje za taj dan
+                      const poNalogu = {}
+                      logovi.forEach(l => {
+                        if (!poNalogu[l.nalog_id]) poNalogu[l.nalog_id] = {}
+                        poNalogu[l.nalog_id][l.akcija] = new Date(l.created_at)
+                      })
+                      let ukupnoMs = 0
+                      Object.values(poNalogu).forEach(n => {
+                        if (n.otvorio && n.zatvorio) ukupnoMs += n.zatvorio - n.otvorio
+                      })
+                      const ukupnoMin = Math.round(ukupnoMs / 60000)
+                      const sati = Math.floor(ukupnoMin / 60)
+                      const min = ukupnoMin % 60
+                      const trajanjeTekst = ukupnoMin > 0 ? (sati > 0 ? `${sati}h ${min}min` : `${min}min`) : null
+
+                      return (
+                        <div key={dan} style={{ marginBottom: 12 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                            <div style={{ color: '#1B85B8', fontSize: 11, fontWeight: 700 }}>{dan}</div>
+                            {trajanjeTekst && (
+                              <div style={{ background: '#0D2A1A', border: '1px solid #2A9D8F', borderRadius: 6, padding: '2px 8px', fontSize: 11, color: '#2A9D8F', fontWeight: 700 }}>
+                                ⏱ {trajanjeTekst}
+                              </div>
+                            )}
                           </div>
-                          <div style={{ fontSize: 11, color: '#7B96B2' }}>{log.nalog_id}</div>
+                          {logovi.map(log => {
+                            const vrijemeStr = new Date(log.created_at).toLocaleTimeString('bs-BA', { hour: '2-digit', minute: '2-digit' })
+                            return (
+                              <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A' }}>
+                                <div>
+                                  <span style={{ fontSize: 12, color: log.akcija === 'otvorio' ? '#1B85B8' : '#2A9D8F', fontWeight: 600 }}>
+                                    {log.akcija === 'otvorio' ? '▶' : '■'}
+                                  </span>
+                                  <span style={{ fontSize: 12, color: '#E8F4FD', marginLeft: 6 }}>{log.nalog_id}</span>
+                                </div>
+                                <div style={{ fontSize: 11, color: '#7B96B2' }}>{vrijemeStr}</div>
+                              </div>
+                            )
+                          })}
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: 11, color: '#E8F4FD' }}>{vrijemeStr}</div>
-                          <div style={{ fontSize: 10, color: '#7B96B2' }}>{datumStr}</div>
-                        </div>
-                      </div>
-                    )
-                  })}
+                      )
+                    })
+                  })()}
                 </>
               )}
             </div>
