@@ -150,7 +150,7 @@ export default function Dashboard() {
             <h2 style={s.naslov}>Mapa – danas</h2>
             <Mapa
               prijave={prijave.filter(p => p.status !== 'zatvorena')}
-              radnici={radnici.filter(r => r.status !== 'deaktiviran' && r.lat)}
+              radnici={radnici.filter(r => r.status !== 'deaktiviran')}
             />
           </div>
         )}
