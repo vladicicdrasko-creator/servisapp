@@ -15,6 +15,21 @@ export default function RadnikDashboard({ radnikId }) {
     ucitajPodatke()
   }, [radnikId])
 
+  useEffect(() => {
+    if (!radnikId || !navigator.geolocation) return
+    const id = navigator.geolocation.watchPosition(
+      pos => {
+        supabase.from('radnici').update({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        }).eq('id', radnikId)
+      },
+      null,
+      { enableHighAccuracy: true, maximumAge: 30000, timeout: 20000 }
+    )
+    return () => navigator.geolocation.clearWatch(id)
+  }, [radnikId])
+
   const ucitajPodatke = async () => {
     const [{ data: r }, { data: n }] = await Promise.all([
       supabase.from('radnici').select('*').eq('id', radnikId).single(),
