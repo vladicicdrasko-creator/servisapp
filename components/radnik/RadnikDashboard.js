@@ -22,6 +22,7 @@ export default function RadnikDashboard({ radnikId }) {
         supabase.from('radnici').update({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
+          lokacija_updated_at: new Date().toISOString(),
         }).eq('id', radnikId)
       },
       null,
