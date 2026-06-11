@@ -64,9 +64,21 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     setQrUrl(qr)
   }
 
+  const uploadSlika = async (fajl, aparatId) => {
+    const ext = fajl.name.split('.').pop()
+    const path = `aparati/${aparatId}.${ext}`
+    await supabase.storage.from('slike').remove([path])
+    const { error } = await supabase.storage.from('slike').upload(path, fajl, { upsert: true })
+    if (error) return null
+    const { data } = supabase.storage.from('slike').getPublicUrl(path)
+    return data.publicUrl
+  }
+
   const dodajAparat = async () => {
     setLoading(true)
     const id = 'APR-' + Date.now().toString().slice(-6)
+    let slikaUrl = null
+    if (noviAparat.slika) slikaUrl = await uploadSlika(noviAparat.slika, id)
     const { error } = await supabase.from('aparati').insert({
       id,
       naziv: noviAparat.naziv,
@@ -76,7 +88,8 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       lat: noviAparat.lat,
       lng: noviAparat.lng,
       status: 'aktivan',
-      verifikacija: 'aktivan'
+      verifikacija: 'aktivan',
+      slika_url: slikaUrl,
     })
     setLoading(false)
     if (error) { setPoruka({ tip: 'greska', tekst: error.message }); return }
@@ -102,7 +115,9 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   }
 
   const snimiEdit = async () => {
-    const { ostecen, ...rest } = editAparat
+    const { ostecen, novaSlika, ...rest } = editAparat
+    let slikaUrl = rest.slika_url
+    if (novaSlika) slikaUrl = await uploadSlika(novaSlika, rest.id)
     await supabase.from('aparati').update({
       naziv: rest.naziv,
       lokal: rest.lokal,
@@ -110,6 +125,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       serijski_broj: ostecen ? 'OŠTEĆEN' : (rest.serijski_broj || null),
       lat: rest.lat,
       lng: rest.lng,
+      slika_url: slikaUrl,
     }).eq('id', rest.id)
     setEditAparat(null)
     ucitaj()
@@ -198,6 +214,16 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             </label>
           </div>
 
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>SLIKA APARATA (opcionalno)</div>
+            <input type="file" accept="image/*" onChange={e => setNoviAparat({ ...noviAparat, slika: e.target.files[0] })}
+              style={{ color: '#E8F4FD', fontSize: 12 }} />
+            {noviAparat.slika && (
+              <img src={URL.createObjectURL(noviAparat.slika)} alt="preview"
+                style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginTop: 6 }} />
+            )}
+          </div>
+
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={dodajAparat} disabled={!noviAparat.naziv || !noviAparat.lokal || !noviAparat.adresa}
               style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!noviAparat.naziv || !noviAparat.lokal || !noviAparat.adresa) ? 0.5 : 1 }}>
@@ -259,6 +285,20 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
               </label>
             </div>
 
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>SLIKA APARATA</div>
+              {editAparat.slika_url && !editAparat.novaSlika && (
+                <img src={editAparat.slika_url} alt="trenutna"
+                  style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginBottom: 6 }} />
+              )}
+              {editAparat.novaSlika && (
+                <img src={URL.createObjectURL(editAparat.novaSlika)} alt="nova"
+                  style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginBottom: 6 }} />
+              )}
+              <input type="file" accept="image/*" onChange={e => setEditAparat({ ...editAparat, novaSlika: e.target.files[0] })}
+                style={{ color: '#E8F4FD', fontSize: 12 }} />
+            </div>
+
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={snimiEdit} disabled={!editAparat.naziv || !editAparat.lokal || !editAparat.adresa}
                 style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!editAparat.naziv || !editAparat.lokal || !editAparat.adresa) ? 0.5 : 1 }}>
@@ -315,6 +355,11 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
 
             {odabrani?.id === a.id && qrUrl && (
               <div style={{ marginTop: 12, borderTop: '1px solid #1E3A5A', paddingTop: 12 }}>
+                {a.slika_url && (
+                  <img src={a.slika_url} alt="aparat"
+                    onClick={() => window.open(a.slika_url, '_blank')}
+                    style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 8, marginBottom: 12, cursor: 'pointer' }} />
+                )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
                   <img src={qrUrl} alt="QR kod" style={{ width: 100, height: 100, borderRadius: 8 }} />
                   <div>
