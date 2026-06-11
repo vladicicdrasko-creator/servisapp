@@ -293,7 +293,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                 </div>
                 {aktuelne.length === 0 && <div style={{ color: '#7B96B2', fontSize: 12, marginBottom: 8 }}>Nema prijava.</div>}
                 {aktuelne.map(p => (
-                  <div key={p.id} onClick={() => setPovijestModal(p)}
+                  <div key={p.id} onClick={e => { e.stopPropagation(); setPovijestModal(p) }}
                     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A', cursor: 'pointer' }}>
                     <div style={{ fontSize: 12, color: '#E8F4FD' }}>{p.id}</div>
                     <StatusBadge status={p.status} />
@@ -307,7 +307,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                       {pokaziIstoriju[a.id] ? '▲ Sakrij istoriju' : `▼ Istorija (${historijske.length})`}
                     </button>
                     {pokaziIstoriju[a.id] && historijske.map(p => (
-                      <div key={p.id} onClick={() => setPovijestModal(p)}
+                      <div key={p.id} onClick={e => { e.stopPropagation(); setPovijestModal(p) }}
                         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #0D1B2A', cursor: 'pointer', opacity: 0.6 }}>
                         <div style={{ fontSize: 12, color: '#E8F4FD' }}>{p.id}</div>
                         <StatusBadge status={p.status} />
