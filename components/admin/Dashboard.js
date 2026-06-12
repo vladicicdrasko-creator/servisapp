@@ -35,8 +35,7 @@ export default function Dashboard() {
         body: JSON.stringify({})
       })
     } catch (_) {}
-    // scope: 'global' odjavljuje sa svih uređaja
-    await supabaseBrowser.auth.signOut({ scope: 'global' })
+    await supabaseBrowser.auth.signOut()
     window.location.href = '/admin/login'
   }
   const registrujPush = async () => {
