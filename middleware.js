@@ -50,9 +50,10 @@ export async function middleware(request) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user && request.nextUrl.pathname.startsWith('/admin') && 
+  if (request.nextUrl.pathname.startsWith('/admin') &&
       !request.nextUrl.pathname.startsWith('/admin/login')) {
-    return NextResponse.redirect(new URL('/admin/login', request.url))
+    const jeAdmin = user && user.user_metadata?.role !== 'radnik'
+    if (!jeAdmin) return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 
   return supabaseResponse

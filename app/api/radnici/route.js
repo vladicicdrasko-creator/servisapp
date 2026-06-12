@@ -21,7 +21,8 @@ export async function POST(request) {
   const { ime, telefon, email } = await request.json()
 
   const { data: authData, error: authError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://servisapp-pi.vercel.app'}/radnik/postavi-lozinku`
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://servisapp-pi.vercel.app'}/radnik/postavi-lozinku`,
+    data: { role: 'radnik' }
   })
 
   if (authError) return NextResponse.json({ error: authError.message }, { status: 400 })
