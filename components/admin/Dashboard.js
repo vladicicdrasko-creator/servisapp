@@ -667,6 +667,13 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
                   ? <span style={{ background: '#F4A261', color: '#0D1B2A', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>RADI</span>
                   : null
               }
+              {r.telefon && (
+                <a href={`tel:${r.telefon.replace(/\s/g, '')}`}
+                  onClick={e => e.stopPropagation()}
+                  style={{ display: typeof window !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent) ? 'inline-block' : 'none', background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12, textDecoration: 'none', fontWeight: 600 }}>
+                  📞 Pozovi
+                </a>
+              )}
               <button onClick={() => otvoriEdit(r)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Uredi</button>
               <button onClick={() => toggleAktivan(r)} style={{ background: 'transparent', border: `1px solid ${r.status === 'deaktiviran' ? '#2A9D8F' : '#E63946'}`, color: r.status === 'deaktiviran' ? '#2A9D8F' : '#E63946', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>
                 {r.status === 'deaktiviran' ? 'Aktiviraj' : 'Deaktiviraj'}
