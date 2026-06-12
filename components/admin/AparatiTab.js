@@ -501,10 +501,9 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             onClick={(e) => { if (e.target.closest('button')) return; odaberiAparat(a) }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <div style={{ fontWeight: 700 }}>{a.naziv || a.lokal}</div>
-                {a.vlasnik && <div style={{ color: '#E8F4FD', fontSize: 12 }}>{a.vlasnik}</div>}
+                <div style={{ fontWeight: 700, fontSize: 15 }}>{a.naziv || a.lokal}</div>
+                {a.vlasnik && <div style={{ color: '#7B96B2', fontSize: 12 }}>{a.vlasnik}</div>}
                 {a.lokal && <div style={{ color: '#7B96B2', fontSize: 12 }}>{a.lokal}</div>}
-                {a.adresa && <div style={{ color: '#7B96B2', fontSize: 11 }}>{a.adresa}</div>}
                 {a.serijski_broj && <div style={{ color: a.serijski_broj === 'OŠTEĆEN' ? '#E63946' : '#7B96B2', fontSize: 11 }}>SN: {a.serijski_broj}</div>}
                 <div style={{ color: '#1B85B8', fontSize: 11, marginTop: 2 }}>{a.id}</div>
               </div>
