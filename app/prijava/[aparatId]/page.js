@@ -10,7 +10,7 @@ export default function PrijavaPage({ params }) {
   const [kategorija, setKategorija] = useState('')
   const [opis, setOpis] = useState('')
   const [kontaktIme, setKontaktIme] = useState('')
-  const [kontaktTel, setKontaktTel] = useState('')
+  const [kontaktTel, setKontaktTel] = useState('06')
   const [slika, setSlika] = useState(null)
   const [slikaPreview, setSlikaPreview] = useState(null)
   const [saljem, setSaljem] = useState(false)
@@ -284,7 +284,9 @@ export default function PrijavaPage({ params }) {
           <input
             value={kontaktTel}
             onChange={e => {
-              let v = e.target.value.replace(/\D/g, '').slice(0, 9)
+              let v = e.target.value.replace(/\D/g, '')
+              if (!v.startsWith('06')) v = '06' + v.replace(/^0*6*/, '')
+              v = v.slice(0, 9)
               if (v.length > 6) v = v.slice(0,3) + ' ' + v.slice(3,6) + ' ' + v.slice(6)
               else if (v.length > 3) v = v.slice(0,3) + ' ' + v.slice(3)
               setKontaktTel(v)
