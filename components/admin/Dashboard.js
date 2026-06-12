@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [odabranaP, setOdabranaP] = useState(null)
   const [ucitava, setUcitava] = useState(true)
   const [adminIme, setAdminIme] = useState('')
+  const [mapaOtvorena, setMapaOtvorena] = useState(false)
 
   const supabaseBrowser = createClient()
 
@@ -156,7 +157,7 @@ export default function Dashboard() {
 
       <div style={s.sadrzaj}>
         {tab === 'dashboard' && (
-          <DashboardTab prijave={prijave} radnici={radnici} onOdaberi={(p) => { setOdabranaP(p); setTab('nalozi') }} />
+          <DashboardTab prijave={prijave} radnici={radnici} mapaOtvorena={mapaOtvorena} setMapaOtvorena={setMapaOtvorena} onOdaberi={(p) => { setOdabranaP(p); setTab('nalozi') }} />
         )}
 
         {tab === 'nalozi' && !odabranaP && (
@@ -466,9 +467,8 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
   )
 }
 
-function DashboardTab({ prijave, radnici, onOdaberi }) {
+function DashboardTab({ prijave, radnici, mapaOtvorena, setMapaOtvorena, onOdaberi }) {
   const [odabraniStatus, setOdabraniStatus] = useState(null)
-  const [mapaOtvorena, setMapaOtvorena] = useState(false)
 
   const danas = new Date().toDateString()
   const prijaveToday = prijave.filter(p => new Date(p.created_at).toDateString() === danas)
