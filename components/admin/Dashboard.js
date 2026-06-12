@@ -22,27 +22,49 @@ export default function Dashboard() {
   const supabaseBrowser = createClient()
 
   const handleLogout = async () => {
-    await supabaseBrowser.auth.signOut()
+    try {
+      const reg = await navigator.serviceWorker.ready
+      const sub = await reg.pushManager.getSubscription()
+      if (sub) {
+        await sub.unsubscribe()
+      }
+      // Briše SVE subscriptione za ovog usera (svi uređaji)
+      await fetch('/api/push-subscribe', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      })
+    } catch (_) {}
+    // scope: 'global' odjavljuje sa svih uređaja
+    await supabaseBrowser.auth.signOut({ scope: 'global' })
     window.location.href = '/admin/login'
   }
   const registrujPush = async () => {
   try {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      console.warn('Push: serviceWorker ili PushManager nije dostupan')
+      return
+    }
 
     const registration = await navigator.serviceWorker.register('/sw.js')
+    console.log('Push: SW registrovan')
+
     const permission = await Notification.requestPermission()
+    console.log('Push: dozvola =', permission)
     if (permission !== 'granted') return
 
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
     })
+    console.log('Push: subscription kreiran', subscription.endpoint)
 
-    await fetch('/api/push-subscribe', {
+    const res = await fetch('/api/push-subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(subscription)
     })
+    console.log('Push: API odgovor =', res.status)
   } catch (e) {
     console.error('Push registracija greška:', e)
   }
@@ -53,6 +75,7 @@ export default function Dashboard() {
       if (user) setAdminIme(user.email.split('@')[0])
     })
     ucitajPodatke()
+    registrujPush()
     const kanal = supabase
       .channel('prijave')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'prijave' }, () => {

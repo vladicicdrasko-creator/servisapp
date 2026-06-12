@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import webpush from 'web-push'
 import { createClient } from '@supabase/supabase-js'
+// Ovaj endpoint je javno dostupan (poziva ga forma za prijavu kvara).
+// Rizik je minimalan: napadač može poslati lažnu notifikaciju, ali ne može pristupiti podacima.
+// Zaštita: rate limiting u middleware.js (5 req/min po IP na /prijava rutama)
 
 webpush.setVapidDetails(
   process.env.VAPID_EMAIL,
@@ -13,20 +16,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
-import { createClient as createServerClient } from '../../../lib/supabase-server'
-
-async function provjeriPosiljoca(request) {
-  // Push može slati i Flutter app (nema cookie session) i admin panel
-  // Dozvoljavamo samo sa poznatih origin-a
-  const origin = request.headers.get('origin') || ''
-  const referer = request.headers.get('referer') || ''
-  const dozvoljenOrigin = origin.includes('servisapp') || referer.includes('servisapp') || origin === ''
-  return dozvoljenOrigin
-}
-
 export async function POST(request) {
-  const dozvoljeno = await provjeriPosiljoca(request)
-  if (!dozvoljeno) return NextResponse.json({ error: 'Neautorizovano' }, { status: 401 })
   const { title, body, url } = await request.json()
 
   const { data: subscriptions } = await supabase

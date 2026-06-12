@@ -177,7 +177,7 @@ export default function PrijavaPage({ params }) {
     doc.setTextColor(100, 120, 140)
     doc.setFontSize(8)
     doc.setFont('helvetica', 'normal')
-    doc.text('Tehničar će biti upućen u najkraćem roku. Čuvajte ovaj dokument kao potvrdu vaše prijave.', 105, 283, { align: 'center' })
+    doc.text('Tehnicar ce biti upucen u najkracem roku. Cuvajte ovaj dokument kao potvrdu vase prijave.', 105, 283, { align: 'center' })
     doc.text('ServisApp © ' + new Date().getFullYear(), 105, 290, { align: 'center' })
 
     doc.save('prijava-' + brojPrijave + '.pdf')
