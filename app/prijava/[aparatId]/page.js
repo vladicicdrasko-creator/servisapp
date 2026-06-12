@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { use } from 'react'
+import { supabase } from '../../../lib/supabase'
 
 export default function PrijavaPage({ params }) {
   const { aparatId } = use(params)
@@ -285,11 +286,13 @@ export default function PrijavaPage({ params }) {
             value={kontaktTel}
             onChange={e => {
               let v = e.target.value.replace(/\D/g, '')
-              if (!v.startsWith('06')) v = '06' + v.replace(/^0*6*/, '')
+              if (v.length < 2) v = '06'
+              else if (!v.startsWith('06')) v = '06' + v.slice(2)
               v = v.slice(0, 9)
-              if (v.length > 6) v = v.slice(0,3) + ' ' + v.slice(3,6) + ' ' + v.slice(6)
-              else if (v.length > 3) v = v.slice(0,3) + ' ' + v.slice(3)
-              setKontaktTel(v)
+              let f = v
+              if (v.length > 6) f = v.slice(0,3) + ' ' + v.slice(3,6) + ' ' + v.slice(6)
+              else if (v.length > 3) f = v.slice(0,3) + ' ' + v.slice(3)
+              setKontaktTel(f)
             }}
             placeholder="06X XXX XXX"
             inputMode="tel"
@@ -299,7 +302,7 @@ export default function PrijavaPage({ params }) {
         <button onClick={posaljiPrijavu}
           disabled={!kategorija || !opis || saljem}
           style={{ ...s.btn, background: kategorija && opis ? '#1B85B8' : '#1E3A5A', cursor: kategorija && opis ? 'pointer' : 'not-allowed' }}>
-          {saljem ? 'Slanjem...' : 'Pošalji prijavu'}
+          {saljem ? 'Slanje...' : 'Pošalji prijavu'}
         </button>
       </div>
     </div>
