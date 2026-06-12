@@ -124,7 +124,6 @@ export default function Mapa({ prijave = [], radnici = [] }) {
               <div style="margin-bottom:6px"><span style="background:${aktivan ? '#2A9D8F' : '#aaa'};color:#fff;border-radius:4px;padding:1px 8px;font-size:11px;font-weight:600">
                 ${aktivan ? '● GPS aktivan' : '○ GPS neaktivan'}
               </span></div>
-              <div style="font-size:12px;color:#555">Status: <b>${r.status}</b></div>
               <div style="font-size:11px;color:#888;margin-top:4px">Zadnji put viđen: <b>${zadnjiPut}</b></div>
               ${r.telefon ? `<div style="font-size:11px;color:#888;margin-top:2px">📞 ${r.telefon}</div>` : ''}
             </div>
