@@ -81,8 +81,8 @@ export default function Dashboard() {
         ucitajPodatke()
       })
       .subscribe()
-    return () => supabase.removeChannel(kanal)
-    ucitajPodatke()
+    const interval = setInterval(ucitajPodatke, 30000)
+    return () => { supabase.removeChannel(kanal); clearInterval(interval) }
   }, [])
 
   const ucitajPodatke = async () => {
