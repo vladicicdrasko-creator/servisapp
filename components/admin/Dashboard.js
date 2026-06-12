@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '../../lib/supabase'
 import PrijavaDetalj from './PrijavaDetalj'
 import Mapa from './Mapa'
 import { createClient } from '../../lib/supabase-browser'
 import AparatiTab from './AparatiTab'
 import Kalendar from './Kalendar'
+
+const supabase = createClient()
 
 export default function Dashboard() {
   const [tab, setTab] = useState('nalozi')

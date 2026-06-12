@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '../../lib/supabase'
+import { createClient } from '../../lib/supabase-browser'
+const supabase = createClient()
 import QRCode from 'qrcode'
 import { StatusBadge } from './Dashboard'
 import dynamic from 'next/dynamic'

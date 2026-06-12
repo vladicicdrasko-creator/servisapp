@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { supabase } from '../../lib/supabase'
+import { createClient } from '../../lib/supabase-browser'
+const supabase = createClient()
 import { StatusBadge } from './Dashboard'
 
 export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj }) {
