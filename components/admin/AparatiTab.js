@@ -46,8 +46,36 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [noviAparat, setNoviAparat] = useState({
     naziv: '', vlasnik: '', lokal: '', adresa: '', serijski_broj: '', ostecen: false, lat: null, lng: null
   })
+  const [modeli, setModeli] = useState([])
+  const [pokaziModele, setPokaziModele] = useState(false)
+  const [noviModel, setNoviModel] = useState({ naziv: '', proizvodjac: '' })
+  const [editModel, setEditModel] = useState(null)
 
-  useEffect(() => { ucitaj() }, [])
+  useEffect(() => { ucitaj(); ucitajModele() }, [])
+
+  const ucitajModele = async () => {
+    const { data } = await supabase.from('modeli_aparata').select('*').order('naziv')
+    setModeli(data || [])
+  }
+
+  const dodajModel = async () => {
+    if (!noviModel.naziv) return
+    await supabase.from('modeli_aparata').insert({ naziv: noviModel.naziv, proizvodjac: noviModel.proizvodjac || null })
+    setNoviModel({ naziv: '', proizvodjac: '' })
+    ucitajModele()
+  }
+
+  const snimiModel = async () => {
+    await supabase.from('modeli_aparata').update({ naziv: editModel.naziv, proizvodjac: editModel.proizvodjac || null }).eq('id', editModel.id)
+    setEditModel(null)
+    ucitajModele()
+  }
+
+  const obrisiModel = async (id) => {
+    if (!window.confirm('Obriši model?')) return
+    await supabase.from('modeli_aparata').delete().eq('id', id)
+    ucitajModele()
+  }
 
   const ucitaj = async () => {
     const [{ data: a }, { data: p }] = await Promise.all([
@@ -155,7 +183,11 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             background: 'transparent', border: '1px solid #2A9D8F', color: '#2A9D8F',
             padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13
           }}>↓ Export</button>
-          <button onClick={() => setForma(!forma)} style={{
+          <button onClick={() => { setPokaziModele(!pokaziModele); setForma(false) }} style={{
+            background: pokaziModele ? '#1E3A5A' : 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2',
+            padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600
+          }}>☰ Modeli</button>
+          <button onClick={() => { setForma(!forma); setPokaziModele(false) }} style={{
             background: '#1B85B8', border: 'none', color: '#fff',
             padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600
           }}>+ Dodaj aparat</button>
@@ -168,13 +200,52 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
         </div>
       )}
 
+      {pokaziModele && (
+        <div style={{ background: '#1A2E45', border: '1px solid #1E3A5A', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>MODELI APARATA</h3>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+            <input value={noviModel.naziv} onChange={e => setNoviModel({ ...noviModel, naziv: e.target.value })}
+              placeholder="Naziv modela *"
+              style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <input value={noviModel.proizvodjac} onChange={e => setNoviModel({ ...noviModel, proizvodjac: e.target.value })}
+              placeholder="Proizvođač"
+              style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <button onClick={dodajModel} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600 }}>+ Dodaj</button>
+          </div>
+          {modeli.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13 }}>Nema modela.</div>}
+          {modeli.map(m => (
+            <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #0D1B2A' }}>
+              {editModel?.id === m.id ? (
+                <>
+                  <input value={editModel.naziv} onChange={e => setEditModel({ ...editModel, naziv: e.target.value })}
+                    style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1B85B8', color: '#E8F4FD', borderRadius: 6, padding: '4px 8px' }} />
+                  <input value={editModel.proizvodjac || ''} onChange={e => setEditModel({ ...editModel, proizvodjac: e.target.value })}
+                    style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1B85B8', color: '#E8F4FD', borderRadius: 6, padding: '4px 8px' }} />
+                  <button onClick={snimiModel} style={{ background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Snimi</button>
+                  <button onClick={() => setEditModel(null)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>X</button>
+                </>
+              ) : (
+                <>
+                  <div style={{ flex: 1, color: '#E8F4FD', fontSize: 13 }}>{m.naziv}</div>
+                  <div style={{ flex: 1, color: '#7B96B2', fontSize: 12 }}>{m.proizvodjac || '—'}</div>
+                  <button onClick={() => setEditModel({ ...m })} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Uredi</button>
+                  <button onClick={() => obrisiModel(m.id)} style={{ background: 'transparent', border: '1px solid #E63946', color: '#E63946', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Briši</button>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       {forma && (
         <div style={{ background: '#1A2E45', border: '1px solid #1B85B8', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>NOVI APARAT</h3>
 
-          <input value={noviAparat.naziv} onChange={e => setNoviAparat({ ...noviAparat, naziv: e.target.value })}
-            placeholder="Naziv aparata *"
-            style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+          <select value={noviAparat.naziv} onChange={e => setNoviAparat({ ...noviAparat, naziv: e.target.value })}
+            style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: noviAparat.naziv ? '#E8F4FD' : '#7B96B2', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }}>
+            <option value="">-- Odaberi model aparata *</option>
+            {modeli.map(m => <option key={m.id} value={m.naziv}>{m.naziv}{m.proizvodjac ? ` (${m.proizvodjac})` : ''}</option>)}
+          </select>
 
           <input value={noviAparat.vlasnik} onChange={e => setNoviAparat({ ...noviAparat, vlasnik: e.target.value })}
             placeholder="Vlasnik aparata (opcionalno)"
