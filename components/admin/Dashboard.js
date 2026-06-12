@@ -670,8 +670,8 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
               {r.telefon && (
                 <a href={`tel:${r.telefon.replace(/\s/g, '')}`}
                   onClick={e => e.stopPropagation()}
-                  style={{ display: typeof window !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent) ? 'inline-block' : 'none', background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12, textDecoration: 'none', fontWeight: 600 }}>
-                  📞 Pozovi
+                  style={{ display: typeof window !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent) ? 'inline-block' : 'none', background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: '2px 7px', cursor: 'pointer', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}>
+                  📞
                 </a>
               )}
               <button onClick={() => otvoriEdit(r)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Uredi</button>
