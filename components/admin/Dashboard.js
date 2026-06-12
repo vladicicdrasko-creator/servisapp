@@ -35,7 +35,7 @@ export default function Dashboard() {
         body: JSON.stringify({})
       })
     } catch (_) {}
-    await supabaseBrowser.auth.signOut()
+    await supabaseBrowser.auth.signOut({ scope: 'local' })
     window.location.href = '/admin/login'
   }
   const registrujPush = async () => {
