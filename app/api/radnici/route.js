@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import { createClient as createServerClient } from '../../../lib/supabase-server'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -7,8 +8,16 @@ const supabaseAdmin = createClient(
   { auth: { autoRefreshToken: false, persistSession: false } }
 )
 
+async function provjeriAdmina() {
+  const supabase = await createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  return user
+}
+
 // Dodaj radnika
 export async function POST(request) {
+  const user = await provjeriAdmina()
+  if (!user) return NextResponse.json({ error: 'Neautorizovano' }, { status: 401 })
   const { ime, telefon, email } = await request.json()
 
   const { data: authData, error: authError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
@@ -32,6 +41,8 @@ export async function POST(request) {
 
 // Ažuriraj radnika
 export async function PUT(request) {
+  const user = await provjeriAdmina()
+  if (!user) return NextResponse.json({ error: 'Neautorizovano' }, { status: 401 })
   const { id, ime, telefon, aktivan } = await request.json()
 
   const { error } = await supabaseAdmin.from('radnici').update({ ime, telefon }).eq('id', id)

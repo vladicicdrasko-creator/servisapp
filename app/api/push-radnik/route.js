@@ -38,8 +38,18 @@ async function getFcmAccessToken() {
   return data.access_token
 }
 
+import { createClient as createServerClient } from '../../../lib/supabase-server'
+
+async function provjeriAdmina() {
+  const supabase = await createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  return user
+}
+
 export async function POST(req) {
   try {
+    const user = await provjeriAdmina()
+    if (!user) return Response.json({ error: 'Neautorizovano' }, { status: 401 })
     const { radnik_id, title, body } = await req.json()
     if (!radnik_id) return Response.json({ error: 'radnik_id required' }, { status: 400 })
 
