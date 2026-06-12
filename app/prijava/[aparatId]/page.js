@@ -9,7 +9,8 @@ export default function PrijavaPage({ params }) {
   const [ucitava, setUcitava] = useState(true)
   const [kategorija, setKategorija] = useState('')
   const [opis, setOpis] = useState('')
-  const [kontakt, setKontakt] = useState('')
+  const [kontaktIme, setKontaktIme] = useState('')
+  const [kontaktTel, setKontaktTel] = useState('')
   const [slika, setSlika] = useState(null)
   const [slikaPreview, setSlikaPreview] = useState(null)
   const [saljem, setSaljem] = useState(false)
@@ -66,7 +67,7 @@ export default function PrijavaPage({ params }) {
     lng: aparat.lng,
     opis,
     kategorija,
-    kontakt: kontakt || null,
+    kontakt: [kontaktIme, kontaktTel].filter(Boolean).join(' / ') || null,
     slika_url: slikaUrl,
     status: 'nova',
     hitnost: 'srednja'
@@ -149,7 +150,8 @@ export default function PrijavaPage({ params }) {
       ['Vrsta kvara', kategorija],
       ['Opis', opis],
     ]
-    if (kontakt) detalji.push(['Kontakt', kontakt])
+    const kontaktStr = [kontaktIme, kontaktTel].filter(Boolean).join(' / ')
+    if (kontaktStr) detalji.push(['Kontakt', kontaktStr])
 
     let y = 84
     doc.setFontSize(10)
@@ -276,8 +278,19 @@ export default function PrijavaPage({ params }) {
         {/* Kontakt */}
         <div style={{ marginBottom: 20 }}>
           <label style={s.label}>VAŠ KONTAKT (opciono)</label>
-          <input value={kontakt} onChange={e => setKontakt(e.target.value)}
-            placeholder="Ime i broj telefona"
+          <input value={kontaktIme} onChange={e => setKontaktIme(e.target.value)}
+            placeholder="Vaše ime"
+            style={{ ...s.input, marginBottom: 8 }} />
+          <input
+            value={kontaktTel}
+            onChange={e => {
+              let v = e.target.value.replace(/\D/g, '').slice(0, 9)
+              if (v.length > 6) v = v.slice(0,3) + ' ' + v.slice(3,6) + ' ' + v.slice(6)
+              else if (v.length > 3) v = v.slice(0,3) + ' ' + v.slice(3)
+              setKontaktTel(v)
+            }}
+            placeholder="06X XXX XXX"
+            inputMode="tel"
             style={s.input} />
         </div>
 
