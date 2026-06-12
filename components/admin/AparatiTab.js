@@ -50,12 +50,60 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [pokaziModele, setPokaziModele] = useState(false)
   const [noviModel, setNoviModel] = useState({ naziv: '', proizvodjac: '' })
   const [editModel, setEditModel] = useState(null)
+  const [modelCheckliste, setModelCheckliste] = useState({})
+  const [novaStavka, setNovaStavka] = useState({})
+
+  const KATEGORIJE = ['Curi voda', 'Ne grije', 'Buka / vibracije', 'Mlin ne radi', 'Pušta paru', 'Ostalo']
 
   useEffect(() => { ucitaj(); ucitajModele() }, [])
 
   const ucitajModele = async () => {
     const { data } = await supabase.from('modeli_aparata').select('*').order('naziv')
     setModeli(data || [])
+  }
+
+  const ucitajCheckliste = async (modelId) => {
+    const { data } = await supabase.from('modeli_checkliste').select('*').eq('model_id', modelId)
+    const mapa = {}
+    ;(data || []).forEach(c => { mapa[c.kategorija] = c })
+    setModelCheckliste(mapa)
+  }
+
+  const otvoriEditModel = async (m) => {
+    setEditModel({ ...m })
+    await ucitajCheckliste(m.id)
+  }
+
+  const dodajStavku = async (kategorija) => {
+    const tekst = novaStavka[kategorija]?.trim()
+    if (!tekst) return
+    const postojeci = modelCheckliste[kategorija]
+    const stavke = postojeci ? [...postojeci.stavke, tekst] : [tekst]
+    if (postojeci) {
+      await supabase.from('modeli_checkliste').update({ stavke }).eq('id', postojeci.id)
+    } else {
+      await supabase.from('modeli_checkliste').insert({ model_id: editModel.id, kategorija, stavke })
+    }
+    setNovaStavka(prev => ({ ...prev, [kategorija]: '' }))
+    ucitajCheckliste(editModel.id)
+  }
+
+  const obrisiStavku = async (kategorija, idx) => {
+    const postojeci = modelCheckliste[kategorija]
+    if (!postojeci) return
+    const stavke = postojeci.stavke.filter((_, i) => i !== idx)
+    await supabase.from('modeli_checkliste').update({ stavke }).eq('id', postojeci.id)
+    ucitajCheckliste(editModel.id)
+  }
+
+  const uploadPdf = async (fajl) => {
+    const path = `modeli/${editModel.id}.pdf`
+    await supabase.storage.from('aparati-slike').upload(path, fajl, { upsert: true })
+    const { data } = supabase.storage.from('aparati-slike').getPublicUrl(path)
+    const pdfUrl = data.publicUrl
+    await supabase.from('modeli_aparata').update({ pdf_url: pdfUrl }).eq('id', editModel.id)
+    setEditModel(prev => ({ ...prev, pdf_url: pdfUrl }))
+    ucitajModele()
   }
 
   const dodajModel = async () => {
@@ -66,8 +114,13 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   }
 
   const snimiModel = async () => {
-    await supabase.from('modeli_aparata').update({ naziv: editModel.naziv, proizvodjac: editModel.proizvodjac || null }).eq('id', editModel.id)
+    await supabase.from('modeli_aparata').update({
+      naziv: editModel.naziv,
+      proizvodjac: editModel.proizvodjac || null,
+      napomena: editModel.napomena || null
+    }).eq('id', editModel.id)
     setEditModel(null)
+    setModelCheckliste({})
     ucitajModele()
   }
 
@@ -214,23 +267,58 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
           </div>
           {modeli.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13 }}>Nema modela.</div>}
           {modeli.map(m => (
-            <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #0D1B2A' }}>
-              {editModel?.id === m.id ? (
-                <>
-                  <input value={editModel.naziv} onChange={e => setEditModel({ ...editModel, naziv: e.target.value })}
-                    style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1B85B8', color: '#E8F4FD', borderRadius: 6, padding: '4px 8px' }} />
-                  <input value={editModel.proizvodjac || ''} onChange={e => setEditModel({ ...editModel, proizvodjac: e.target.value })}
-                    style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1B85B8', color: '#E8F4FD', borderRadius: 6, padding: '4px 8px' }} />
-                  <button onClick={snimiModel} style={{ background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Snimi</button>
-                  <button onClick={() => setEditModel(null)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>X</button>
-                </>
-              ) : (
-                <>
-                  <div style={{ flex: 1, color: '#E8F4FD', fontSize: 13 }}>{m.naziv}</div>
-                  <div style={{ flex: 1, color: '#7B96B2', fontSize: 12 }}>{m.proizvodjac || '—'}</div>
-                  <button onClick={() => setEditModel({ ...m })} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Uredi</button>
-                  <button onClick={() => obrisiModel(m.id)} style={{ background: 'transparent', border: '1px solid #E63946', color: '#E63946', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Briši</button>
-                </>
+            <div key={m.id}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: '1px solid #0D1B2A' }}>
+                <div style={{ flex: 1, color: '#E8F4FD', fontSize: 13, fontWeight: 600 }}>{m.naziv}</div>
+                <div style={{ flex: 1, color: '#7B96B2', fontSize: 12 }}>{m.proizvodjac || '—'}</div>
+                <button onClick={() => editModel?.id === m.id ? (setEditModel(null), setModelCheckliste({})) : otvoriEditModel(m)}
+                  style={{ background: editModel?.id === m.id ? '#1B85B8' : 'transparent', border: '1px solid #1E3A5A', color: editModel?.id === m.id ? '#fff' : '#7B96B2', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>
+                  {editModel?.id === m.id ? 'Zatvori' : 'Uredi'}
+                </button>
+                <button onClick={() => obrisiModel(m.id)} style={{ background: 'transparent', border: '1px solid #E63946', color: '#E63946', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Briši</button>
+              </div>
+
+              {editModel?.id === m.id && (
+                <div style={{ background: '#0D1B2A', borderRadius: 8, padding: 14, margin: '8px 0 12px' }}>
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                    <input value={editModel.naziv} onChange={e => setEditModel({ ...editModel, naziv: e.target.value })}
+                      placeholder="Naziv" style={{ flex: 1, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
+                    <input value={editModel.proizvodjac || ''} onChange={e => setEditModel({ ...editModel, proizvodjac: e.target.value })}
+                      placeholder="Proizvođač" style={{ flex: 1, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
+                  </div>
+                  <textarea value={editModel.napomena || ''} onChange={e => setEditModel({ ...editModel, napomena: e.target.value })}
+                    placeholder="Opšte napomene za ovaj model (posebnosti, poznati problemi...)"
+                    rows={2} style={{ width: '100%', background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px', resize: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <label style={{ background: '#132338', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12 }}>
+                      📄 {editModel.pdf_url ? 'Zamijeni PDF' : 'Upload PDF priručnik'}
+                      <input type="file" accept=".pdf" onChange={e => e.target.files[0] && uploadPdf(e.target.files[0])} style={{ display: 'none' }} />
+                    </label>
+                    {editModel.pdf_url && <a href={editModel.pdf_url} target="_blank" rel="noreferrer" style={{ color: '#1B85B8', fontSize: 12 }}>📄 Otvori PDF</a>}
+                  </div>
+                  <button onClick={snimiModel} style={{ background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: '6px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 13, marginBottom: 16 }}>Snimi osnovne podatke</button>
+
+                  <div style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>CHECKLISTE PO KATEGORIJI KVARA</div>
+                  {KATEGORIJE.map(kat => (
+                    <div key={kat} style={{ marginBottom: 12, background: '#132338', borderRadius: 8, padding: 10 }}>
+                      <div style={{ color: '#1B85B8', fontSize: 12, fontWeight: 700, marginBottom: 6 }}>{kat}</div>
+                      {(modelCheckliste[kat]?.stavke || []).map((stavka, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                          <span style={{ color: '#7B96B2', fontSize: 12 }}>☐</span>
+                          <span style={{ flex: 1, color: '#E8F4FD', fontSize: 13 }}>{stavka}</span>
+                          <button onClick={() => obrisiStavku(kat, idx)} style={{ background: 'none', border: 'none', color: '#E63946', cursor: 'pointer', fontSize: 14, padding: '0 4px' }}>×</button>
+                        </div>
+                      ))}
+                      <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                        <input value={novaStavka[kat] || ''} onChange={e => setNovaStavka(prev => ({ ...prev, [kat]: e.target.value }))}
+                          onKeyDown={e => e.key === 'Enter' && dodajStavku(kat)}
+                          placeholder="Dodaj stavku..."
+                          style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '4px 8px', fontSize: 12 }} />
+                        <button onClick={() => dodajStavku(kat)} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>+</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           ))}
