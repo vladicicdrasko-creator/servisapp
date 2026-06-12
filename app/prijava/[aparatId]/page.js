@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { supabase } from '../../../lib/supabase'
 import { use } from 'react'
 
 export default function PrijavaPage({ params }) {
@@ -28,13 +27,11 @@ export default function PrijavaPage({ params }) {
 ]
   useEffect(() => {
     const ucitajAparat = async () => {
-      const { data, error } = await supabase
-        .from('aparati')
-        .select('*')
-        .eq('id', aparatId)
-        .single()
-
-      if (data) setAparat(data)
+      const res = await fetch(`/api/aparat/${aparatId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setAparat(data)
+      }
       setUcitava(false)
     }
     ucitajAparat()
