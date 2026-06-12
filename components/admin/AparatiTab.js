@@ -199,8 +199,8 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
           {pokaziMapu && (
             <div style={{ marginBottom: 8, borderRadius: 8, overflow: 'hidden', height: 250 }}>
               <MapaPicker
-                lat={noviAparat.lat || 44.0}
-                lng={noviAparat.lng || 17.0}
+                lat={noviAparat.lat || 42.71}
+                lng={noviAparat.lng || 19.37}
                 onOdaberi={(lat, lng) => {
                   setNoviAparat({ ...noviAparat, lat, lng })
                   setPokaziMapu(false)
@@ -277,8 +277,8 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             {pokaziEditMapu && (
               <div style={{ marginBottom: 8, borderRadius: 8, overflow: 'hidden', height: 220 }}>
                 <MapaPicker
-                  lat={editAparat.lat || 44.0}
-                  lng={editAparat.lng || 17.0}
+                  lat={editAparat.lat || 42.71}
+                  lng={editAparat.lng || 19.37}
                   onOdaberi={(lat, lng) => { setEditAparat({ ...editAparat, lat, lng }); setPokaziEditMapu(false) }}
                 />
               </div>
