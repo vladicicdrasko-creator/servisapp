@@ -150,14 +150,13 @@ export default function Dashboard() {
       <div style={s.nav}>
         <TabBtn id="nalozi" label="Nalozi" badge={nova} />
         <TabBtn id="dashboard" label="Pregled" />
-        <TabBtn id="mapa" label="Mapa" />
         <TabBtn id="radnici" label="Radnici" />
         <TabBtn id="aparati" label="Aparati" />
       </div>
 
       <div style={s.sadrzaj}>
         {tab === 'dashboard' && (
-          <DashboardTab prijave={prijave} onOdaberi={(p) => { setOdabranaP(p); setTab('nalozi') }} />
+          <DashboardTab prijave={prijave} radnici={radnici} onOdaberi={(p) => { setOdabranaP(p); setTab('nalozi') }} />
         )}
 
         {tab === 'nalozi' && !odabranaP && (
@@ -172,15 +171,6 @@ export default function Dashboard() {
           />
         )}
 
-        {tab === 'mapa' && (
-          <div>
-            <h2 style={s.naslov}>Mapa – danas</h2>
-            <Mapa
-              prijave={prijave.filter(p => p.status !== 'zatvorena')}
-              radnici={radnici.filter(r => r.status !== 'deaktiviran')}
-            />
-          </div>
-        )}
 
         {tab === 'radnici' && (
           <RadniciTab radnici={radnici} prijave={prijave} onRefresh={ucitajPodatke} />
@@ -476,8 +466,9 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
   )
 }
 
-function DashboardTab({ prijave, onOdaberi }) {
+function DashboardTab({ prijave, radnici, onOdaberi }) {
   const [odabraniStatus, setOdabraniStatus] = useState(null)
+  const [mapaOtvorena, setMapaOtvorena] = useState(false)
 
   const danas = new Date().toDateString()
   const prijaveToday = prijave.filter(p => new Date(p.created_at).toDateString() === danas)
@@ -510,7 +501,21 @@ function DashboardTab({ prijave, onOdaberi }) {
 
   return (
     <div>
-      <h2 style={s.naslov}>Pregled danas</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={s.naslov}>Pregled danas</h2>
+        <button onClick={() => setMapaOtvorena(v => !v)}
+          style={{ background: mapaOtvorena ? '#1B85B8' : 'transparent', border: '1px solid #1E3A5A', color: mapaOtvorena ? '#fff' : '#7B96B2', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+          🗺 {mapaOtvorena ? 'Zatvori mapu' : 'Prikaži mapu'}
+        </button>
+      </div>
+      {mapaOtvorena && (
+        <div style={{ marginBottom: 16 }}>
+          <Mapa
+            prijave={prijave.filter(p => p.status !== 'zatvorena')}
+            radnici={radnici.filter(r => r.status !== 'deaktiviran')}
+          />
+        </div>
+      )}
       <div style={s.grid4}>
         {statusi.map(k => (
           <div key={k.key} onClick={() => setOdabraniStatus(odabraniStatus === k.key ? null : k.key)}
