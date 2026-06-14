@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '../../lib/supabase-browser'
 import AparatiTab from './AparatiTab'
 import MlinoviTab from './MlinoviTab'
+import DijeloviTab from './DijeloviTab'
 
 const supabase = createClient()
 
@@ -56,9 +57,7 @@ export default function OpremaTab({ onOdaberiPrijavu }) {
 
       {subTab === 'aparati' && <AparatiTab onOdaberiPrijavu={onOdaberiPrijavu} />}
       {subTab === 'mlinovi' && <MlinoviTab />}
-      {subTab === 'dijelovi' && (
-        <div style={{ color: '#7B96B2', padding: 40, textAlign: 'center' }}>Dijelovi — u pripremi</div>
-      )}
+      {subTab === 'dijelovi' && <DijeloviTab />}
 
       {subTab === 'sve' && (
         <div>
