@@ -443,7 +443,17 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
                   🔔 Čeka odgovor
                 </span>
               )}
+              {p.ishod === 'neriješena' && (
+                <span style={{ background: '#E63946', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
+                  ↩ VRAĆEN — nije riješeno
+                </span>
+              )}
             </div>
+            {p.ishod === 'neriješena' && p.napomena_radnika && (
+              <div style={{ background: '#2A1A1A', border: '1px solid #E63946', borderRadius: 8, padding: '6px 10px', marginBottom: 6, fontSize: 12, color: '#E8B4B4' }}>
+                💬 Radnik: {p.napomena_radnika}
+              </div>
+            )}
             {p.zakazano_za && p.zakazano_za > danas && (
               <div style={{ display: 'inline-block', background: '#F4A261', color: '#0D1B2A', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, marginBottom: 6 }}>
                 📅 {new Date(p.zakazano_za + 'T00:00:00').toLocaleDateString('bs-BA')}
