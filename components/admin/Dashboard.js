@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import PrijavaDetalj from './PrijavaDetalj'
 import Mapa from './Mapa'
 import { createClient } from '../../lib/supabase-browser'
-import AparatiTab from './AparatiTab'
+import OpremaTab from './OpremaTab'
 import Kalendar from './Kalendar'
 
 const supabase = createClient()
@@ -152,7 +152,7 @@ export default function Dashboard() {
         <TabBtn id="nalozi" label="Nalozi" badge={nova} />
         <TabBtn id="dashboard" label="Pregled" />
         <TabBtn id="radnici" label="Radnici" />
-        <TabBtn id="aparati" label="Aparati" />
+        <TabBtn id="aparati" label="Oprema" />
       </div>
 
       <div style={s.sadrzaj}>
@@ -178,7 +178,7 @@ export default function Dashboard() {
         )}
 
         {tab === 'aparati' && (
-          <AparatiTab onOdaberiPrijavu={(p) => { setOdabranaP(p); setTab('nalozi') }} />
+          <OpremaTab onOdaberiPrijavu={(p) => { setOdabranaP(p); setTab('nalozi') }} />
         )}
       </div>
     </div>
