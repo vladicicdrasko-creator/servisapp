@@ -208,13 +208,16 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
 
   const danas = new Date().toISOString().split('T')[0]
 
+  // Samo aktivni aparati (deaktivirani se ne nude za nove naloge)
+  const aparatiAktivni = aparati.filter(a => a.status !== 'neaktivan')
+
   // Izvuci gradove iz adresa aparata
-  const gradovi = ['svi', ...new Set(aparati.map(a => {
+  const gradovi = ['svi', ...new Set(aparatiAktivni.map(a => {
     const dijelovi = a.adresa?.split(',')
     return dijelovi?.[dijelovi.length - 1]?.trim() || ''
   }).filter(Boolean))]
 
-  const aparatiFiltrirani = filterGrad === 'svi' ? aparati : aparati.filter(a => a.adresa?.endsWith(filterGrad))
+  const aparatiFiltrirani = filterGrad === 'svi' ? aparatiAktivni : aparatiAktivni.filter(a => a.adresa?.endsWith(filterGrad))
 
  const [filterTip, setFilterTip] = useState('svi')
 
