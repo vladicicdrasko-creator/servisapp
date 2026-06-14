@@ -14,6 +14,13 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
   const [prijave, setPrijave] = useState([])
   const [odabrani, setOdabrani] = useState(null)
   const [povijestModal, setPovijestModal] = useState(null)
+  const [modalDijelovi, setModalDijelovi] = useState([])
+
+  useEffect(() => {
+    if (!povijestModal) { setModalDijelovi([]); return }
+    supabase.from('nalog_dijelovi').select('naziv, kolicina').eq('nalog_id', povijestModal.id)
+      .then(({ data }) => setModalDijelovi(data || []))
+  }, [povijestModal])
 
   const exportExcel = async () => {
     const { utils, writeFile } = await import('xlsx')
@@ -623,10 +630,21 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 3 }}>OPIS</div>
             <div style={{ fontSize: 13, background: '#0D1B2A', borderRadius: 8, padding: 10 }}>{povijestModal.opis || '—'}</div>
           </div>
-          <div style={{ display: 'flex', gap: 12, fontSize: 11, color: '#7B96B2', marginBottom: 16 }}>
+          <div style={{ display: 'flex', gap: 12, fontSize: 11, color: '#7B96B2', marginBottom: 14 }}>
             <span>📂 {povijestModal.kategorija}</span>
             <span>🕐 {new Date(povijestModal.created_at).toLocaleDateString('bs-BA')}</span>
           </div>
+          {modalDijelovi.length > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>ZAMIJENJENI DIJELOVI</div>
+              {modalDijelovi.map((d, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, background: '#0D1B2A', borderRadius: 6, padding: '6px 10px', marginBottom: 4 }}>
+                  <span>🔧 {d.naziv}</span>
+                  <span style={{ color: '#2A9D8F', fontWeight: 600 }}>×{d.kolicina}</span>
+                </div>
+              ))}
+            </div>
+          )}
           <button onClick={() => setPovijestModal(null)}
             style={{ width: '100%', background: '#0F4C75', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>
             Zatvori
