@@ -448,8 +448,13 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
                   ↩ VRAĆEN — nije riješeno
                 </span>
               )}
+              {p.status === 'vraceno' && (
+                <span style={{ background: '#E63946', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
+                  ↩ VRAĆEN — bez pristupa
+                </span>
+              )}
             </div>
-            {p.ishod === 'neriješena' && p.napomena_radnika && (
+            {(p.ishod === 'neriješena' || p.status === 'vraceno') && p.napomena_radnika && (
               <div style={{ background: '#2A1A1A', border: '1px solid #E63946', borderRadius: 8, padding: '6px 10px', marginBottom: 6, fontSize: 12, color: '#E8B4B4' }}>
                 💬 Radnik: {p.napomena_radnika}
               </div>
@@ -830,6 +835,7 @@ export function StatusBadge({ status }) {
     dodijeljena: { label: 'DODIJELJENA', bg: '#F4A261', color: '#0D1B2A' },
     u_toku: { label: 'U TOKU', bg: '#9B59B6' },
     'riješena': { label: 'RIJEŠENA', bg: '#2A9D8F' },
+    vraceno: { label: 'VRAĆENO', bg: '#E63946' },
     zatvorena: { label: 'ZATVORIO ADMIN', bg: '#7B96B2', color: '#0D1B2A' },
   }
   const s = mapa[status] || mapa.nova
