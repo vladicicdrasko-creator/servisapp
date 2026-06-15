@@ -78,12 +78,12 @@ export default function Dashboard() {
     ucitajPodatke()
     registrujPush()
     const kanal = supabase
-      .channel('prijave')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'prijave' }, () => {
-        ucitajPodatke()
-      })
+      .channel('admin-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'prijave' }, () => ucitajPodatke())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'montaza_zahtjevi' }, () => ucitajPodatke())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dopune' }, () => ucitajPodatke())
       .subscribe()
-    const interval = setInterval(ucitajPodatke, 30000)
+    const interval = setInterval(ucitajPodatke, 15000)
     return () => { supabase.removeChannel(kanal); clearInterval(interval) }
   }, [])
 
