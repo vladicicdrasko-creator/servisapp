@@ -346,15 +346,18 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
           </div>
 
           {(tip === 'montaza' || tip === 'demontaza') && (
-            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-              {['aparat', 'mlin'].map(ot => (
-                <button key={ot} onClick={() => setOpremaTip(ot)} style={{
-                  flex: 1, background: opremaTip === ot ? '#1B85B8' : '#0D1B2A',
-                  border: `1px solid ${opremaTip === ot ? '#1B85B8' : '#1E3A5A'}`,
-                  color: opremaTip === ot ? '#fff' : '#7B96B2',
-                  borderRadius: 8, padding: '8px', cursor: 'pointer', fontWeight: 600, fontSize: 13
-                }}>{ot === 'aparat' ? 'Aparat' : 'Mlin'}</button>
-              ))}
+            <div style={{ marginTop: 4, marginBottom: 12, paddingTop: 12, borderTop: '1px solid #1E3A5A' }}>
+              <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>TIP OPREME</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {['aparat', 'mlin'].map(ot => (
+                  <button key={ot} onClick={() => setOpremaTip(ot)} style={{
+                    flex: 1, background: opremaTip === ot ? '#1B85B8' : '#0D1B2A',
+                    border: `1px solid ${opremaTip === ot ? '#1B85B8' : '#1E3A5A'}`,
+                    color: opremaTip === ot ? '#fff' : '#7B96B2',
+                    borderRadius: 8, padding: '8px', cursor: 'pointer', fontWeight: 600, fontSize: 13
+                  }}>{ot === 'aparat' ? 'Aparat' : 'Mlin'}</button>
+                ))}
+              </div>
             </div>
           )}
 
