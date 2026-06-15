@@ -258,7 +258,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
           <div style={{ marginBottom: 16 }}>
             <label style={s.label}>ODABERI RADNIKA</label>
             {radnici.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13 }}>Nema radnika.</div>}
-            {radnici.map(r => (
+            {radnici.filter(r => r.uloga !== 'magacioner').map(r => (
               <div key={r.id} onClick={() => setOdabraniRadnik(r.id)}
                 style={{
                   background: odabraniRadnik === r.id ? '#0F4C75' : '#0D1B2A',
