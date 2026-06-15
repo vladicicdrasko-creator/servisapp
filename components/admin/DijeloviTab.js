@@ -73,6 +73,17 @@ export default function DijeloviTab() {
     ucitaj()
   }
 
+  const exportExcel = async () => {
+    const { utils, writeFile } = await import('xlsx')
+    const podaci = dijelovi.map(d => ({
+      'ID': d.id, 'Naziv': d.naziv || '', 'Količina': d.kolicina ?? 0, 'Jedinica': d.jedinica || '',
+    }))
+    const ws = utils.json_to_sheet(podaci)
+    const wb = utils.book_new()
+    utils.book_append_sheet(wb, ws, 'Dijelovi')
+    writeFile(wb, `dijelovi_${new Date().toISOString().split('T')[0]}.xlsx`)
+  }
+
   const inp = { width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }
 
   if (loading) return <div style={{ color: '#7B96B2', padding: 40, textAlign: 'center' }}>Učitavam...</div>
@@ -81,9 +92,12 @@ export default function DijeloviTab() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h2 style={{ fontSize: 18, margin: 0 }}>Dijelovi ({dijelovi.length})</h2>
-        <button onClick={() => setForma(!forma)} style={{ background: '#1B85B8', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>
-          + Dodaj dio
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={exportExcel} style={{ background: 'transparent', border: '1px solid #2A9D8F', color: '#2A9D8F', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>↓ Export</button>
+          <button onClick={() => setForma(!forma)} style={{ background: '#1B85B8', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>
+            + Dodaj dio
+          </button>
+        </div>
       </div>
 
       {poruka && <div style={{ color: poruka.tip === 'ok' ? '#2A9D8F' : '#E63946', fontSize: 13, marginBottom: 12 }}>{poruka.tekst}</div>}

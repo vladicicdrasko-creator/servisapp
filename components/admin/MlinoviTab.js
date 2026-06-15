@@ -93,6 +93,18 @@ export default function MlinoviTab() {
     ucitaj()
   }
 
+  const exportExcel = async () => {
+    const { utils, writeFile } = await import('xlsx')
+    const podaci = mlinovi.map(m => ({
+      'ID': m.id, 'Model': m.model || '', 'Marka': m.marka || '',
+      'Lokal': m.lokal || '', 'Serijski broj': m.serijski_broj || '', 'Status': m.status || '',
+    }))
+    const ws = utils.json_to_sheet(podaci)
+    const wb = utils.book_new()
+    utils.book_append_sheet(wb, ws, 'Mlinovi')
+    writeFile(wb, `mlinovi_${new Date().toISOString().split('T')[0]}.xlsx`)
+  }
+
   const inp = { width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }
   const sel = { ...inp, marginBottom: 8 }
 
@@ -102,9 +114,12 @@ export default function MlinoviTab() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h2 style={{ fontSize: 18, margin: 0 }}>Mlinovi ({mlinovi.filter(m => m.status !== 'neaktivan').length})</h2>
-        <button onClick={() => setForma(!forma)} style={{ background: '#1B85B8', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>
-          + Dodaj mlin
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={exportExcel} style={{ background: 'transparent', border: '1px solid #2A9D8F', color: '#2A9D8F', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>↓ Export</button>
+          <button onClick={() => setForma(!forma)} style={{ background: '#1B85B8', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>
+            + Dodaj mlin
+          </button>
+        </div>
       </div>
 
       {poruka && <div style={{ color: poruka.tip === 'ok' ? '#2A9D8F' : '#E63946', fontSize: 13, marginBottom: 12 }}>{poruka.tekst}</div>}
