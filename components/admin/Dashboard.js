@@ -267,7 +267,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
     onRefresh()
   }
 
-  const jeMlin = (tip === 'montaza' || tip === 'demontaza') && opremaTip === 'mlin'
+  const jeMlin = opremaTip === 'mlin'
 
   const dodajNalog = async () => {
     if (!tip || (jeMlin ? !mlinId : !aparatId)) return
@@ -345,7 +345,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
             ))}
           </div>
 
-          {(tip === 'montaza' || tip === 'demontaza') && (
+          {tip && (
             <div style={{ marginTop: 4, marginBottom: 12, paddingTop: 12, borderTop: '1px solid #1E3A5A' }}>
               <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>TIP OPREME</div>
               <div style={{ display: 'flex', gap: 8 }}>
