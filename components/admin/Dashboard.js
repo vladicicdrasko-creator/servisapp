@@ -582,6 +582,40 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
   const [radnikLog, setRadnikLog] = useState({})
   const [radnikLogTab, setRadnikLogTab] = useState({})
   const [radniciAktivni, setRadniciAktivni] = useState(new Set())
+  const [radnikStanje, setRadnikStanje] = useState({})
+  const [radnikDopune, setRadnikDopune] = useState({})
+
+  const ucitajDopune = async (radnikId) => {
+    const [{ data: stanje }, { data: dopune }] = await Promise.all([
+      supabase.from('radnik_dijelovi').select('kolicina, dijelovi(naziv, jedinica)').eq('radnik_id', radnikId).gt('kolicina', 0),
+      supabase.from('dopune').select('*, dopuna_stavke(*)').eq('radnik_id', radnikId).neq('status', 'preuzeto').order('created_at', { ascending: false }),
+    ])
+    setRadnikStanje(prev => ({ ...prev, [radnikId]: stanje || [] }))
+    setRadnikDopune(prev => ({ ...prev, [radnikId]: dopune || [] }))
+  }
+
+  const izmijeniStavku = (radnikId, dopunaId, stavkaId, delta) => {
+    setRadnikDopune(prev => ({
+      ...prev,
+      [radnikId]: prev[radnikId].map(d => d.id !== dopunaId ? d : {
+        ...d,
+        dopuna_stavke: d.dopuna_stavke.map(s => s.id !== stavkaId ? s : { ...s, kolicina_odobrena: Math.max(0, (s.kolicina_odobrena || 0) + delta) })
+      })
+    }))
+  }
+
+  const odobriDopunu = async (radnikId, dopuna) => {
+    for (const s of dopuna.dopuna_stavke) {
+      await supabase.from('dopuna_stavke').update({ kolicina_odobrena: s.kolicina_odobrena }).eq('id', s.id)
+    }
+    await supabase.from('dopune').update({ status: 'odobreno', updated_at: new Date().toISOString() }).eq('id', dopuna.id)
+    ucitajDopune(radnikId)
+  }
+
+  const odbijDopunu = async (radnikId, dopunaId) => {
+    await supabase.from('dopune').update({ status: 'odbijeno', updated_at: new Date().toISOString() }).eq('id', dopunaId)
+    ucitajDopune(radnikId)
+  }
 
   useEffect(() => {
     const provjeriAktivne = async () => {
@@ -709,10 +743,10 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
           {odabraniRadnik === r.id && (
             <div style={{ marginTop: 12, borderTop: '1px solid #1E3A5A', paddingTop: 12 }}>
               <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                {['nalozi', 'aktivnost'].map(t => (
-                  <button key={t} onClick={e => { e.stopPropagation(); setRadnikLogTab(prev => ({ ...prev, [r.id]: t })) }}
+                {['nalozi', 'aktivnost', 'dopune'].map(t => (
+                  <button key={t} onClick={e => { e.stopPropagation(); setRadnikLogTab(prev => ({ ...prev, [r.id]: t })); if (t === 'dopune') ucitajDopune(r.id) }}
                     style={{ background: (radnikLogTab[r.id] || 'nalozi') === t ? '#1B85B8' : '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontSize: 11, fontWeight: 600 }}>
-                    {t === 'nalozi' ? 'Nalozi' : 'Aktivnost'}
+                    {t === 'nalozi' ? 'Nalozi' : t === 'aktivnost' ? 'Aktivnost' : 'Dopune'}
                   </button>
                 ))}
               </div>
@@ -819,6 +853,53 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
                       )
                     })
                   })()}
+                </>
+              )}
+
+              {radnikLogTab[r.id] === 'dopune' && (
+                <>
+                  {!radnikDopune[r.id] && <div style={{ color: '#7B96B2', fontSize: 12 }}>Učitavam...</div>}
+
+                  {/* Zahtjevi za odobravanje */}
+                  {(radnikDopune[r.id] || []).map(d => (
+                    <div key={d.id} style={{ background: '#0D1B2A', borderRadius: 8, padding: 10, marginBottom: 10, border: `1px solid ${d.status === 'zahtjev' ? '#F4A261' : '#1E3A5A'}` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <span style={{ color: '#1B85B8', fontSize: 11, fontWeight: 700 }}>{d.id}</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#7B96B2' }}>{d.status.toUpperCase()}</span>
+                      </div>
+                      {(d.dopuna_stavke || []).map(st => (
+                        <div key={st.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 0' }}>
+                          <span style={{ fontSize: 13, color: '#E8F4FD' }}>{st.naziv}</span>
+                          {d.status === 'zahtjev' ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <button onClick={() => izmijeniStavku(r.id, d.id, st.id, -1)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 4, width: 22, height: 22, cursor: 'pointer' }}>−</button>
+                              <span style={{ fontSize: 13, color: '#E8F4FD', fontWeight: 700, minWidth: 30, textAlign: 'center' }}>{st.kolicina_odobrena}{st.kolicina_trazena !== st.kolicina_odobrena ? ` (tražio ${st.kolicina_trazena})` : ''}</span>
+                              <button onClick={() => izmijeniStavku(r.id, d.id, st.id, 1)} style={{ background: 'transparent', border: '1px solid #1B85B8', color: '#1B85B8', borderRadius: 4, width: 22, height: 22, cursor: 'pointer' }}>+</button>
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: 13, color: '#7B96B2', fontWeight: 600 }}>×{st.kolicina_odobrena}{d.status === 'spakovano' ? ` (spakovano ${st.kolicina_spremljena})` : ''}</span>
+                          )}
+                        </div>
+                      ))}
+                      {d.status === 'zahtjev' && (
+                        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                          <button onClick={() => odobriDopunu(r.id, d)} style={{ flex: 1, background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>✓ Odobri</button>
+                          <button onClick={() => odbijDopunu(r.id, d.id)} style={{ background: 'transparent', border: '1px solid #E63946', color: '#E63946', borderRadius: 6, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>Odbij</button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {radnikDopune[r.id]?.length === 0 && <div style={{ color: '#7B96B2', fontSize: 12, marginBottom: 10 }}>Nema aktivnih zahtjeva.</div>}
+
+                  {/* Trenutno stanje radnika */}
+                  <div style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginTop: 6, marginBottom: 6 }}>STANJE RADNIKA</div>
+                  {(radnikStanje[r.id] || []).length === 0 && <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema dijelova na stanju.</div>}
+                  {(radnikStanje[r.id] || []).map((st, i) => (
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #0D1B2A' }}>
+                      <span style={{ fontSize: 13, color: '#E8F4FD' }}>{st.dijelovi?.naziv}</span>
+                      <span style={{ fontSize: 13, color: '#2A9D8F', fontWeight: 700 }}>{st.kolicina} {st.dijelovi?.jedinica}</span>
+                    </div>
+                  ))}
                 </>
               )}
             </div>
