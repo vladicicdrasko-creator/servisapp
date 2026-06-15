@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [tab, setTab] = useState('nalozi')
   const [prijave, setPrijave] = useState([])
   const [aparati, setAparati] = useState([])
+  const [mlinovi, setMlinovi] = useState([])
   const [radnici, setRadnici] = useState([])
   const [pendingMontaza, setPendingMontaza] = useState([])
   const [odabranaP, setOdabranaP] = useState(null)
@@ -87,15 +88,17 @@ export default function Dashboard() {
   }, [])
 
   const ucitajPodatke = async () => {
-    const [{ data: p }, { data: r }, { data: a }, { data: mz }] = await Promise.all([
+    const [{ data: p }, { data: r }, { data: a }, { data: mz }, { data: ml }] = await Promise.all([
       supabase.from('prijave').select('*').order('created_at', { ascending: false }),
       supabase.from('radnici').select('*').order('ime'),
       supabase.from('aparati').select('*').order('lokal'),
       supabase.from('montaza_zahtjevi').select('nalog_id').eq('status', 'pending'),
+      supabase.from('mlinovi').select('*').eq('status', 'aktivan').order('model'),
     ])
     setPrijave(p || [])
     setRadnici(r || [])
     setAparati(a || [])
+    setMlinovi(ml || [])
     setPendingMontaza((mz || []).map(m => m.nalog_id))
     setUcitava(false)
   }
@@ -161,7 +164,7 @@ export default function Dashboard() {
         )}
 
         {tab === 'nalozi' && !odabranaP && (
-          <NaloziTab prijave={prijave} aparati={aparati} radnici={radnici} pendingMontaza={pendingMontaza} onOdaberi={p => setOdabranaP(p)} onRefresh={ucitajPodatke} />
+          <NaloziTab prijave={prijave} aparati={aparati} mlinovi={mlinovi} radnici={radnici} pendingMontaza={pendingMontaza} onOdaberi={p => setOdabranaP(p)} onRefresh={ucitajPodatke} />
         )}
         {tab === 'nalozi' && odabranaP && (
           <PrijavaDetalj
@@ -193,9 +196,11 @@ const tipBoja = {
   prijava: { bg: '#E63946', label: 'PRIJAVA' },
 }
 
-function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, onRefresh }) {
+function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [], onOdaberi, onRefresh }) {
   const [pokaziFormu, setPokaziFormu] = useState(false)
   const [tip, setTip] = useState(null)
+  const [opremaTip, setOpremaTip] = useState('aparat')
+  const [mlinId, setMlinId] = useState('')
   const [aparatId, setAparatId] = useState('')
   const [radnikId, setRadnikId] = useState('')
   const [napomena, setNapomena] = useState('')
@@ -262,18 +267,23 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
     onRefresh()
   }
 
+  const jeMlin = (tip === 'montaza' || tip === 'demontaza') && opremaTip === 'mlin'
+
   const dodajNalog = async () => {
-    if (!tip || !aparatId) return
+    if (!tip || (jeMlin ? !mlinId : !aparatId)) return
     setLoading(true)
     const aparat = aparati.find(a => a.id === aparatId)
+    const mlin = mlinovi.find(m => m.id === mlinId)
     const id = 'PR-' + Date.now().toString().slice(-6)
     const { error } = await supabase.from('prijave').insert({
       id,
-      aparat_id: aparatId,
-      lokal: aparat?.lokal,
-      adresa: aparat?.adresa,
-      lat: aparat?.lat,
-      lng: aparat?.lng,
+      aparat_id: jeMlin ? null : aparatId,
+      mlin_id: jeMlin ? mlinId : null,
+      oprema_tip: jeMlin ? 'mlin' : 'aparat',
+      lokal: jeMlin ? mlin?.lokal : aparat?.lokal,
+      adresa: jeMlin ? null : aparat?.adresa,
+      lat: jeMlin ? null : aparat?.lat,
+      lng: jeMlin ? null : aparat?.lng,
       opis: napomena || tip,
       kategorija: tip,
       status: radnikId ? 'dodijeljena' : 'nova',
@@ -291,13 +301,13 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
         body: JSON.stringify({
           radnik_id: radnikId,
           title: 'Novi zadatak',
-          body: `${tip?.toUpperCase()} — ${aparat?.lokal || aparat?.adresa}`,
+          body: `${tip?.toUpperCase()} — ${jeMlin ? (mlin?.model || mlin?.lokal) : (aparat?.lokal || aparat?.adresa)}`,
         }),
       }).catch(() => {})
     }
     setPoruka({ tip: 'ok', tekst: 'Nalog kreiran!' })
     setPokaziFormu(false)
-    setTip(null); setAparatId(''); setRadnikId(''); setNapomena(''); setZakazanoDatum(new Date().toISOString().split('T')[0])
+    setTip(null); setAparatId(''); setMlinId(''); setOpremaTip('aparat'); setRadnikId(''); setNapomena(''); setZakazanoDatum(new Date().toISOString().split('T')[0])
     onRefresh()
     setTimeout(() => setPoruka(null), 2000)
   }
@@ -335,17 +345,40 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
             ))}
           </div>
 
+          {(tip === 'montaza' || tip === 'demontaza') && (
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+              {['aparat', 'mlin'].map(ot => (
+                <button key={ot} onClick={() => setOpremaTip(ot)} style={{
+                  flex: 1, background: opremaTip === ot ? '#1B85B8' : '#0D1B2A',
+                  border: `1px solid ${opremaTip === ot ? '#1B85B8' : '#1E3A5A'}`,
+                  color: opremaTip === ot ? '#fff' : '#7B96B2',
+                  borderRadius: 8, padding: '8px', cursor: 'pointer', fontWeight: 600, fontSize: 13
+                }}>{ot === 'aparat' ? 'Aparat' : 'Mlin'}</button>
+              ))}
+            </div>
+          )}
+
           <div style={{ marginBottom: 8 }}>
-            <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>FILTER PO GRADU</div>
-            <select value={filterGrad} onChange={e => setFilterGrad(e.target.value)}
-              style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8 }}>
-              {gradovi.map(g => <option key={g} value={g}>{g === 'svi' ? 'Svi gradovi' : g}</option>)}
-            </select>
-            <select value={aparatId} onChange={e => setAparatId(e.target.value)}
-              style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px' }}>
-              <option value=''>Odaberi aparat *</option>
-              {aparatiFiltrirani.map(a => <option key={a.id} value={a.id}>{a.lokal} – {a.adresa}</option>)}
-            </select>
+            {jeMlin ? (
+              <select value={mlinId} onChange={e => setMlinId(e.target.value)}
+                style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px' }}>
+                <option value=''>Odaberi mlin *</option>
+                {mlinovi.map(m => <option key={m.id} value={m.id}>{m.model}{m.lokal ? ` – ${m.lokal}` : ''}</option>)}
+              </select>
+            ) : (
+              <>
+                <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>FILTER PO GRADU</div>
+                <select value={filterGrad} onChange={e => setFilterGrad(e.target.value)}
+                  style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8 }}>
+                  {gradovi.map(g => <option key={g} value={g}>{g === 'svi' ? 'Svi gradovi' : g}</option>)}
+                </select>
+                <select value={aparatId} onChange={e => setAparatId(e.target.value)}
+                  style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px' }}>
+                  <option value=''>Odaberi aparat *</option>
+                  {aparatiFiltrirani.map(a => <option key={a.id} value={a.id}>{a.lokal} – {a.adresa}</option>)}
+                </select>
+              </>
+            )}
           </div>
 
           <textarea value={napomena} onChange={e => setNapomena(e.target.value)} placeholder="Napomena (opcionalno)"
@@ -370,8 +403,8 @@ function NaloziTab({ prijave, aparati, radnici, pendingMontaza = [], onOdaberi, 
           </div>
 
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={dodajNalog} disabled={!tip || !aparatId || loading}
-              style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!tip || !aparatId) ? 0.5 : 1 }}>
+            <button onClick={dodajNalog} disabled={!tip || (jeMlin ? !mlinId : !aparatId) || loading}
+              style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!tip || (jeMlin ? !mlinId : !aparatId)) ? 0.5 : 1 }}>
               {loading ? 'Čekaj...' : 'Kreiraj nalog'}
             </button>
             <button onClick={() => setPokaziFormu(false)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
