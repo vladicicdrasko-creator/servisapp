@@ -609,6 +609,16 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
       await supabase.from('dopuna_stavke').update({ kolicina_odobrena: s.kolicina_odobrena }).eq('id', s.id)
     }
     await supabase.from('dopune').update({ status: 'odobreno', updated_at: new Date().toISOString() }).eq('id', dopuna.id)
+    // Obavijesti magacionere
+    const { data: magacioneri } = await supabase.from('radnici').select('id').eq('uloga', 'magacioner')
+    const radnikIme = radnici.find(r => r.id === radnikId)?.ime || 'Radnik'
+    for (const m of (magacioneri || [])) {
+      fetch('/api/push-radnik', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ radnik_id: m.id, title: '📦 Nova dopuna za pakovanje', body: `${radnikIme} — ${dopuna.dopuna_stavke.length} stavki` }),
+      }).catch(() => {})
+    }
     ucitajDopune(radnikId)
   }
 
