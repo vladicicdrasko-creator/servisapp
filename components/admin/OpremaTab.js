@@ -48,7 +48,7 @@ export default function OpremaTab({ onOdaberiPrijavu }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
         <SubBtn id="aparati" label="Aparati" />
         <SubBtn id="mlinovi" label="Mlinovi" />
         <SubBtn id="dijelovi" label="Dijelovi" />
