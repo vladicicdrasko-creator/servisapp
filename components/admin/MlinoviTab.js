@@ -17,7 +17,15 @@ export default function MlinoviTab() {
   const [editMlin, setEditMlin] = useState(null)
   const [noviMlin, setNoviMlin] = useState({ model: '', marka: '', lokal: '', serijski_broj: '' })
 
-  useEffect(() => { ucitaj() }, [])
+  useEffect(() => {
+    ucitaj()
+    const kanal = supabase
+      .channel('mlinovi-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mlinovi' }, () => ucitaj())
+      .subscribe()
+    const interval = setInterval(ucitaj, 15000)
+    return () => { supabase.removeChannel(kanal); clearInterval(interval) }
+  }, [])
 
   const ucitaj = async () => {
     const [{ data: m }, { data: a }] = await Promise.all([

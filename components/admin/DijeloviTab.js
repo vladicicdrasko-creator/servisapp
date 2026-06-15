@@ -16,7 +16,15 @@ export default function DijeloviTab() {
   const [editDio, setEditDio] = useState(null)
   const [noviDio, setNoviDio] = useState({ naziv: '', kolicina: '', jedinica: 'kom' })
 
-  useEffect(() => { ucitaj() }, [])
+  useEffect(() => {
+    ucitaj()
+    const kanal = supabase
+      .channel('dijelovi-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dijelovi' }, () => ucitaj())
+      .subscribe()
+    const interval = setInterval(ucitaj, 15000)
+    return () => { supabase.removeChannel(kanal); clearInterval(interval) }
+  }, [])
 
   const ucitaj = async () => {
     const { data } = await supabase.from('dijelovi').select('*').eq('status', 'aktivan').order('naziv')
