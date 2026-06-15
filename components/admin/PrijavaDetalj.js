@@ -104,15 +104,23 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
   const potvrdiMontazu = async () => {
     if (!montazaZahtjev) return
     setSaljem(true)
-    // Ažuriraj aparat
-    await supabase.from('aparati').update({
-      lokal: editLokal || montazaZahtjev.novi_lokal,
-      adresa: editAdresa || montazaZahtjev.nova_adresa,
-      lat: montazaZahtjev.novi_lat,
-      lng: montazaZahtjev.novi_lng,
-      montaza_datum: new Date().toISOString(),
-      ...(montazaZahtjev.slika_url ? { slika_url: montazaZahtjev.slika_url } : {}),
-    }).eq('id', montazaZahtjev.aparat_id)
+    if (montazaZahtjev.oprema_tip === 'mlin') {
+      // Ažuriraj mlin
+      await supabase.from('mlinovi').update({
+        lokal: editLokal || montazaZahtjev.novi_lokal,
+        ...(prijava.slika_url ? { slika_url: prijava.slika_url } : {}),
+      }).eq('id', montazaZahtjev.mlin_id)
+    } else {
+      // Ažuriraj aparat
+      await supabase.from('aparati').update({
+        lokal: editLokal || montazaZahtjev.novi_lokal,
+        adresa: editAdresa || montazaZahtjev.nova_adresa,
+        lat: montazaZahtjev.novi_lat,
+        lng: montazaZahtjev.novi_lng,
+        montaza_datum: new Date().toISOString(),
+        ...(prijava.slika_url ? { slika_url: prijava.slika_url } : {}),
+      }).eq('id', montazaZahtjev.aparat_id)
+    }
     // Zatvori zahtjev
     await supabase.from('montaza_zahtjevi').update({ status: 'odobren' }).eq('id', montazaZahtjev.id)
     // Zatvori nalog
