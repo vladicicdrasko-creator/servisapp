@@ -203,6 +203,8 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
   const [mlinId, setMlinId] = useState('')
   const [aparatId, setAparatId] = useState('')
   const [rucniLokal, setRucniLokal] = useState('')
+  const [ostaloVrsta, setOstaloVrsta] = useState('generalna')
+  const [generalnaUnos, setGeneralnaUnos] = useState('')
   const [radnikId, setRadnikId] = useState('')
   const [napomena, setNapomena] = useState('')
   const [filterGrad, setFilterGrad] = useState('svi')
@@ -269,24 +271,50 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
   }
 
   const jeMlin = opremaTip === 'mlin'
-  const jeDrugo = opremaTip === 'drugo'
+  const jeOstalo = tip === 'ostalo'
+  const jeGeneralna = jeOstalo && ostaloVrsta === 'generalna'
+  const jeDrugo = jeOstalo && ostaloVrsta === 'drugo'
+
+  // Validacija po slučaju
+  const naloziValidan = !tip ? false
+    : jeDrugo ? !!rucniLokal.trim()
+    : jeGeneralna ? !!generalnaUnos.trim()
+    : jeMlin ? !!mlinId : !!aparatId
 
   const dodajNalog = async () => {
-    if (!tip || (jeDrugo ? !rucniLokal.trim() : jeMlin ? !mlinId : !aparatId)) return
+    if (!naloziValidan) return
     setLoading(true)
     const aparat = aparati.find(a => a.id === aparatId)
     const mlin = mlinovi.find(m => m.id === mlinId)
     const id = 'PR-' + Date.now().toString().slice(-6)
+
+    // Generalna: probaj naći u bazi (po nazivu/lokalu), inače slobodan unos
+    let gen = null
+    if (jeGeneralna) {
+      const unos = generalnaUnos.trim().toLowerCase()
+      gen = jeMlin
+        ? mlinovi.find(m => (m.model || '').toLowerCase() === unos || (m.lokal || '').toLowerCase() === unos)
+        : aparati.find(a => (a.naziv || '').toLowerCase() === unos || (a.lokal || '').toLowerCase() === unos)
+    }
+
+    let red
+    if (jeDrugo) {
+      red = { aparat_id: null, mlin_id: null, oprema_tip: 'drugo', lokal: rucniLokal.trim(), adresa: null, lat: null, lng: null }
+    } else if (jeGeneralna) {
+      if (gen && jeMlin) red = { aparat_id: null, mlin_id: gen.id, oprema_tip: 'mlin', lokal: gen.lokal, adresa: null, lat: null, lng: null }
+      else if (gen) red = { aparat_id: gen.id, mlin_id: null, oprema_tip: 'aparat', lokal: gen.lokal, adresa: gen.adresa, lat: gen.lat, lng: gen.lng }
+      else red = { aparat_id: null, mlin_id: null, oprema_tip: 'drugo', lokal: generalnaUnos.trim(), adresa: null, lat: null, lng: null }
+    } else if (jeMlin) {
+      red = { aparat_id: null, mlin_id: mlinId, oprema_tip: 'mlin', lokal: mlin?.lokal, adresa: null, lat: null, lng: null }
+    } else {
+      red = { aparat_id: aparatId, mlin_id: null, oprema_tip: 'aparat', lokal: aparat?.lokal, adresa: aparat?.adresa, lat: aparat?.lat, lng: aparat?.lng }
+    }
+
+    const vrstaLabel = jeGeneralna ? 'Generalna' : jeDrugo ? 'Drugo' : tip
     const { error } = await supabase.from('prijave').insert({
       id,
-      aparat_id: (jeMlin || jeDrugo) ? null : aparatId,
-      mlin_id: jeMlin ? mlinId : null,
-      oprema_tip: jeDrugo ? 'drugo' : jeMlin ? 'mlin' : 'aparat',
-      lokal: jeDrugo ? rucniLokal.trim() : jeMlin ? mlin?.lokal : aparat?.lokal,
-      adresa: (jeMlin || jeDrugo) ? null : aparat?.adresa,
-      lat: (jeMlin || jeDrugo) ? null : aparat?.lat,
-      lng: (jeMlin || jeDrugo) ? null : aparat?.lng,
-      opis: napomena || tip,
+      ...red,
+      opis: napomena || vrstaLabel,
       kategorija: tip,
       status: radnikId ? 'dodijeljena' : 'nova',
       radnik_id: radnikId || null,
@@ -303,13 +331,13 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
         body: JSON.stringify({
           radnik_id: radnikId,
           title: 'Novi zadatak',
-          body: `${tip?.toUpperCase()} — ${jeDrugo ? rucniLokal.trim() : jeMlin ? (mlin?.model || mlin?.lokal) : (aparat?.lokal || aparat?.adresa)}`,
+          body: `${tip?.toUpperCase()} — ${red.lokal || ''}`,
         }),
       }).catch(() => {})
     }
     setPoruka({ tip: 'ok', tekst: 'Nalog kreiran!' })
     setPokaziFormu(false)
-    setTip(null); setAparatId(''); setMlinId(''); setOpremaTip('aparat'); setRucniLokal(''); setRadnikId(''); setNapomena(''); setZakazanoDatum(new Date().toISOString().split('T')[0])
+    setTip(null); setAparatId(''); setMlinId(''); setOpremaTip('aparat'); setRucniLokal(''); setOstaloVrsta('generalna'); setGeneralnaUnos(''); setRadnikId(''); setNapomena(''); setZakazanoDatum(new Date().toISOString().split('T')[0])
     onRefresh()
     setTimeout(() => setPoruka(null), 2000)
   }
@@ -347,17 +375,28 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
             ))}
           </div>
 
-          {tip && (
+          {jeOstalo && (
             <div style={{ marginTop: 4, marginBottom: 12, paddingTop: 12, borderTop: '1px solid #1E3A5A' }}>
+              <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>VRSTA</div>
+              <select value={ostaloVrsta} onChange={e => setOstaloVrsta(e.target.value)}
+                style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px' }}>
+                <option value='generalna'>Generalna</option>
+                <option value='drugo'>Drugo</option>
+              </select>
+            </div>
+          )}
+
+          {tip && !jeDrugo && (
+            <div style={{ marginTop: 4, marginBottom: 12, paddingTop: jeOstalo ? 0 : 12, borderTop: jeOstalo ? 'none' : '1px solid #1E3A5A' }}>
               <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>TIP OPREME</div>
               <div style={{ display: 'flex', gap: 8 }}>
-                {['aparat', 'mlin', 'drugo'].map(ot => (
+                {['aparat', 'mlin'].map(ot => (
                   <button key={ot} onClick={() => setOpremaTip(ot)} style={{
                     flex: 1, background: opremaTip === ot ? '#1B85B8' : '#0D1B2A',
                     border: `1px solid ${opremaTip === ot ? '#1B85B8' : '#1E3A5A'}`,
                     color: opremaTip === ot ? '#fff' : '#7B96B2',
                     borderRadius: 8, padding: '8px', cursor: 'pointer', fontWeight: 600, fontSize: 13
-                  }}>{ot === 'aparat' ? 'Aparat' : ot === 'mlin' ? 'Mlin' : 'Drugo'}</button>
+                  }}>{ot === 'aparat' ? 'Aparat' : 'Mlin'}</button>
                 ))}
               </div>
             </div>
@@ -368,6 +407,18 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
               <input value={rucniLokal} onChange={e => setRucniLokal(e.target.value)}
                 placeholder="Naziv / lokacija (ručni unos) *"
                 style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            ) : jeGeneralna ? (
+              <>
+                <input value={generalnaUnos} onChange={e => setGeneralnaUnos(e.target.value)}
+                  list="generalna-lista"
+                  placeholder={jeMlin ? 'Upiši ili izaberi mlin *' : 'Upiši ili izaberi aparat *'}
+                  style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+                <datalist id="generalna-lista">
+                  {jeMlin
+                    ? mlinovi.map(m => <option key={m.id} value={m.model}>{m.lokal || ''}</option>)
+                    : aparatiAktivni.map(a => <option key={a.id} value={a.naziv || a.lokal}>{a.lokal || ''}</option>)}
+                </datalist>
+              </>
             ) : jeMlin ? (
               <select value={mlinId} onChange={e => setMlinId(e.target.value)}
                 style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px' }}>
@@ -412,8 +463,8 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
           </div>
 
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={dodajNalog} disabled={!tip || (jeDrugo ? !rucniLokal.trim() : jeMlin ? !mlinId : !aparatId) || loading}
-              style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: (!tip || (jeDrugo ? !rucniLokal.trim() : jeMlin ? !mlinId : !aparatId)) ? 0.5 : 1 }}>
+            <button onClick={dodajNalog} disabled={!naloziValidan || loading}
+              style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: !naloziValidan ? 0.5 : 1 }}>
               {loading ? 'Čekaj...' : 'Kreiraj nalog'}
             </button>
             <button onClick={() => setPokaziFormu(false)} style={{ background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
