@@ -447,7 +447,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
           <select value={radnikId} onChange={e => setRadnikId(e.target.value)}
             style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
             <option value=''>Dodijeli radniku (opcionalno)</option>
-            {radnici.filter(r => r.status !== 'deaktiviran' && r.uloga !== 'magacioner').map(r => <option key={r.id} value={r.id}>{r.ime}</option>)}
+            {radnici.filter(r => r.status !== 'deaktiviran' && r.uloga !== 'magacioner' && r.uloga !== 'saradnik').map(r => <option key={r.id} value={r.id}>{r.ime}</option>)}
           </select>
 
           <div style={{ marginBottom: 12 }}>
@@ -623,7 +623,7 @@ function DashboardTab({ prijave, radnici, mapaOtvorena, setMapaOtvorena, onOdabe
         <div style={{ marginBottom: 16 }}>
           <Mapa
             prijave={prijave.filter(p => p.status !== 'zatvorena')}
-            radnici={radnici.filter(r => r.status !== 'deaktiviran' && r.uloga !== 'magacioner')}
+            radnici={radnici.filter(r => r.status !== 'deaktiviran' && r.uloga !== 'magacioner' && r.uloga !== 'saradnik')}
           />
         </div>
       )}
@@ -677,6 +677,21 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
   const [radniciAktivni, setRadniciAktivni] = useState(new Set())
   const [radnikStanje, setRadnikStanje] = useState({})
   const [radnikDopune, setRadnikDopune] = useState({})
+  const [radnikObracuni, setRadnikObracuni] = useState({})
+
+  const ucitajObracuni = async (radnikId) => {
+    const { data } = await supabase.from('saradnik_obracuni').select('*, saradnik_stavke(*)').eq('saradnik_id', radnikId).order('created_at', { ascending: false })
+    setRadnikObracuni(prev => ({ ...prev, [radnikId]: data || [] }))
+  }
+
+  const odlukaObracun = async (radnikId, obracun, nova) => {
+    await supabase.from('saradnik_obracuni').update({ status: nova, updated_at: new Date().toISOString() }).eq('id', obracun.id)
+    fetch('/api/push-radnik', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ radnik_id: radnikId, title: nova === 'prihvaceno' ? '✅ Obračun prihvaćen' : '❌ Obračun odbijen', body: `${obracun.id} — ${Number(obracun.ukupno).toFixed(2)}€` }),
+    }).catch(() => {})
+    ucitajObracuni(radnikId)
+  }
 
   const ucitajDopune = async (radnikId) => {
     const [{ data: stanje }, { data: dopune }] = await Promise.all([
@@ -846,12 +861,16 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
           {odabraniRadnik === r.id && (
             <div style={{ marginTop: 12, borderTop: '1px solid #1E3A5A', paddingTop: 12 }}>
               <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                {['nalozi', 'aktivnost', 'dopune'].map(t => (
-                  <button key={t} onClick={e => { e.stopPropagation(); setRadnikLogTab(prev => ({ ...prev, [r.id]: t })); if (t === 'dopune') ucitajDopune(r.id) }}
-                    style={{ background: (radnikLogTab[r.id] || 'nalozi') === t ? '#1B85B8' : '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontSize: 11, fontWeight: 600 }}>
-                    {t === 'nalozi' ? 'Nalozi' : t === 'aktivnost' ? 'Aktivnost' : 'Dopune'}
-                  </button>
-                ))}
+                {(r.uloga === 'saradnik' ? ['obracuni'] : ['nalozi', 'aktivnost', 'dopune']).map(t => {
+                  const aktivan = (radnikLogTab[r.id] || (r.uloga === 'saradnik' ? 'obracuni' : 'nalozi')) === t
+                  const naziv = { nalozi: 'Nalozi', aktivnost: 'Aktivnost', dopune: 'Dopune', obracuni: 'Obračuni' }[t]
+                  return (
+                    <button key={t} onClick={e => { e.stopPropagation(); setRadnikLogTab(prev => ({ ...prev, [r.id]: t })); if (t === 'dopune') ucitajDopune(r.id); if (t === 'obracuni') ucitajObracuni(r.id) }}
+                      style={{ background: aktivan ? '#1B85B8' : '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontSize: 11, fontWeight: 600 }}>
+                      {naziv}
+                    </button>
+                  )
+                })}
               </div>
 
               {(radnikLogTab[r.id] || 'nalozi') === 'nalozi' && (
@@ -1001,6 +1020,37 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #0D1B2A' }}>
                       <span style={{ fontSize: 13, color: '#E8F4FD' }}>{st.dijelovi?.naziv}</span>
                       <span style={{ fontSize: 13, color: '#2A9D8F', fontWeight: 700 }}>{st.kolicina} {st.dijelovi?.jedinica}</span>
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {radnikLogTab[r.id] === 'obracuni' && (
+                <>
+                  {!radnikObracuni[r.id] && <div style={{ color: '#7B96B2', fontSize: 12 }}>Učitavam...</div>}
+                  {radnikObracuni[r.id]?.length === 0 && <div style={{ color: '#7B96B2', fontSize: 12 }}>Nema obračuna.</div>}
+                  {(radnikObracuni[r.id] || []).map(o => (
+                    <div key={o.id} style={{ background: '#0D1B2A', borderRadius: 8, padding: 10, marginBottom: 10, border: `1px solid ${o.status === 'poslato' ? '#F4A261' : o.status === 'prihvaceno' ? '#2A9D8F' : '#E63946'}` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <span style={{ color: '#1B85B8', fontSize: 11, fontWeight: 700 }}>{o.id}</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#7B96B2' }}>{o.status.toUpperCase()}</span>
+                      </div>
+                      {(o.saradnik_stavke || []).map(st => (
+                        <div key={st.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
+                          <span style={{ fontSize: 13, color: '#E8F4FD' }}>{st.opis}</span>
+                          <span style={{ fontSize: 13, color: '#7B96B2', fontWeight: 600 }}>{Number(st.cijena).toFixed(2)}€</span>
+                        </div>
+                      ))}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #1E3A5A', marginTop: 6, paddingTop: 6 }}>
+                        <span style={{ fontSize: 11, color: '#7B96B2', fontWeight: 700 }}>UKUPNO</span>
+                        <span style={{ fontSize: 15, color: '#E8F4FD', fontWeight: 800 }}>{Number(o.ukupno).toFixed(2)}€</span>
+                      </div>
+                      {o.status === 'poslato' && (
+                        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                          <button onClick={() => odlukaObracun(r.id, o, 'prihvaceno')} style={{ flex: 1, background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>✓ Prihvati</button>
+                          <button onClick={() => odlukaObracun(r.id, o, 'odbijeno')} style={{ background: 'transparent', border: '1px solid #E63946', color: '#E63946', borderRadius: 6, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>Odbij</button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </>
