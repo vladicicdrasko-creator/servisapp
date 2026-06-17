@@ -43,7 +43,8 @@ export default function MlinoviTab() {
   const odaberiMlin = async (m) => {
     if (odabrani?.id === m.id) { setOdabrani(null); setQrUrl(null); return }
     setOdabrani(m)
-    const qr = await QRCode.toDataURL(`MLN-${m.id}`, { width: 200, margin: 1 })
+    const url = `${window.location.origin}/prijava/${m.id}`
+    const qr = await QRCode.toDataURL(url, { width: 200, margin: 1 })
     setQrUrl(qr)
   }
 
@@ -186,7 +187,7 @@ export default function MlinoviTab() {
                 <img src={qrUrl} alt="QR" style={{ width: 100, height: 100, borderRadius: 8 }} />
                 <div>
                   <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>QR KOD</div>
-                  <div style={{ color: '#E8F4FD', fontSize: 12, marginBottom: 8 }}>{m.id}</div>
+                  <div style={{ color: '#E8F4FD', fontSize: 12, marginBottom: 8 }}>/prijava/{m.id}</div>
                   <button onClick={preuzmiQR} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
                     📥 Preuzmi QR
                   </button>

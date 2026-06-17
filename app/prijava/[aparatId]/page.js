@@ -59,9 +59,12 @@ export default function PrijavaPage({ params }) {
     }
   }
 
+  const jeMlin = aparat.tip === 'mlin'
   const { error } = await supabase.from('prijave').insert({
     id,
-    aparat_id: aparatId,
+    aparat_id: jeMlin ? null : aparatId,
+    mlin_id: jeMlin ? aparatId : null,
+    oprema_tip: jeMlin ? 'mlin' : 'aparat',
     lokal: aparat.lokal,
     adresa: aparat.adresa,
     lat: aparat.lat,
@@ -214,12 +217,16 @@ export default function PrijavaPage({ params }) {
         </div>
       </div>
 
-      {/* Info aparat */}
+      {/* Info aparat/mlin */}
       <div style={s.card}>
-        <div style={{ fontWeight: 600, fontSize: 14 }}>{aparat.lokal}</div>
-        <div style={{ color: '#7B96B2', fontSize: 12 }}>{aparat.adresa}</div>
+        <div style={{ fontWeight: 600, fontSize: 14 }}>{aparat.tip === 'mlin' ? aparat.naziv : aparat.lokal}</div>
+        {aparat.tip === 'mlin' ? (
+          aparat.lokal && <div style={{ color: '#7B96B2', fontSize: 12 }}>{aparat.lokal}</div>
+        ) : (
+          <div style={{ color: '#7B96B2', fontSize: 12 }}>{aparat.adresa}</div>
+        )}
         <div style={{ color: '#7B96B2', fontSize: 11, marginTop: 2 }}>
-          Aparat: <span style={{ color: '#1B85B8' }}>{aparat.id}</span>
+          {aparat.tip === 'mlin' ? 'Mlin' : 'Aparat'}: <span style={{ color: '#1B85B8' }}>{aparat.id}</span>
         </div>
       </div>
 
