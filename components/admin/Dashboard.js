@@ -277,8 +277,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
 
   // Validacija po slučaju
   const naloziValidan = !tip ? false
-    : jeDrugo ? !!rucniLokal.trim()
-    : jeGeneralna ? !!generalnaUnos.trim()
+    : (jeDrugo || jeGeneralna) ? !!generalnaUnos.trim()
     : jeMlin ? !!mlinId : !!aparatId
 
   const dodajNalog = async () => {
@@ -288,9 +287,9 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
     const mlin = mlinovi.find(m => m.id === mlinId)
     const id = 'PR-' + Date.now().toString().slice(-6)
 
-    // Generalna: probaj naći u bazi (po nazivu/lokalu), inače slobodan unos
+    // Generalna/Drugo: probaj naći u bazi (po nazivu/lokalu), inače slobodan unos
     let gen = null
-    if (jeGeneralna) {
+    if (jeGeneralna || jeDrugo) {
       const unos = generalnaUnos.trim().toLowerCase()
       gen = jeMlin
         ? mlinovi.find(m => (m.model || '').toLowerCase() === unos || (m.lokal || '').toLowerCase() === unos)
@@ -299,7 +298,10 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
 
     let red
     if (jeDrugo) {
-      red = { aparat_id: null, mlin_id: null, oprema_tip: 'drugo', lokal: rucniLokal.trim(), adresa: null, lat: null, lng: null }
+      // Drugo: veže postojeći ako se poklopi, ali oprema_tip='drugo' → radnik NE skenira
+      if (gen && jeMlin) red = { aparat_id: null, mlin_id: gen.id, oprema_tip: 'drugo', lokal: gen.lokal, adresa: null, lat: null, lng: null }
+      else if (gen) red = { aparat_id: gen.id, mlin_id: null, oprema_tip: 'drugo', lokal: gen.lokal, adresa: gen.adresa, lat: gen.lat, lng: gen.lng }
+      else red = { aparat_id: null, mlin_id: null, oprema_tip: 'drugo', lokal: generalnaUnos.trim(), adresa: null, lat: null, lng: null }
     } else if (jeGeneralna) {
       if (gen && jeMlin) red = { aparat_id: null, mlin_id: gen.id, oprema_tip: 'mlin', lokal: gen.lokal, adresa: null, lat: null, lng: null }
       else if (gen) red = { aparat_id: gen.id, mlin_id: null, oprema_tip: 'aparat', lokal: gen.lokal, adresa: gen.adresa, lat: gen.lat, lng: gen.lng }
@@ -386,7 +388,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
             </div>
           )}
 
-          {tip && !jeDrugo && (
+          {tip && (
             <div style={{ marginTop: 4, marginBottom: 12, paddingTop: jeOstalo ? 0 : 12, borderTop: jeOstalo ? 'none' : '1px solid #1E3A5A' }}>
               <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 6 }}>TIP OPREME</div>
               <div style={{ display: 'flex', gap: 8 }}>
@@ -403,11 +405,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
           )}
 
           <div style={{ marginBottom: 8 }}>
-            {jeDrugo ? (
-              <input value={rucniLokal} onChange={e => setRucniLokal(e.target.value)}
-                placeholder="Naziv / lokacija (ručni unos) *"
-                style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
-            ) : jeGeneralna ? (
+            {(jeGeneralna || jeDrugo) ? (
               <>
                 <input value={generalnaUnos} onChange={e => setGeneralnaUnos(e.target.value)}
                   list="generalna-lista"
