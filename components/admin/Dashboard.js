@@ -234,11 +234,19 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
  const [filterTip, setFilterTip] = useState('svi')
 
   const prijaveF = prijave.filter(p => {
+    // RIJEŠENO filter — koristi datum završetka (updated_at)
+    if (filterTip === 'rijesena') {
+      if (!(p.status === 'riješena' || p.status === 'zatvorena')) return false
+      const dr = lokalniDatum(p.updated_at || p.created_at)
+      if (filterDatum === 'danas' && dr !== danas) return false
+      if (filterDatum === 'datum' && dr !== datum) return false
+      return true
+    }
+    // Aktivni nalozi — riješene sakrij
+    if (p.status === 'riješena' || p.status === 'zatvorena') return false
     const d = p.zakazano_za ? p.zakazano_za.slice(0, 10) : lokalniDatum(p.created_at)
     if (filterDatum === 'danas' && d !== danas) return false
     if (filterDatum === 'datum' && d !== datum) return false
-    if (filterDatum === 'danas' && p.status === 'riješena') return false
-    if (filterTip === 'rijesena') return p.status === 'riješena' || p.status === 'zatvorena'
     if (filterTip !== 'svi') {
       const pTip = tipBoja[p.kategorija] ? p.kategorija : 'prijava'
       if (pTip !== filterTip) return false
