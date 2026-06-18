@@ -201,6 +201,19 @@ export default function SaradnikPage() {
                   <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>OPIS POSLA</div>
                   <div style={{ fontSize: 14, marginBottom: 12 }}>{n.opis || '—'}</div>
 
+                  <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>LOKACIJA</div>
+                  <div style={{ fontSize: 14, marginBottom: 6 }}>{n.lokal || '—'}{n.adresa ? ` · ${n.adresa}` : ''}</div>
+                  {(n.lat && n.lng) || n.adresa || n.lokal ? (
+                    <a href={(n.lat && n.lng)
+                        ? `https://www.google.com/maps?q=${n.lat},${n.lng}`
+                        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([n.lokal, n.adresa].filter(Boolean).join(' '))}`}
+                      target="_blank" rel="noreferrer"
+                      style={{ display: 'inline-block', background: '#0F4C75', color: '#fff', borderRadius: 8, padding: '8px 14px', fontSize: 13, textDecoration: 'none', marginBottom: 12 }}>
+                      📍 Otvori u Google Maps
+                    </a>
+                  ) : null}
+                  <div style={{ height: 4 }} />
+
                   {/* FAZA 1 — procjena */}
                   {!n.procjena_status && (
                     <>
