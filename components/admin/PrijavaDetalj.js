@@ -163,9 +163,12 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
           <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>OPIS</div>
           <div style={{ fontSize: 14 }}>{prijava.opis}</div>
         </div>
-        <div style={{ display: 'flex', gap: 16, fontSize: 12, color: '#7B96B2' }}>
-          <span>📂 {prijava.kategorija}</span>
-          <span>🕐 {new Date(prijava.created_at).toLocaleString('bs-BA')}</span>
+        <div style={{ display: 'flex', gap: 16, fontSize: 12, color: '#7B96B2', flexWrap: 'wrap' }}>
+          <span>📂 {prijava.vrsta || prijava.kategorija}</span>
+          <span>🕐 Prijava: {new Date(prijava.created_at).toLocaleString('bs-BA')}</span>
+          {(prijava.status === 'riješena' || prijava.status === 'zatvorena') && (prijava.rijeseno_at || prijava.updated_at) && (
+            <span style={{ color: '#2A9D8F' }}>✓ Riješeno: {new Date(prijava.rijeseno_at || prijava.updated_at).toLocaleString('bs-BA')}</span>
+          )}
         </div>
         {prijava.kontakt && <div style={{ marginTop: 8, fontSize: 12, color: '#7B96B2' }}>📞 {prijava.kontakt}</div>}
         {prijava.slika_url && (
