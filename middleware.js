@@ -52,7 +52,12 @@ export async function middleware(request) {
 
   if (request.nextUrl.pathname.startsWith('/admin') &&
       !request.nextUrl.pathname.startsWith('/admin/login')) {
-    const jeAdmin = user && user.user_metadata?.role !== 'radnik'
+    let jeAdmin = false
+    if (user) {
+      // Admin = prijavljen korisnik koji NIJE u radnici tabeli (radnik/magacioner/saradnik)
+      const { data: r } = await supabase.from('radnici').select('id').eq('email', user.email).maybeSingle()
+      jeAdmin = !r
+    }
     if (!jeAdmin) return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 
