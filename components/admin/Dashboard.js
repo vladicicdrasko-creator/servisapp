@@ -237,7 +237,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
     // RIJEŠENO filter — po danu kad je riješeno (updated_at)
     if (filterTip === 'rijesena') {
       if (!(p.status === 'riješena' || p.status === 'zatvorena')) return false
-      const dr = lokalniDatum(p.updated_at || p.created_at)
+      const dr = lokalniDatum(p.rijeseno_at || p.updated_at || p.created_at)
       if (filterDatum === 'danas' && dr !== danas) return false
       if (filterDatum === 'datum' && dr !== datum) return false
       return true
@@ -278,7 +278,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
   const zatvoriNalog = async (e, id) => {
     e.stopPropagation()
     if (!window.confirm(`Označiti nalog ${id} kao zatvoren?`)) return
-    await supabase.from('prijave').update({ status: 'zatvorena' }).eq('id', id)
+    await supabase.from('prijave').update({ status: 'zatvorena', rijeseno_at: new Date().toISOString() }).eq('id', id)
     onRefresh()
   }
 
@@ -574,7 +574,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ color: '#7B96B2', fontSize: 11 }}>
                   {(p.status === 'riješena' || p.status === 'zatvorena')
-                    ? `Riješeno: ${new Date(p.updated_at || p.created_at).toLocaleString('bs-BA')}`
+                    ? `Riješeno: ${new Date(p.rijeseno_at || p.updated_at || p.created_at).toLocaleString('bs-BA')}`
                     : new Date(p.created_at).toLocaleString('bs-BA')}
                 </span>
                 {p.status !== 'riješena' && p.status !== 'zatvorena' && (

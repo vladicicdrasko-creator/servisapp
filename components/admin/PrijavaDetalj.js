@@ -127,6 +127,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
     await supabase.from('prijave').update({
       status: 'riješena',
       ishod: 'riješena',
+      rijeseno_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }).eq('id', prijava.id)
     setSaljem(false)

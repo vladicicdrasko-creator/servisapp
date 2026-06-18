@@ -29,7 +29,7 @@ export default function Kalendar({ prijave = [], odabraniDan, onOdaberi }) {
     const rijesen = p.status === 'riješena' || p.status === 'zatvorena'
     // Riješene idu na dan kad su riješene (updated_at), aktivne na zakazano/kreirano
     const d = rijesen
-      ? lokalniDatum(p.updated_at || p.created_at)
+      ? lokalniDatum(p.rijeseno_at || p.updated_at || p.created_at)
       : (p.zakazano_za ? p.zakazano_za.slice(0, 10) : lokalniDatum(p.created_at))
     if (!prijavePoDatetu[d]) prijavePoDatetu[d] = []
     prijavePoDatetu[d].push(p)
