@@ -39,8 +39,12 @@ export default function PrijavaPage({ params }) {
     ucitajAparat()
   }, [aparatId])
 
+ const telDigits = kontaktTel.replace(/\D/g, '')
+ const kontaktOk = kontaktIme.trim() && telDigits.length === 9
+ const formaOk = kategorija && opis && kontaktOk
+
  const posaljiPrijavu = async () => {
-  if (!kategorija || !opis) return
+  if (!formaOk) return
   setSaljem(true)
 
   const id = 'PR-' + Date.now().toString().slice(-6)
@@ -285,7 +289,7 @@ export default function PrijavaPage({ params }) {
 </div>
         {/* Kontakt */}
         <div style={{ marginBottom: 20 }}>
-          <label style={s.label}>VAŠ KONTAKT (opciono)</label>
+          <label style={s.label}>VAŠ KONTAKT *</label>
           <input value={kontaktIme} onChange={e => setKontaktIme(e.target.value)}
             placeholder="Vaše ime"
             style={{ ...s.input, marginBottom: 8 }} />
@@ -307,8 +311,8 @@ export default function PrijavaPage({ params }) {
         </div>
 
         <button onClick={posaljiPrijavu}
-          disabled={!kategorija || !opis || saljem}
-          style={{ ...s.btn, background: kategorija && opis ? '#1B85B8' : '#1E3A5A', cursor: kategorija && opis ? 'pointer' : 'not-allowed' }}>
+          disabled={!formaOk || saljem}
+          style={{ ...s.btn, background: formaOk ? '#1B85B8' : '#1E3A5A', cursor: formaOk ? 'pointer' : 'not-allowed' }}>
           {saljem ? 'Slanje...' : 'Pošalji prijavu'}
         </button>
       </div>
