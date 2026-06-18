@@ -340,15 +340,16 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
     if (error) { setPoruka({ tip: 'greska', tekst: error.message }); return }
     // Pošalji push radniku ako je dodijeljen
     if (radnikId) {
-      fetch('/api/push-radnik', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          radnik_id: radnikId,
-          title: 'Novi zadatak',
-          body: `${tip?.toUpperCase()} — ${red.lokal || ''}`,
-        }),
-      }).catch(() => {})
+      const odabraniR = radnici.find(r => r.id === radnikId)
+      const body = `${tip?.toUpperCase()} — ${red.lokal || ''}`
+      if (odabraniR?.uloga === 'saradnik') {
+        // Saradnik je web → web push
+        fetch('/api/push-user', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: radnikId, title: '📋 Novi nalog', body }) }).catch(() => {})
+      } else {
+        fetch('/api/push-radnik', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ radnik_id: radnikId, title: 'Novi zadatak', body }) }).catch(() => {})
+      }
     }
     setPoruka({ tip: 'ok', tekst: 'Nalog kreiran!' })
     setPokaziFormu(false)
@@ -706,9 +707,9 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
 
   const odlukaObracun = async (radnikId, obracun, nova) => {
     await supabase.from('saradnik_obracuni').update({ status: nova, updated_at: new Date().toISOString() }).eq('id', obracun.id)
-    fetch('/api/push-radnik', {
+    fetch('/api/push-user', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ radnik_id: radnikId, title: nova === 'prihvaceno' ? '✅ Obračun prihvaćen' : '❌ Obračun odbijen', body: `${obracun.id} — ${Number(obracun.ukupno).toFixed(2)}€` }),
+      body: JSON.stringify({ user_id: radnikId, title: nova === 'prihvaceno' ? '✅ Obračun prihvaćen' : '❌ Obračun odbijen', body: `${obracun.id} — ${Number(obracun.ukupno).toFixed(2)}€`, url: '/saradnik' }),
     }).catch(() => {})
     ucitajObracuni(radnikId)
   }

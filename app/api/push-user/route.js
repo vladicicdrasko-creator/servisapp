@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server'
 import webpush from 'web-push'
 import { createClient } from '@supabase/supabase-js'
-// Ovaj endpoint je javno dostupan (poziva ga forma za prijavu kvara).
-// Rizik je minimalan: napadač može poslati lažnu notifikaciju, ali ne može pristupiti podacima.
-// Zaštita: rate limiting u middleware.js (5 req/min po IP na /prijava rutama)
 
 webpush.setVapidDetails(
   process.env.VAPID_EMAIL,
@@ -16,24 +13,22 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
+// Javni endpoint — šalje web push konkretnom korisniku (po user_id)
 export async function POST(request) {
-  const { title, body, url } = await request.json()
+  const { user_id, title, body, url } = await request.json()
+  if (!user_id) return NextResponse.json({ error: 'user_id required' }, { status: 400 })
 
-  // Svi pretplatnici + lista radnika (saradnici/radnici NE dobijaju admin notifikacije)
-  const [{ data: subscriptions }, { data: radnici }] = await Promise.all([
-    supabase.from('push_subscriptions').select('subscription, user_id'),
-    supabase.from('radnici').select('id'),
-  ])
+  const { data: subscriptions } = await supabase
+    .from('push_subscriptions')
+    .select('subscription')
+    .eq('user_id', user_id)
 
   if (!subscriptions || subscriptions.length === 0) {
     return NextResponse.json({ success: false, message: 'Nema pretplatnika' })
   }
 
-  const radniciIds = new Set((radnici || []).map(r => r.id))
-  const adminSubs = subscriptions.filter(s => !radniciIds.has(s.user_id))
-
   const rezultati = await Promise.allSettled(
-    adminSubs.map(async (s) => {
+    subscriptions.map((s) => {
       const sub = JSON.parse(s.subscription)
       return webpush.sendNotification(sub, JSON.stringify({ title, body, url }))
     })

@@ -144,8 +144,8 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
   const odobriProcjenu = async () => {
     await supabase.from('prijave').update({ procjena_status: 'odobrena' }).eq('id', prijava.id)
     if (prijava.radnik_id) {
-      fetch('/api/push-radnik', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ radnik_id: prijava.radnik_id, title: '✅ Procjena odobrena', body: `${prijava.id} — možeš započeti posao` }) }).catch(() => {})
+      fetch('/api/push-user', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: prijava.radnik_id, title: '✅ Procjena odobrena', body: `${prijava.id} — možeš započeti posao`, url: '/saradnik' }) }).catch(() => {})
     }
     onAzuriraj(); onNazad()
   }
@@ -154,8 +154,8 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
     const radnikId = prijava.radnik_id
     await supabase.from('prijave').update({ status: 'nova', radnik_id: null, procjena: null, procjena_status: null }).eq('id', prijava.id)
     if (radnikId) {
-      fetch('/api/push-radnik', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ radnik_id: radnikId, title: '❌ Procjena odbijena', body: `${prijava.id} — nalog je vraćen` }) }).catch(() => {})
+      fetch('/api/push-user', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: radnikId, title: '❌ Procjena odbijena', body: `${prijava.id} — nalog je vraćen`, url: '/saradnik' }) }).catch(() => {})
     }
     onAzuriraj(); onNazad()
   }
