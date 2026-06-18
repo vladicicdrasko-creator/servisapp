@@ -557,6 +557,11 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
                   ↩ VRAĆEN — bez pristupa
                 </span>
               )}
+              {p.procjena_status === 'poslata' && (
+                <span style={{ background: '#F4A261', color: '#0D1B2A', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
+                  🕐 PROCJENA — čeka odobrenje
+                </span>
+              )}
             </div>
             {(p.ishod === 'neriješena' || p.status === 'vraceno') && p.napomena_radnika && (
               <div style={{ background: '#2A1A1A', border: '1px solid #E63946', borderRadius: 8, padding: '6px 10px', marginBottom: 6, fontSize: 12, color: '#E8B4B4' }}>
