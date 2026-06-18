@@ -458,7 +458,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
           <select value={radnikId} onChange={e => setRadnikId(e.target.value)}
             style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
             <option value=''>Dodijeli radniku (opcionalno)</option>
-            {radnici.filter(r => r.status !== 'deaktiviran' && r.uloga !== 'magacioner' && r.uloga !== 'saradnik').map(r => <option key={r.id} value={r.id}>{r.ime}</option>)}
+            {radnici.filter(r => r.status !== 'deaktiviran' && r.uloga !== 'magacioner').map(r => <option key={r.id} value={r.id}>{r.ime}{r.uloga === 'saradnik' ? ' (saradnik)' : ''}</option>)}
           </select>
 
           <div style={{ marginBottom: 12 }}>

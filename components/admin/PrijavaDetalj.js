@@ -141,6 +141,25 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
     setMontazaZahtjev(null)
   }
 
+  const odobriProcjenu = async () => {
+    await supabase.from('prijave').update({ procjena_status: 'odobrena' }).eq('id', prijava.id)
+    if (prijava.radnik_id) {
+      fetch('/api/push-radnik', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ radnik_id: prijava.radnik_id, title: '✅ Procjena odobrena', body: `${prijava.id} — možeš započeti posao` }) }).catch(() => {})
+    }
+    onAzuriraj(); onNazad()
+  }
+
+  const odbijProcjenu = async () => {
+    const radnikId = prijava.radnik_id
+    await supabase.from('prijave').update({ status: 'nova', radnik_id: null, procjena: null, procjena_status: null }).eq('id', prijava.id)
+    if (radnikId) {
+      fetch('/api/push-radnik', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ radnik_id: radnikId, title: '❌ Procjena odbijena', body: `${prijava.id} — nalog je vraćen` }) }).catch(() => {})
+    }
+    onAzuriraj(); onNazad()
+  }
+
   const stariPodaci = montazaZahtjev?.stari_podaci
     ? (typeof montazaZahtjev.stari_podaci === 'string'
         ? JSON.parse(montazaZahtjev.stari_podaci)
@@ -180,6 +199,24 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
           </div>
         )}
       </div>
+
+      {/* Procjena saradnika */}
+      {prijava.procjena_status === 'poslata' && (
+        <div style={{ ...s.card, marginBottom: 12, border: '1px solid #F4A261' }}>
+          <div style={{ color: '#F4A261', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>PROCJENA SARADNIKA — ČEKA ODOBRENJE</div>
+          <div style={{ background: '#0D1B2A', borderRadius: 8, padding: 12, marginBottom: 12, fontSize: 14 }}>{prijava.procjena}</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={odobriProcjenu} style={{ flex: 1, background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>✓ Odobri</button>
+            <button onClick={odbijProcjenu} style={{ background: 'transparent', border: '1px solid #E63946', color: '#E63946', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>Odbij (vrati u nove)</button>
+          </div>
+        </div>
+      )}
+      {prijava.procjena_status === 'odobrena' && prijava.procjena && (
+        <div style={{ ...s.card, marginBottom: 12 }}>
+          <div style={{ color: '#2A9D8F', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>PROCJENA SARADNIKA (odobrena)</div>
+          <div style={{ fontSize: 13, color: '#E8F4FD' }}>{prijava.procjena}</div>
+        </div>
+      )}
 
       {/* Montaža zahtjev */}
       {prijava.kategorija === 'montaza' && montazaZahtjev && (
@@ -262,7 +299,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
           <div style={{ marginBottom: 16 }}>
             <label style={s.label}>ODABERI RADNIKA</label>
             {radnici.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13 }}>Nema radnika.</div>}
-            {radnici.filter(r => r.uloga !== 'magacioner' && r.uloga !== 'saradnik').map(r => (
+            {radnici.filter(r => r.uloga !== 'magacioner').map(r => (
               <div key={r.id} onClick={() => setOdabraniRadnik(r.id)}
                 style={{
                   background: odabraniRadnik === r.id ? '#0F4C75' : '#0D1B2A',

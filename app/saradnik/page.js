@@ -9,7 +9,7 @@ export default function SaradnikPage() {
   const [ucitava, setUcitava] = useState(true)
   const [saradnik, setSaradnik] = useState(null)
   const [nemaPristup, setNemaPristup] = useState(false)
-  const [obracuni, setObracuni] = useState([])
+  const [nalozi, setNalozi] = useState([])
 
   // login
   const [email, setEmail] = useState('')
@@ -18,9 +18,11 @@ export default function SaradnikPage() {
   const [greska, setGreska] = useState(null)
   const [loginLoading, setLoginLoading] = useState(false)
 
-  // novi obračun
-  const [forma, setForma] = useState(false)
-  const [redovi, setRedovi] = useState([{ opis: '', cijena: '' }])
+  // po-nalog state
+  const [otvoren, setOtvoren] = useState(null)        // id naloga koji je proširen
+  const [procjenaUnos, setProcjenaUnos] = useState({})
+  const [radovi, setRadovi] = useState({})            // id -> [{opis,cijena}]
+  const [slike, setSlike] = useState({})              // id -> File
   const [slanje, setSlanje] = useState(false)
 
   useEffect(() => { provjeri() }, [])
@@ -31,13 +33,13 @@ export default function SaradnikPage() {
     const { data: r } = await supabase.from('radnici').select('*').eq('email', user.email).maybeSingle()
     if (!r || r.uloga !== 'saradnik') { setNemaPristup(true); setUcitava(false); return }
     setSaradnik(r)
-    await ucitajObracune(r.id)
+    await ucitajNaloge(r.id)
     setUcitava(false)
   }
 
-  const ucitajObracune = async (id) => {
-    const { data } = await supabase.from('saradnik_obracuni').select('*, saradnik_stavke(*)').eq('saradnik_id', id).order('created_at', { ascending: false })
-    setObracuni(data || [])
+  const ucitajNaloge = async (id) => {
+    const { data } = await supabase.from('prijave').select('*').eq('radnik_id', id).order('created_at', { ascending: false })
+    setNalozi(data || [])
   }
 
   const prijava = async () => {
@@ -50,39 +52,73 @@ export default function SaradnikPage() {
 
   const odjava = async () => { await supabase.auth.signOut(); window.location.reload() }
 
-  const ukupno = redovi.reduce((s, r) => s + (parseFloat(String(r.cijena).replace(',', '.')) || 0), 0)
-
-  const posalji = async () => {
-    const stavke = redovi
-      .map(r => ({ opis: r.opis.trim(), cijena: parseFloat(String(r.cijena).replace(',', '.')) || 0 }))
-      .filter(s => s.opis)
-    if (stavke.length === 0) return
+  // Faza 1 — pošalji procjenu
+  const posaljiProcjenu = async (n) => {
+    const tekst = (procjenaUnos[n.id] || '').trim()
+    if (!tekst) return
     setSlanje(true)
-    const id = 'OBR-' + Date.now().toString().slice(-6)
-    const uk = stavke.reduce((s, e) => s + e.cijena, 0)
-    await supabase.from('saradnik_obracuni').insert({ id, saradnik_id: saradnik.id, status: 'poslato', ukupno: uk })
-    await supabase.from('saradnik_stavke').insert(stavke.map(s => ({ obracun_id: id, opis: s.opis, cijena: s.cijena })))
-    fetch('/api/push', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: '💰 Novi obračun saradnika', body: `${saradnik.ime} — ${uk.toFixed(2)}€`, url: '/admin' })
-    }).catch(() => {})
-    setSlanje(false); setForma(false); setRedovi([{ opis: '', cijena: '' }])
-    ucitajObracune(saradnik.id)
+    await supabase.from('prijave').update({ procjena: tekst, procjena_status: 'poslata' }).eq('id', n.id)
+    fetch('/api/push', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: '🕐 Procjena saradnika', body: `${saradnik.ime} — ${n.lokal || n.id}`, url: '/admin' }) }).catch(() => {})
+    setSlanje(false); setOtvoren(null)
+    ucitajNaloge(saradnik.id)
   }
 
-  const statusBoja = { poslato: '#F4A261', prihvaceno: '#2A9D8F', odbijeno: '#E63946' }
-  const statusLabel = { poslato: 'Čeka odgovor', prihvaceno: 'Prihvaćeno', odbijeno: 'Odbijeno' }
+  // Faza 2 — završi nalog (obračun + slika)
+  const zavrsiNalog = async (n) => {
+    const lista = (radovi[n.id] || [])
+      .map(r => ({ opis: r.opis.trim(), cijena: parseFloat(String(r.cijena).replace(',', '.')) || 0 }))
+      .filter(s => s.opis)
+    if (lista.length === 0) return
+    setSlanje(true)
+    const uk = lista.reduce((s, e) => s + e.cijena, 0)
+
+    // slika
+    let slikaUrl = null
+    const fajl = slike[n.id]
+    if (fajl) {
+      const ext = fajl.name.split('.').pop()
+      const path = `saradnik/${n.id}.${ext}`
+      await supabase.storage.from('aparati-slike').upload(path, fajl, { upsert: true })
+      slikaUrl = supabase.storage.from('aparati-slike').getPublicUrl(path).data.publicUrl
+    }
+
+    // obračun
+    const obrId = 'OBR-' + Date.now().toString().slice(-6)
+    await supabase.from('saradnik_obracuni').insert({ id: obrId, saradnik_id: saradnik.id, nalog_id: n.id, status: 'poslato', ukupno: uk })
+    await supabase.from('saradnik_stavke').insert(lista.map(s => ({ obracun_id: obrId, opis: s.opis, cijena: s.cijena })))
+
+    // nalog riješen
+    await supabase.from('prijave').update({
+      status: 'riješena', ishod: 'riješena',
+      rijeseno_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+      ...(slikaUrl ? { slika_url: slikaUrl } : {}),
+    }).eq('id', n.id)
+
+    fetch('/api/push', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: '💰 Obračun saradnika', body: `${saradnik.ime} — ${uk.toFixed(2)}€`, url: '/admin' }) }).catch(() => {})
+
+    setSlanje(false); setOtvoren(null)
+    ucitajNaloge(saradnik.id)
+  }
+
+  const setRed = (id, i, polje, val) => setRadovi(prev => {
+    const arr = [...(prev[id] || [{ opis: '', cijena: '' }])]
+    arr[i] = { ...arr[i], [polje]: val }
+    return { ...prev, [id]: arr }
+  })
+  const dodajRed = (id) => setRadovi(prev => ({ ...prev, [id]: [...(prev[id] || [{ opis: '', cijena: '' }]), { opis: '', cijena: '' }] }))
 
   if (ucitava) return <div style={s.centar}><div style={{ color: '#7B96B2' }}>Učitavam...</div></div>
 
-  // Login ekran
+  // Login
   if (!saradnik && !nemaPristup) return (
     <div style={s.centar}>
       <div style={s.loginCard}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <div style={s.logo}>🔧</div>
           <h1 style={{ color: '#E8F4FD', fontSize: 20, fontWeight: 800, margin: 0 }}>ServisApp</h1>
-          <p style={{ color: '#7B96B2', fontSize: 13, margin: '4px 0 0' }}>Saradnik — obračuni</p>
+          <p style={{ color: '#7B96B2', fontSize: 13, margin: '4px 0 0' }}>Saradnik</p>
         </div>
         <label style={s.label}>EMAIL</label>
         <input value={email} onChange={e => setEmail(e.target.value)} placeholder="vas@email.com" style={s.input} />
@@ -93,9 +129,7 @@ export default function SaradnikPage() {
           <button onClick={() => setShowL(v => !v)} style={s.oko}>{showL ? '🙈' : '👁'}</button>
         </div>
         {greska && <div style={{ color: '#E63946', fontSize: 13, margin: '8px 0' }}>{greska}</div>}
-        <button onClick={prijava} disabled={loginLoading} style={{ ...s.btn, marginTop: 12 }}>
-          {loginLoading ? 'Prijava...' : 'Prijavi se'}
-        </button>
+        <button onClick={prijava} disabled={loginLoading} style={{ ...s.btn, marginTop: 12 }}>{loginLoading ? 'Prijava...' : 'Prijavi se'}</button>
       </div>
     </div>
   )
@@ -110,7 +144,9 @@ export default function SaradnikPage() {
     </div>
   )
 
-  // Glavni ekran
+  const aktivni = nalozi.filter(n => n.status !== 'riješena' && n.status !== 'zatvorena')
+  const gotovi = nalozi.filter(n => n.status === 'riješena' || n.status === 'zatvorena')
+
   return (
     <div style={s.wrapper}>
       <div style={s.header}>
@@ -122,61 +158,88 @@ export default function SaradnikPage() {
       </div>
 
       <div style={{ padding: 16, maxWidth: 600, margin: '0 auto' }}>
-        {!forma && (
-          <button onClick={() => setForma(true)} style={{ ...s.btn, marginBottom: 16 }}>+ Novi obračun</button>
-        )}
+        <div style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>MOJI NALOZI</div>
+        {aktivni.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13, marginBottom: 16 }}>Nema aktivnih naloga.</div>}
 
-        {forma && (
-          <div style={s.card}>
-            <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>NOVI OBRAČUN</h3>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 6, fontSize: 11, color: '#7B96B2' }}>
-              <div style={{ flex: 3 }}>Opis posla</div>
-              <div style={{ flex: 1 }}>Cijena €</div>
-              <div style={{ width: 28 }} />
+        {aktivni.map(n => {
+          const jeOtvoren = otvoren === n.id
+          return (
+            <div key={n.id} style={s.card}>
+              <div onClick={() => setOtvoren(jeOtvoren ? null : n.id)} style={{ cursor: 'pointer' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <span style={{ color: '#1B85B8', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
+                  {n.procjena_status === 'poslata' && <span style={{ background: '#F4A261', color: '#0D1B2A', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ČEKA ODOBRENJE</span>}
+                  {n.procjena_status === 'odobrena' && <span style={{ background: '#2A9D8F', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ODOBRENO — ZAVRŠI</span>}
+                  {!n.procjena_status && <span style={{ background: '#1B85B8', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>NOVO</span>}
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 15 }}>{n.lokal || n.vrsta || n.kategorija}</div>
+                {n.adresa && <div style={{ color: '#7B96B2', fontSize: 12 }}>📍 {n.adresa}</div>}
+              </div>
+
+              {jeOtvoren && (
+                <div style={{ marginTop: 12, borderTop: '1px solid #1E3A5A', paddingTop: 12 }}>
+                  <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>OPIS POSLA</div>
+                  <div style={{ fontSize: 14, marginBottom: 12 }}>{n.opis || '—'}</div>
+
+                  {/* FAZA 1 — procjena */}
+                  {!n.procjena_status && (
+                    <>
+                      <label style={s.label}>PROCJENA — kad otprilike možeš završiti?</label>
+                      <textarea value={procjenaUnos[n.id] || ''} onChange={e => setProcjenaUnos(prev => ({ ...prev, [n.id]: e.target.value }))}
+                        placeholder="npr. mogu sutra popodne / za 2-3 dana..." style={{ ...s.input, minHeight: 70, resize: 'none' }} />
+                      <button onClick={() => posaljiProcjenu(n)} disabled={slanje} style={{ ...s.btn, marginTop: 10 }}>{slanje ? 'Slanje...' : 'Pošalji procjenu adminu'}</button>
+                    </>
+                  )}
+
+                  {/* FAZA 1 — čeka */}
+                  {n.procjena_status === 'poslata' && (
+                    <div style={{ background: '#0D1B2A', borderRadius: 8, padding: 12 }}>
+                      <div style={{ color: '#F4A261', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>Procjena poslata — čeka odobrenje</div>
+                      <div style={{ fontSize: 13, color: '#E8F4FD' }}>{n.procjena}</div>
+                    </div>
+                  )}
+
+                  {/* FAZA 2 — rad + obračun */}
+                  {n.procjena_status === 'odobrena' && (
+                    <>
+                      <div style={{ color: '#2A9D8F', fontSize: 12, marginBottom: 10 }}>✓ Procjena odobrena — unesi obračun i sliku.</div>
+                      <div style={{ display: 'flex', gap: 8, marginBottom: 6, fontSize: 11, color: '#7B96B2' }}>
+                        <div style={{ flex: 3 }}>Opis</div><div style={{ flex: 1 }}>Cijena €</div>
+                      </div>
+                      {(radovi[n.id] || [{ opis: '', cijena: '' }]).map((r, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                          <input value={r.opis} onChange={e => setRed(n.id, i, 'opis', e.target.value)} placeholder="Opis..." style={{ ...s.input, flex: 3, margin: 0 }} />
+                          <input value={r.cijena} onChange={e => setRed(n.id, i, 'cijena', e.target.value)} placeholder="0" inputMode="decimal" style={{ ...s.input, flex: 1, margin: 0 }} />
+                        </div>
+                      ))}
+                      <button onClick={() => dodajRed(n.id)} style={{ background: 'none', border: 'none', color: '#1B85B8', cursor: 'pointer', fontSize: 13, padding: '4px 0' }}>+ Dodaj red</button>
+                      <div style={{ marginTop: 8 }}>
+                        <label style={s.label}>SLIKA (opciono)</label>
+                        <input type="file" accept="image/*" onChange={e => setSlike(prev => ({ ...prev, [n.id]: e.target.files[0] }))} style={{ color: '#7B96B2', fontSize: 12 }} />
+                      </div>
+                      <button onClick={() => zavrsiNalog(n)} disabled={slanje} style={{ ...s.btn, marginTop: 12 }}>{slanje ? 'Slanje...' : 'Završi i pošalji obračun'}</button>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
-            {redovi.map((r, i) => (
-              <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
-                <input value={r.opis} onChange={e => setRedovi(redovi.map((x, j) => j === i ? { ...x, opis: e.target.value } : x))}
-                  placeholder="Opis..." style={{ ...s.input, flex: 3, margin: 0 }} />
-                <input value={r.cijena} onChange={e => setRedovi(redovi.map((x, j) => j === i ? { ...x, cijena: e.target.value } : x))}
-                  placeholder="0" inputMode="decimal" style={{ ...s.input, flex: 1, margin: 0 }} />
-                <button onClick={() => redovi.length > 1 && setRedovi(redovi.filter((_, j) => j !== i))}
-                  style={{ width: 28, background: 'none', border: 'none', color: '#E63946', cursor: 'pointer', fontSize: 18 }}>×</button>
+          )
+        })}
+
+        {gotovi.length > 0 && (
+          <>
+            <div style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700, letterSpacing: 1, margin: '16px 0 8px' }}>ZAVRŠENI</div>
+            {gotovi.map(n => (
+              <div key={n.id} style={{ ...s.card, opacity: 0.7 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#1B85B8', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
+                  <span style={{ background: '#2A9D8F', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ZAVRŠENO</span>
+                </div>
+                <div style={{ fontWeight: 600, fontSize: 14 }}>{n.lokal || n.vrsta || n.kategorija}</div>
               </div>
             ))}
-            <button onClick={() => setRedovi([...redovi, { opis: '', cijena: '' }])}
-              style={{ background: 'none', border: 'none', color: '#1B85B8', cursor: 'pointer', fontSize: 13, padding: '4px 0' }}>+ Dodaj red</button>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #1E3A5A', paddingTop: 10, marginTop: 6 }}>
-              <span style={{ color: '#7B96B2', fontSize: 12, fontWeight: 700 }}>UKUPNO</span>
-              <span style={{ color: '#E8F4FD', fontSize: 18, fontWeight: 800 }}>{ukupno.toFixed(2)}€</span>
-            </div>
-            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-              <button onClick={posalji} disabled={slanje} style={{ ...s.btn, flex: 1 }}>{slanje ? 'Slanje...' : 'Pošalji adminu'}</button>
-              <button onClick={() => { setForma(false); setRedovi([{ opis: '', cijena: '' }]) }} style={s.odustani}>Odustani</button>
-            </div>
-          </div>
+          </>
         )}
-
-        <div style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700, letterSpacing: 1, margin: '8px 0' }}>MOJI OBRAČUNI</div>
-        {obracuni.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13 }}>Nema obračuna.</div>}
-        {obracuni.map(o => (
-          <div key={o.id} style={{ ...s.card, borderColor: statusBoja[o.status] || '#1E3A5A' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <span style={{ color: '#1B85B8', fontSize: 12, fontWeight: 700 }}>{o.id}</span>
-              <span style={{ background: statusBoja[o.status], color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>{statusLabel[o.status] || o.status}</span>
-            </div>
-            {(o.saradnik_stavke || []).map((st, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 13 }}>
-                <span style={{ color: '#E8F4FD' }}>{st.opis}</span>
-                <span style={{ color: '#7B96B2' }}>{Number(st.cijena).toFixed(2)}€</span>
-              </div>
-            ))}
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #1E3A5A', marginTop: 6, paddingTop: 6 }}>
-              <span style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700 }}>UKUPNO</span>
-              <span style={{ color: '#E8F4FD', fontSize: 15, fontWeight: 800 }}>{Number(o.ukupno).toFixed(2)}€</span>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   )
@@ -188,11 +251,10 @@ const s = {
   header: { background: '#0F4C75', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
   loginCard: { background: '#132338', border: '1px solid #1E3A5A', borderRadius: 16, padding: 32, width: '100%', maxWidth: 380 },
   logo: { width: 56, height: 56, background: '#1B85B8', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: 26 },
-  label: { color: '#7B96B2', fontSize: 12, display: 'block', marginBottom: 6, marginTop: 10 },
+  label: { color: '#7B96B2', fontSize: 12, display: 'block', marginBottom: 6, marginTop: 4 },
   input: { width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '10px 12px', fontSize: 14, outline: 'none', boxSizing: 'border-box' },
   oko: { position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#7B96B2', cursor: 'pointer', fontSize: 16 },
   btn: { width: '100%', background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 10, padding: 13, fontSize: 15, fontWeight: 700, cursor: 'pointer' },
-  odustani: { background: 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 10, padding: '10px 16px', cursor: 'pointer' },
   odjavaBtn: { background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 13 },
   card: { background: '#132338', border: '1px solid #1E3A5A', borderRadius: 12, padding: 16, marginBottom: 12 },
 }
