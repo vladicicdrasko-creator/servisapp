@@ -305,13 +305,13 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                   </div>
                   <button onClick={snimiModel} style={{ background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: '6px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 13, marginBottom: 16 }}>Snimi osnovne podatke</button>
 
-                  <div style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>CHECKLISTE PO KATEGORIJI KVARA</div>
+                  <div style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>SAVJETI / STAVKE PO KATEGORIJI KVARA</div>
                   {KATEGORIJE.map(kat => (
                     <div key={kat} style={{ marginBottom: 12, background: '#132338', borderRadius: 8, padding: 10 }}>
                       <div style={{ color: '#1B85B8', fontSize: 12, fontWeight: 700, marginBottom: 6 }}>{kat}</div>
                       {(modelCheckliste[kat]?.stavke || []).map((stavka, idx) => (
                         <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                          <span style={{ color: '#7B96B2', fontSize: 12 }}>☐</span>
+                          <span style={{ color: '#1B85B8', fontSize: 14 }}>•</span>
                           <span style={{ flex: 1, color: '#E8F4FD', fontSize: 13 }}>{stavka}</span>
                           <button onClick={() => obrisiStavku(kat, idx)} style={{ background: 'none', border: 'none', color: '#E63946', cursor: 'pointer', fontSize: 14, padding: '0 4px' }}>×</button>
                         </div>
