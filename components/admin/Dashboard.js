@@ -322,6 +322,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
       ...red,
       opis: napomena || vrstaLabel,
       kategorija: tip,
+      vrsta: (jeGeneralna || jeDrugo) ? vrstaLabel : null,
       status: radnikId ? 'dodijeljena' : 'nova',
       radnik_id: radnikId || null,
       hitnost: 'srednja',
@@ -527,7 +528,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <span style={{ color: '#1B85B8', fontWeight: 700, fontSize: 12 }}>{p.id}</span>
               <div style={{ display: 'flex', gap: 6 }}>
-                <span style={{ background: t.bg, color: t.color || '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20 }}>{t.label}</span>
+                <span style={{ background: t.bg, color: t.color || '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20 }}>{p.vrsta ? p.vrsta.toUpperCase() : t.label}</span>
                 <StatusBadge status={p.status} />
               </div>
             </div>
