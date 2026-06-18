@@ -214,7 +214,11 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
   const [loading, setLoading] = useState(false)
   const [poruka, setPoruka] = useState(null)
 
-  const danas = new Date().toISOString().split('T')[0]
+  const lokalniDatum = (iso) => {
+    const dt = new Date(iso)
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
+  }
+  const danas = lokalniDatum(new Date())
 
   // Samo aktivni aparati (deaktivirani se ne nude za nove naloge)
   const aparatiAktivni = aparati.filter(a => a.status !== 'neaktivan')
@@ -230,7 +234,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
  const [filterTip, setFilterTip] = useState('svi')
 
   const prijaveF = prijave.filter(p => {
-    const d = (p.zakazano_za || new Date(p.created_at).toISOString().split('T')[0])
+    const d = p.zakazano_za ? p.zakazano_za.slice(0, 10) : lokalniDatum(p.created_at)
     if (filterDatum === 'danas' && d !== danas) return false
     if (filterDatum === 'datum' && d !== datum) return false
     if (filterDatum === 'danas' && p.status === 'riješena') return false
