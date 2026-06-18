@@ -11,7 +11,11 @@ export default function Kalendar({ prijave = [], odabraniDan, onOdaberi }) {
   const [godina, setGodina] = useState(danas.getFullYear())
   const [mjesec, setMjesec] = useState(danas.getMonth())
 
-  const danasStr = danas.toISOString().split('T')[0]
+  const lokalniDatum = (iso) => {
+    const dt = new Date(iso)
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
+  }
+  const danasStr = lokalniDatum(danas)
 
   const prviDanMjeseca = new Date(godina, mjesec, 1)
   // Ponedjeljak = 0
@@ -22,7 +26,11 @@ export default function Kalendar({ prijave = [], odabraniDan, onOdaberi }) {
 
   const prijavePoDatetu = {}
   prijave.forEach(p => {
-    const d = p.zakazano_za || new Date(p.created_at).toISOString().split('T')[0]
+    const rijesen = p.status === 'riješena' || p.status === 'zatvorena'
+    // Riješene idu na dan kad su riješene (updated_at), aktivne na zakazano/kreirano
+    const d = rijesen
+      ? lokalniDatum(p.updated_at || p.created_at)
+      : (p.zakazano_za ? p.zakazano_za.slice(0, 10) : lokalniDatum(p.created_at))
     if (!prijavePoDatetu[d]) prijavePoDatetu[d] = []
     prijavePoDatetu[d].push(p)
   })

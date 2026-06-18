@@ -234,7 +234,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
  const [filterTip, setFilterTip] = useState('svi')
 
   const prijaveF = prijave.filter(p => {
-    // RIJEŠENO filter — koristi datum završetka (updated_at)
+    // RIJEŠENO filter — po danu kad je riješeno (updated_at)
     if (filterTip === 'rijesena') {
       if (!(p.status === 'riješena' || p.status === 'zatvorena')) return false
       const dr = lokalniDatum(p.updated_at || p.created_at)
@@ -572,7 +572,11 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ color: '#7B96B2', fontSize: 11 }}>{p.adresa}</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ color: '#7B96B2', fontSize: 11 }}>{new Date(p.created_at).toLocaleString('bs-BA')}</span>
+                <span style={{ color: '#7B96B2', fontSize: 11 }}>
+                  {(p.status === 'riješena' || p.status === 'zatvorena')
+                    ? `Riješeno: ${new Date(p.updated_at || p.created_at).toLocaleString('bs-BA')}`
+                    : new Date(p.created_at).toLocaleString('bs-BA')}
+                </span>
                 {p.status !== 'riješena' && p.status !== 'zatvorena' && (
                   <button onClick={(e) => zatvoriNalog(e, p.id)} style={{
                     background: 'transparent', border: '1px solid #2A9D8F',
