@@ -224,11 +224,12 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     ucitaj()
   }
 
-  const preuzmiQR = () => {
-    const link = document.createElement('a')
-    link.href = qrUrl
-    link.download = `QR-${odabrani.id}.png`
-    link.click()
+  const preuzmiQR = async () => {
+    const { preuzmiQrPdf } = await import('../../lib/qrPdf')
+    await preuzmiQrPdf(qrUrl, odabrani.naziv || odabrani.lokal || 'Aparat',
+      [odabrani.lokal, odabrani.vlasnik, odabrani.adresa,
+       odabrani.serijski_broj ? `SN: ${odabrani.serijski_broj}` : null, odabrani.id],
+      `QR-${odabrani.id}.pdf`)
   }
 
   if (loading) return <div style={{ color: '#7B96B2', padding: 40, textAlign: 'center' }}>Učitavam...</div>
@@ -263,14 +264,14 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       {pokaziModele && (
         <div style={{ background: '#1A2E45', border: '1px solid #1E3A5A', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>MODELI APARATA</h3>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
             <input value={noviModel.naziv} onChange={e => setNoviModel({ ...noviModel, naziv: e.target.value })}
               placeholder="Naziv modela *"
-              style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+              style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <input value={noviModel.proizvodjac} onChange={e => setNoviModel({ ...noviModel, proizvodjac: e.target.value })}
               placeholder="Proizvođač"
-              style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
-            <button onClick={dodajModel} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600 }}>+ Dodaj</button>
+              style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <button onClick={dodajModel} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>+ Dodaj</button>
           </div>
           {modeli.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13 }}>Nema modela.</div>}
           {modeli.map(m => (

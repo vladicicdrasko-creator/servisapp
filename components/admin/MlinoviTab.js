@@ -117,11 +117,12 @@ export default function MlinoviTab() {
     setQrUrl(qr)
   }
 
-  const preuzmiQR = () => {
-    const link = document.createElement('a')
-    link.href = qrUrl
-    link.download = `QR-${odabrani.id}.png`
-    link.click()
+  const preuzmiQR = async () => {
+    const { preuzmiQrPdf } = await import('../../lib/qrPdf')
+    await preuzmiQrPdf(qrUrl, odabrani.model || 'Mlin',
+      [odabrani.marka, odabrani.lokal,
+       odabrani.serijski_broj ? `SN: ${odabrani.serijski_broj}` : null, odabrani.id],
+      `QR-${odabrani.id}.pdf`)
   }
 
   const uploadSlika = async (fajl, id) => {
@@ -190,9 +191,9 @@ export default function MlinoviTab() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
         <h2 style={{ fontSize: 18, margin: 0 }}>Mlinovi ({mlinovi.filter(m => m.status !== 'neaktivan').length})</h2>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button onClick={exportExcel} style={{ background: 'transparent', border: '1px solid #2A9D8F', color: '#2A9D8F', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>↓ Export</button>
           <button onClick={() => { setPokaziModele(!pokaziModele); setForma(false) }} style={{ background: pokaziModele ? '#1E3A5A' : 'transparent', border: '1px solid #1E3A5A', color: '#7B96B2', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>☰ Modeli</button>
           <button onClick={() => { setForma(!forma); setPokaziModele(false) }} style={{ background: '#1B85B8', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>
@@ -206,10 +207,10 @@ export default function MlinoviTab() {
       {pokaziModele && (
         <div style={{ background: '#1A2E45', border: '1px solid #1E3A5A', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>MODELI MLINOVA</h3>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-            <input value={noviModel.naziv} onChange={e => setNoviModel({ ...noviModel, naziv: e.target.value })} placeholder="Naziv modela *" style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
-            <input value={noviModel.proizvodjac} onChange={e => setNoviModel({ ...noviModel, proizvodjac: e.target.value })} placeholder="Proizvođač" style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
-            <button onClick={dodajModel} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600 }}>+ Dodaj</button>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+            <input value={noviModel.naziv} onChange={e => setNoviModel({ ...noviModel, naziv: e.target.value })} placeholder="Naziv modela *" style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <input value={noviModel.proizvodjac} onChange={e => setNoviModel({ ...noviModel, proizvodjac: e.target.value })} placeholder="Proizvođač" style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <button onClick={dodajModel} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>+ Dodaj</button>
           </div>
           {modeli.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13 }}>Nema modela.</div>}
           {modeli.map(m => (
@@ -222,9 +223,9 @@ export default function MlinoviTab() {
               </div>
               {editModel?.id === m.id && (
                 <div style={{ background: '#0D1B2A', borderRadius: 8, padding: 14, margin: '8px 0 12px' }}>
-                  <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                    <input value={editModel.naziv} onChange={e => setEditModel({ ...editModel, naziv: e.target.value })} placeholder="Naziv" style={{ flex: 1, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
-                    <input value={editModel.proizvodjac || ''} onChange={e => setEditModel({ ...editModel, proizvodjac: e.target.value })} placeholder="Proizvođač" style={{ flex: 1, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                    <input value={editModel.naziv} onChange={e => setEditModel({ ...editModel, naziv: e.target.value })} placeholder="Naziv" style={{ flex: '1 1 130px', minWidth: 0, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
+                    <input value={editModel.proizvodjac || ''} onChange={e => setEditModel({ ...editModel, proizvodjac: e.target.value })} placeholder="Proizvođač" style={{ flex: '1 1 130px', minWidth: 0, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
                   </div>
                   <textarea value={editModel.napomena || ''} onChange={e => setEditModel({ ...editModel, napomena: e.target.value })} placeholder="Opšte napomene za ovaj model" rows={2} style={{ width: '100%', background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px', resize: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>

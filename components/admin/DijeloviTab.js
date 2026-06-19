@@ -39,11 +39,11 @@ export default function DijeloviTab() {
     setQrUrl(qr)
   }
 
-  const preuzmiQR = () => {
-    const link = document.createElement('a')
-    link.href = qrUrl
-    link.download = `QR-${odabrani.id}.png`
-    link.click()
+  const preuzmiQR = async () => {
+    const { preuzmiQrPdf } = await import('../../lib/qrPdf')
+    await preuzmiQrPdf(qrUrl, odabrani.naziv || 'Dio',
+      ['Dio za magacin', `Jedinica: ${odabrani.jedinica || 'kom'}`, odabrani.id],
+      `QR-${odabrani.id}.pdf`)
   }
 
   const dodaj = async () => {
