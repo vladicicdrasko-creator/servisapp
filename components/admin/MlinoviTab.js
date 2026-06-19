@@ -117,12 +117,12 @@ export default function MlinoviTab() {
     setQrUrl(qr)
   }
 
-  const preuzmiQR = async () => {
-    const { preuzmiQrPdf } = await import('../../lib/qrPdf')
-    await preuzmiQrPdf(qrUrl, odabrani.model || 'Mlin',
-      [odabrani.marka, odabrani.lokal,
-       odabrani.serijski_broj ? `SN: ${odabrani.serijski_broj}` : null, odabrani.id],
-      `QR-${odabrani.id}.pdf`)
+  const preuzmiQR = () => {
+    const ime = [odabrani.model, odabrani.lokal, odabrani.id].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g, ' ')
+    const link = document.createElement('a')
+    link.href = qrUrl
+    link.download = `${ime}.png`
+    link.click()
   }
 
   const uploadSlika = async (fajl, id) => {

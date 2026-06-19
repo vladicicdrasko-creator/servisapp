@@ -224,12 +224,12 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     ucitaj()
   }
 
-  const preuzmiQR = async () => {
-    const { preuzmiQrPdf } = await import('../../lib/qrPdf')
-    await preuzmiQrPdf(qrUrl, odabrani.naziv || odabrani.lokal || 'Aparat',
-      [odabrani.lokal, odabrani.vlasnik, odabrani.adresa,
-       odabrani.serijski_broj ? `SN: ${odabrani.serijski_broj}` : null, odabrani.id],
-      `QR-${odabrani.id}.pdf`)
+  const preuzmiQR = () => {
+    const ime = [odabrani.naziv, odabrani.lokal, odabrani.id].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g, ' ')
+    const link = document.createElement('a')
+    link.href = qrUrl
+    link.download = `${ime}.png`
+    link.click()
   }
 
   if (loading) return <div style={{ color: '#7B96B2', padding: 40, textAlign: 'center' }}>Učitavam...</div>
