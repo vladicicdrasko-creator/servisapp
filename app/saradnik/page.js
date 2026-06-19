@@ -105,7 +105,7 @@ export default function SaradnikPage() {
 
     // obračun
     const obrId = 'OBR-' + Date.now().toString().slice(-6)
-    await supabase.from('saradnik_obracuni').insert({ id: obrId, saradnik_id: saradnik.id, nalog_id: n.id, status: 'poslato', ukupno: uk })
+    await supabase.from('saradnik_obracuni').insert({ id: obrId, saradnik_id: saradnik.id, nalog_id: n.id, status: 'zavrseno', ukupno: uk })
     await supabase.from('saradnik_stavke').insert(lista.map(s => ({ obracun_id: obrId, opis: s.opis, cijena: s.cijena })))
 
     // nalog riješen

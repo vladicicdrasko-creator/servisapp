@@ -1066,12 +1066,6 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
                         <span style={{ fontSize: 11, color: '#7B96B2', fontWeight: 700 }}>UKUPNO</span>
                         <span style={{ fontSize: 15, color: '#E8F4FD', fontWeight: 800 }}>{Number(o.ukupno).toFixed(2)}€</span>
                       </div>
-                      {o.status === 'poslato' && (
-                        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                          <button onClick={() => odlukaObracun(r.id, o, 'prihvaceno')} style={{ flex: 1, background: '#2A9D8F', border: 'none', color: '#fff', borderRadius: 6, padding: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>✓ Prihvati</button>
-                          <button onClick={() => odlukaObracun(r.id, o, 'odbijeno')} style={{ background: 'transparent', border: '1px solid #E63946', color: '#E63946', borderRadius: 6, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>Odbij</button>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </>
