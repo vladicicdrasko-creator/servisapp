@@ -27,6 +27,18 @@ export default function SaradnikPage() {
 
   useEffect(() => { provjeri() }, [])
 
+  // Auto-osvježavanje kad je saradnik prijavljen (realtime + rezerva 20s)
+  useEffect(() => {
+    if (!saradnik) return
+    const kanal = supabase
+      .channel('saradnik-nalozi')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'prijave', filter: `radnik_id=eq.${saradnik.id}` },
+        () => ucitajNaloge(saradnik.id))
+      .subscribe()
+    const interval = setInterval(() => ucitajNaloge(saradnik.id), 20000)
+    return () => { supabase.removeChannel(kanal); clearInterval(interval) }
+  }, [saradnik])
+
   const provjeri = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setUcitava(false); return }

@@ -343,7 +343,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
       if (odabraniR?.uloga === 'saradnik') {
         // Saradnik je web → web push
         fetch('/api/push-user', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: radnikId, title: '📋 Novi nalog', body }) }).catch(() => {})
+          body: JSON.stringify({ user_id: radnikId, title: '📋 Novi nalog', body, url: '/saradnik' }) }).catch(() => {})
       } else {
         fetch('/api/push-radnik', { method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ radnik_id: radnikId, title: 'Novi zadatak', body }) }).catch(() => {})
