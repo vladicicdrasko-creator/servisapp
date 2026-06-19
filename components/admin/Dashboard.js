@@ -25,17 +25,15 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      const reg = await navigator.serviceWorker.ready
-      const sub = await reg.pushManager.getSubscription()
-      if (sub) {
-        await sub.unsubscribe()
-      }
-      // Briše SVE subscriptione za ovog usera (svi uređaji)
+      const reg = await navigator.serviceWorker.getRegistration()
+      const sub = reg ? await reg.pushManager.getSubscription() : null
+      // Briše pretplatu OVOG uređaja (po endpointu) + sve za usera
       await fetch('/api/push-subscribe', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
+        body: JSON.stringify({ endpoint: sub?.endpoint })
       })
+      if (sub) await sub.unsubscribe()
     } catch (_) {}
     await supabaseBrowser.auth.signOut({ scope: 'local' })
     window.location.href = '/admin/login'

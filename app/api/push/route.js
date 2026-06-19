@@ -30,7 +30,8 @@ export async function POST(request) {
   }
 
   const radniciIds = new Set((radnici || []).map(r => r.id))
-  const adminSubs = subscriptions.filter(s => !radniciIds.has(s.user_id))
+  // Samo pravi admini: imaju user_id i NISU u radnici tabeli (isključuje stare null pretplate i radnike/saradnike)
+  const adminSubs = subscriptions.filter(s => s.user_id && !radniciIds.has(s.user_id))
 
   const rezultati = await Promise.allSettled(
     adminSubs.map(async (s) => {

@@ -70,7 +70,19 @@ export default function SaradnikPage() {
     setUcitava(true); provjeri()
   }
 
-  const odjava = async () => { await supabase.auth.signOut(); window.location.reload() }
+  const odjava = async () => {
+    try {
+      const reg = await navigator.serviceWorker.getRegistration()
+      const sub = reg ? await reg.pushManager.getSubscription() : null
+      await fetch('/api/push-subscribe', {
+        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: sub?.endpoint }),
+      })
+      if (sub) await sub.unsubscribe()
+    } catch (_) {}
+    await supabase.auth.signOut()
+    window.location.reload()
+  }
 
   // Faza 1 — pošalji procjenu
   const posaljiProcjenu = async (n) => {
