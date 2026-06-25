@@ -52,7 +52,7 @@ export default function DijeloviTab() {
     const id = 'DIO-' + Date.now().toString().slice(-6)
     const { error } = await supabase.from('dijelovi').insert({
       id, naziv: noviDio.naziv,
-      kolicina: parseInt(noviDio.kolicina) || 0,
+      kolicina: Math.max(0, parseInt(noviDio.kolicina) || 0),
       jedinica: noviDio.jedinica || 'kom',
       status: 'aktivan',
     })
@@ -68,7 +68,7 @@ export default function DijeloviTab() {
   const snimiEdit = async () => {
     await supabase.from('dijelovi').update({
       naziv: editDio.naziv,
-      kolicina: parseInt(editDio.kolicina) || 0,
+      kolicina: Math.max(0, parseInt(editDio.kolicina) || 0),
       jedinica: editDio.jedinica || 'kom',
     }).eq('id', editDio.id)
     setEditDio(null)

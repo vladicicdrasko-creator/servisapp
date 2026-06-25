@@ -111,7 +111,7 @@ export default function SaradnikPage() {
   // Faza 2 — završi nalog (obračun + slika)
   const zavrsiNalog = async (n) => {
     const lista = (radovi[n.id] || [])
-      .map(r => ({ opis: r.opis.trim(), cijena: parseFloat(String(r.cijena).replace(',', '.')) || 0 }))
+      .map(r => ({ opis: r.opis.trim(), cijena: Math.max(0, parseFloat(String(r.cijena).replace(',', '.')) || 0) }))
       .filter(s => s.opis)
     if (lista.length === 0) return
     setSlanje(true)

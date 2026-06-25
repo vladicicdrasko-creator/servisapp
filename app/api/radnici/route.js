@@ -19,6 +19,8 @@ export async function POST(request) {
   const user = await provjeriAdmina()
   if (!user) return NextResponse.json({ error: 'Neautorizovano' }, { status: 401 })
   const { ime, telefon, email } = await request.json()
+  if (!ime || !ime.trim()) return NextResponse.json({ error: 'Ime je obavezno' }, { status: 400 })
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return NextResponse.json({ error: 'Neispravan email' }, { status: 400 })
 
   const { data: authData, error: authError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
     redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://servisapp-pi.vercel.app'}/radnik/postavi-lozinku`,

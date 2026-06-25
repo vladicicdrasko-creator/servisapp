@@ -794,8 +794,10 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
   const zatvori = () => { setForma(null); setPoruka(null) }
 
   const dodajRadnika = async () => {
+    if (!ime.trim()) { setPoruka({ tip: 'greska', tekst: 'Unesi ime radnika.' }); return }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setPoruka({ tip: 'greska', tekst: 'Unesi ispravan email.' }); return }
     setLoading(true)
-    const res = await fetch('/api/radnici', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ime, telefon, email }) })
+    const res = await fetch('/api/radnici', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ime: ime.trim(), telefon: telefon.trim(), email: email.trim() }) })
     const data = await res.json()
     setLoading(false)
     if (data.error) { setPoruka({ tip: 'greska', tekst: data.error }); return }
@@ -805,6 +807,7 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
   }
 
   const editujRadnika = async () => {
+    if (!ime.trim()) { setPoruka({ tip: 'greska', tekst: 'Unesi ime radnika.' }); return }
     setLoading(true)
     const res = await fetch('/api/radnici', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: forma, ime, telefon }) })
     const data = await res.json()
