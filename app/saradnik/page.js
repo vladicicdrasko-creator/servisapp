@@ -101,11 +101,17 @@ export default function SaradnikPage() {
     const tekst = (procjenaUnos[n.id] || '').trim()
     if (!tekst) return
     setSlanje(true)
-    await supabase.from('prijave').update({ procjena: tekst, procjena_status: 'poslata' }).eq('id', n.id)
-    fetch('/api/push', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: '🕐 Procjena saradnika', body: `${saradnik.ime} — ${n.lokal || n.id}`, url: '/admin' }) }).catch(() => {})
-    setSlanje(false); setOtvoren(null)
-    ucitajNaloge(saradnik.id)
+    try {
+      await supabase.from('prijave').update({ procjena: tekst, procjena_status: 'poslata' }).eq('id', n.id)
+      fetch('/api/push', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: '🕐 Procjena saradnika', body: `${saradnik.ime} — ${n.lokal || n.id}`, url: '/admin' }) }).catch(() => {})
+      setOtvoren(null)
+      ucitajNaloge(saradnik.id)
+    } catch (e) {
+      alert('Greška: ' + (e.message || e))
+    } finally {
+      setSlanje(false)
+    }
   }
 
   // Faza 2 — završi nalog (obračun + slika)
@@ -116,34 +122,39 @@ export default function SaradnikPage() {
     if (lista.length === 0) return
     setSlanje(true)
     const uk = lista.reduce((s, e) => s + e.cijena, 0)
+    try {
+      // slika
+      let slikaUrl = null
+      const fajl = slike[n.id]
+      if (fajl) {
+        const ext = fajl.name.split('.').pop()
+        const path = `saradnik/${n.id}.${ext}`
+        await supabase.storage.from('aparati-slike').upload(path, fajl, { upsert: true })
+        slikaUrl = supabase.storage.from('aparati-slike').getPublicUrl(path).data.publicUrl
+      }
 
-    // slika
-    let slikaUrl = null
-    const fajl = slike[n.id]
-    if (fajl) {
-      const ext = fajl.name.split('.').pop()
-      const path = `saradnik/${n.id}.${ext}`
-      await supabase.storage.from('aparati-slike').upload(path, fajl, { upsert: true })
-      slikaUrl = supabase.storage.from('aparati-slike').getPublicUrl(path).data.publicUrl
+      // obračun
+      const obrId = 'OBR-' + Date.now().toString().slice(-6)
+      await supabase.from('saradnik_obracuni').insert({ id: obrId, saradnik_id: saradnik.id, nalog_id: n.id, status: 'zavrseno', ukupno: uk })
+      await supabase.from('saradnik_stavke').insert(lista.map(s => ({ obracun_id: obrId, opis: s.opis, cijena: s.cijena })))
+
+      // nalog riješen
+      await supabase.from('prijave').update({
+        status: 'riješena', ishod: 'riješena',
+        rijeseno_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+        ...(slikaUrl ? { slika_url: slikaUrl } : {}),
+      }).eq('id', n.id)
+
+      fetch('/api/push', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: '💰 Obračun saradnika', body: `${saradnik.ime} — ${uk.toFixed(2)}€`, url: '/admin' }) }).catch(() => {})
+
+      setOtvoren(null)
+      ucitajNaloge(saradnik.id)
+    } catch (e) {
+      alert('Greška: ' + (e.message || e))
+    } finally {
+      setSlanje(false)
     }
-
-    // obračun
-    const obrId = 'OBR-' + Date.now().toString().slice(-6)
-    await supabase.from('saradnik_obracuni').insert({ id: obrId, saradnik_id: saradnik.id, nalog_id: n.id, status: 'zavrseno', ukupno: uk })
-    await supabase.from('saradnik_stavke').insert(lista.map(s => ({ obracun_id: obrId, opis: s.opis, cijena: s.cijena })))
-
-    // nalog riješen
-    await supabase.from('prijave').update({
-      status: 'riješena', ishod: 'riješena',
-      rijeseno_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-      ...(slikaUrl ? { slika_url: slikaUrl } : {}),
-    }).eq('id', n.id)
-
-    fetch('/api/push', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: '💰 Obračun saradnika', body: `${saradnik.ime} — ${uk.toFixed(2)}€`, url: '/admin' }) }).catch(() => {})
-
-    setSlanje(false); setOtvoren(null)
-    ucitajNaloge(saradnik.id)
   }
 
   const setRed = (id, i, polje, val) => setRadovi(prev => {

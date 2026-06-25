@@ -19,7 +19,11 @@ export async function POST(request) {
 
   const subscription = await request.json()
 
-  await supabase.from('push_subscriptions').upsert({
+  // Spriječi duplikate: obriši postojeću pretplatu za ovaj endpoint pa ubaci svježu
+  if (subscription.endpoint) {
+    await supabase.from('push_subscriptions').delete().eq('endpoint', subscription.endpoint)
+  }
+  await supabase.from('push_subscriptions').insert({
     endpoint: subscription.endpoint,
     subscription: JSON.stringify(subscription),
     user_id: user.id,
