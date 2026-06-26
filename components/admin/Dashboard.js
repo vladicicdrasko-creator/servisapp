@@ -697,6 +697,7 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
   const [radnikStanje, setRadnikStanje] = useState({})
   const [radnikDopune, setRadnikDopune] = useState({})
   const [radnikObracuni, setRadnikObracuni] = useState({})
+  const [prenosiCeka, setPrenosiCeka] = useState([])
 
   const ucitajObracuni = async (radnikId) => {
     const { data } = await supabase.from('saradnik_obracuni').select('*, saradnik_stavke(*)').eq('saradnik_id', radnikId).order('created_at', { ascending: false })
@@ -772,6 +773,13 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
           .map(l => l.radnik_id)
       )
       setRadniciAktivni(aktivni)
+      // Zaglavljeni prenosi (čekaju potvrdu kolege)
+      const { data: pren } = await supabase
+        .from('prenosi_dijelova')
+        .select('*, od:od_radnik_id(ime), na:na_radnik_id(ime)')
+        .eq('status', 'ceka')
+        .order('created_at', { ascending: false })
+      setPrenosiCeka(pren || [])
     }
     provjeriAktivne()
     const interval = setInterval(provjeriAktivne, 30000)
@@ -833,6 +841,18 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
         <h2 style={{ fontSize: 18, margin: 0 }}>Radnici</h2>
         <button onClick={otvoriDodaj} style={{ background: '#1B85B8', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>+ Dodaj radnika</button>
       </div>
+
+      {prenosiCeka.length > 0 && (
+        <div style={{ background: '#2A1E0A', border: '1px solid #F4A261', borderRadius: 10, padding: 12, marginBottom: 16 }}>
+          <div style={{ color: '#F4A261', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>⏳ PRENOSI KOJI ČEKAJU POTVRDU</div>
+          {prenosiCeka.map(p => (
+            <div key={p.id} style={{ fontSize: 13, color: '#E8F4FD', padding: '3px 0' }}>
+              {p.naziv} ×{p.kolicina} — <span style={{ color: '#7B96B2' }}>{p.od?.ime} → {p.na?.ime}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {forma && (
         <div style={{ background: '#1A2E45', border: '1px solid #1B85B8', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>{forma === 'dodaj' ? 'NOVI RADNIK' : 'UREDI RADNIKA'}</h3>

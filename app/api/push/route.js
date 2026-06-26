@@ -17,6 +17,11 @@ const supabase = createClient(
 )
 
 export async function POST(request) {
+  // Origin provjera: dozvoli native app (bez origin-a) i naš domen, blokiraj strane web origine
+  const origin = request.headers.get('origin') || ''
+  if (origin && !origin.includes('servisapp')) {
+    return NextResponse.json({ error: 'Neautorizovano' }, { status: 403 })
+  }
   const { title, body, url } = await request.json()
 
   // Svi pretplatnici + lista radnika (saradnici/radnici NE dobijaju admin notifikacije)
