@@ -5,11 +5,13 @@ import { createClient } from '@supabase/supabase-js'
 // Rizik je minimalan: napadač može poslati lažnu notifikaciju, ali ne može pristupiti podacima.
 // Zaštita: rate limiting u middleware.js (5 req/min po IP na /prijava rutama)
 
-webpush.setVapidDetails(
-  process.env.VAPID_EMAIL,
-  process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
-)
+if (process.env.VAPID_EMAIL && process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    process.env.VAPID_EMAIL,
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  )
+}
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
