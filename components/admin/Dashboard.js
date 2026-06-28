@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import PrijavaDetalj from './PrijavaDetalj'
 import Mapa from './Mapa'
 import { createClient } from '../../lib/supabase-browser'
@@ -22,6 +22,28 @@ export default function Dashboard() {
   const [mapaOtvorena, setMapaOtvorena] = useState(false)
 
   const supabaseBrowser = createClient()
+
+  // Praćenje navigacije kroz browser history (Back = korak nazad u aplikaciji)
+  const prijaveRef = useRef([])
+  useEffect(() => { prijaveRef.current = prijave }, [prijave])
+
+  const naviguj = (noviTab, prijava = null) => {
+    setTab(noviTab)
+    setOdabranaP(prijava)
+    window.history.pushState({ tab: noviTab, detailId: prijava?.id || null }, '')
+  }
+  const nazad = () => window.history.back()
+
+  useEffect(() => {
+    window.history.replaceState({ tab: 'nalozi', detailId: null }, '')
+    const onPop = (e) => {
+      const st = e.state || { tab: 'nalozi', detailId: null }
+      setTab(st.tab || 'nalozi')
+      setOdabranaP(st.detailId ? (prijaveRef.current.find(p => p.id === st.detailId) || null) : null)
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
 
   const handleLogout = async () => {
     try {
@@ -104,7 +126,7 @@ export default function Dashboard() {
   const nova = prijave.filter(p => p.status === 'nova').length
 
   const TabBtn = ({ id, label, badge }) => (
-    <button onClick={() => setTab(id)} style={{
+    <button onClick={() => naviguj(id)} style={{
       background: tab === id ? '#1B85B8' : 'transparent',
       border: 'none', color: tab === id ? '#fff' : '#7B96B2',
       padding: '8px 10px', borderRadius: 8, cursor: 'pointer',
@@ -158,17 +180,17 @@ export default function Dashboard() {
 
       <div style={s.sadrzaj}>
         {tab === 'dashboard' && (
-          <DashboardTab prijave={prijave} radnici={radnici} mapaOtvorena={mapaOtvorena} setMapaOtvorena={setMapaOtvorena} onOdaberi={(p) => { setOdabranaP(p); setTab('nalozi') }} />
+          <DashboardTab prijave={prijave} radnici={radnici} mapaOtvorena={mapaOtvorena} setMapaOtvorena={setMapaOtvorena} onOdaberi={(p) => naviguj('nalozi', p)} />
         )}
 
         {tab === 'nalozi' && !odabranaP && (
-          <NaloziTab prijave={prijave} aparati={aparati} mlinovi={mlinovi} radnici={radnici} pendingMontaza={pendingMontaza} onOdaberi={p => setOdabranaP(p)} onRefresh={ucitajPodatke} />
+          <NaloziTab prijave={prijave} aparati={aparati} mlinovi={mlinovi} radnici={radnici} pendingMontaza={pendingMontaza} onOdaberi={p => naviguj('nalozi', p)} onRefresh={ucitajPodatke} />
         )}
         {tab === 'nalozi' && odabranaP && (
           <PrijavaDetalj
             prijava={odabranaP}
             radnici={radnici}
-            onNazad={() => setOdabranaP(null)}
+            onNazad={nazad}
             onAzuriraj={ucitajPodatke}
           />
         )}
@@ -179,7 +201,7 @@ export default function Dashboard() {
         )}
 
         {tab === 'aparati' && (
-          <OpremaTab onOdaberiPrijavu={(p) => { setOdabranaP(p); setTab('nalozi') }} />
+          <OpremaTab onOdaberiPrijavu={(p) => naviguj('nalozi', p)} />
         )}
       </div>
     </div>
