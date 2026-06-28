@@ -11,6 +11,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
   const [saljem, setSaljem] = useState(false)
   const [poruka, setPoruka] = useState('')
   const [montazaZahtjev, setMontazaZahtjev] = useState(null)
+  const [montazaOdbijena, setMontazaOdbijena] = useState(false)
   const [editLokal, setEditLokal] = useState('')
   const [editAdresa, setEditAdresa] = useState('')
   const mapaRef = useRef(null)
@@ -34,8 +35,8 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
 
   const dodijeliRadnika = async () => {
     if (!odabraniRadnik) return
-    // Već dodijeljena ovom radniku — ne može ponovo istom, samo prebacaj na drugog
-    if (prijava.radnik_id && prijava.radnik_id === odabraniRadnik) {
+    // Već dodijeljena ovom radniku — ne može ponovo istom (osim ako je montaža odbijena/revidirana)
+    if (!montazaOdbijena && prijava.radnik_id && prijava.radnik_id === odabraniRadnik) {
       setPoruka('Prijava je već dodijeljena ovom radniku')
       setTimeout(() => setPoruka(''), 2500)
       return
@@ -146,11 +147,12 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
   const odbijMontazu = async () => {
     if (!montazaZahtjev) return
     await supabase.from('montaza_zahtjevi').update({ status: 'odbijen' }).eq('nalog_id', prijava.id).eq('status', 'pending')
-    // Vrati nalog radniku u listu
+    // Nalog izlazi iz čekanja; admin sad bira radnika (isti dozvoljen jer je revidirano)
     await supabase.from('prijave').update({ status: 'dodijeljena', updated_at: new Date().toISOString() }).eq('id', prijava.id)
     setMontazaZahtjev(null)
+    setMontazaOdbijena(true)
+    setOdabraniRadnik(prijava.radnik_id || '')
     onAzuriraj()
-    onNazad()
   }
 
   const odobriProcjenu = async () => {
@@ -332,9 +334,18 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
               {poruka}
             </div>
           )}
+          {montazaOdbijena && (
+            <div style={{ background: '#F4A261', color: '#0D1B2A', borderRadius: 8, padding: 10, marginBottom: 10, fontSize: 13, fontWeight: 600 }}>
+              Montaža odbijena. Pošalji ponovo istom radniku ili izaberi drugog.
+            </div>
+          )}
           {(() => {
-            const istiRadnik = prijava.radnik_id && odabraniRadnik === prijava.radnik_id
+            const istiRadnik = !montazaOdbijena && prijava.radnik_id && odabraniRadnik === prijava.radnik_id
             const aktivno = odabraniRadnik && !istiRadnik
+            const label = montazaOdbijena
+              ? (odabraniRadnik === prijava.radnik_id ? 'Pošalji ponovo istom radniku' : 'Pošalji drugom radniku')
+              : istiRadnik ? 'Već dodijeljeno ovom radniku'
+              : prijava.radnik_id ? 'Prebaci na ovog radnika' : 'Pošalji radniku'
             return (
               <button onClick={dodijeliRadnika} disabled={!aktivno || saljem}
                 style={{
@@ -342,7 +353,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
                   border: 'none', color: '#fff', borderRadius: 10, padding: 14,
                   fontSize: 14, fontWeight: 700, cursor: aktivno ? 'pointer' : 'not-allowed'
                 }}>
-                {saljem ? 'Šaljem...' : istiRadnik ? 'Već dodijeljeno ovom radniku' : prijava.radnik_id ? 'Prebaci na ovog radnika' : 'Pošalji radniku'}
+                {saljem ? 'Šaljem...' : label}
               </button>
             )
           })()}
