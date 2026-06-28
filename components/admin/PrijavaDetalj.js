@@ -34,6 +34,12 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
 
   const dodijeliRadnika = async () => {
     if (!odabraniRadnik) return
+    // Već dodijeljena ovom radniku — ne može ponovo istom, samo prebacaj na drugog
+    if (prijava.radnik_id && prijava.radnik_id === odabraniRadnik) {
+      setPoruka('Prijava je već dodijeljena ovom radniku')
+      setTimeout(() => setPoruka(''), 2500)
+      return
+    }
     setSaljem(true)
     const jeReaasignacija = prijava.radnik_id && prijava.radnik_id !== odabraniRadnik
     const noviRadnik = radnici.find(r => r.id === odabraniRadnik)
@@ -322,14 +328,20 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
               {poruka}
             </div>
           )}
-          <button onClick={dodijeliRadnika} disabled={!odabraniRadnik || saljem}
-            style={{
-              width: '100%', background: odabraniRadnik ? '#1B85B8' : '#1E3A5A',
-              border: 'none', color: '#fff', borderRadius: 10, padding: 14,
-              fontSize: 14, fontWeight: 700, cursor: odabraniRadnik ? 'pointer' : 'not-allowed'
-            }}>
-            {saljem ? 'Šaljem...' : 'Pošalji radniku'}
-          </button>
+          {(() => {
+            const istiRadnik = prijava.radnik_id && odabraniRadnik === prijava.radnik_id
+            const aktivno = odabraniRadnik && !istiRadnik
+            return (
+              <button onClick={dodijeliRadnika} disabled={!aktivno || saljem}
+                style={{
+                  width: '100%', background: aktivno ? '#1B85B8' : '#1E3A5A',
+                  border: 'none', color: '#fff', borderRadius: 10, padding: 14,
+                  fontSize: 14, fontWeight: 700, cursor: aktivno ? 'pointer' : 'not-allowed'
+                }}>
+                {saljem ? 'Šaljem...' : istiRadnik ? 'Već dodijeljeno ovom radniku' : prijava.radnik_id ? 'Prebaci na ovog radnika' : 'Pošalji radniku'}
+              </button>
+            )
+          })()}
         </div>
       )}
 
