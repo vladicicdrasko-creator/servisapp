@@ -1105,6 +1105,7 @@ export function StatusBadge({ status }) {
     nova: { label: 'NOVA', bg: '#1B85B8' },
     dodijeljena: { label: 'DODIJELJENA', bg: '#F4A261', color: '#0D1B2A' },
     u_toku: { label: 'U TOKU', bg: '#9B59B6' },
+    ceka_potvrdu: { label: 'ČEKA POTVRDU', bg: '#1B85B8' },
     'riješena': { label: 'RIJEŠENA', bg: '#2A9D8F' },
     vraceno: { label: 'VRAĆENO', bg: '#E63946' },
     zatvorena: { label: 'ZATVORIO ADMIN', bg: '#7B96B2', color: '#0D1B2A' },

@@ -146,7 +146,11 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
   const odbijMontazu = async () => {
     if (!montazaZahtjev) return
     await supabase.from('montaza_zahtjevi').update({ status: 'odbijen' }).eq('nalog_id', prijava.id).eq('status', 'pending')
+    // Vrati nalog radniku u listu
+    await supabase.from('prijave').update({ status: 'dodijeljena', updated_at: new Date().toISOString() }).eq('id', prijava.id)
     setMontazaZahtjev(null)
+    onAzuriraj()
+    onNazad()
   }
 
   const odobriProcjenu = async () => {
