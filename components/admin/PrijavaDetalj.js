@@ -22,10 +22,12 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
         .select('*')
         .eq('nalog_id', prijava.id)
         .eq('status', 'pending')
-        .maybeSingle()
+        .order('id', { ascending: false })
+        .limit(1)
         .then(({ data }) => {
-          setMontazaZahtjev(data)
-          if (data) { setEditLokal(data.novi_lokal || ''); setEditAdresa(data.nova_adresa || '') }
+          const z = data?.[0] || null
+          setMontazaZahtjev(z)
+          if (z) { setEditLokal(z.novi_lokal || ''); setEditAdresa(z.nova_adresa || '') }
         })
     }
   }, [prijava.id, prijava.kategorija])
@@ -121,8 +123,8 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
         ...(prijava.slika_url ? { slika_url: prijava.slika_url } : {}),
       }).eq('id', montazaZahtjev.aparat_id)
     }
-    // Zatvori zahtjev
-    await supabase.from('montaza_zahtjevi').update({ status: 'odobren' }).eq('id', montazaZahtjev.id)
+    // Zatvori sve pending zahtjeve za ovaj nalog (čisti i eventualne duplikate)
+    await supabase.from('montaza_zahtjevi').update({ status: 'odobren' }).eq('nalog_id', prijava.id).eq('status', 'pending')
     // Zatvori nalog
     await supabase.from('prijave').update({
       status: 'riješena',
@@ -137,7 +139,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
 
   const odbijMontazu = async () => {
     if (!montazaZahtjev) return
-    await supabase.from('montaza_zahtjevi').update({ status: 'odbijen' }).eq('id', montazaZahtjev.id)
+    await supabase.from('montaza_zahtjevi').update({ status: 'odbijen' }).eq('nalog_id', prijava.id).eq('status', 'pending')
     setMontazaZahtjev(null)
   }
 
