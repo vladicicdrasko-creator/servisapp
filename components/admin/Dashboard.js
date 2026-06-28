@@ -30,14 +30,18 @@ export default function Dashboard() {
   const naviguj = (noviTab, prijava = null) => {
     setTab(noviTab)
     setOdabranaP(prijava)
-    window.history.pushState({ tab: noviTab, detailId: prijava?.id || null }, '')
+    window.history.pushState({ __app: true, tab: noviTab, detailId: prijava?.id || null }, '')
   }
   const nazad = () => window.history.back()
 
   useEffect(() => {
-    window.history.replaceState({ tab: 'nalozi', detailId: null }, '')
+    if (!window.history.state?.__app) {
+      window.history.replaceState({ __app: true, tab: 'nalozi', detailId: null }, '')
+    }
     const onPop = (e) => {
-      const st = e.state || { tab: 'nalozi', detailId: null }
+      const st = e.state
+      // Ignoriši strane/prazne popstate evente da ne skače na nalozi
+      if (!st || !st.__app) return
       setTab(st.tab || 'nalozi')
       setOdabranaP(st.detailId ? (prijaveRef.current.find(p => p.id === st.detailId) || null) : null)
     }
