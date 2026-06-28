@@ -422,6 +422,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
                 <input value={generalnaUnos} onChange={e => setGeneralnaUnos(e.target.value)}
                   list="generalna-lista"
                   placeholder={jeMlin ? 'Upiši ili izaberi mlin *' : 'Upiši ili izaberi aparat *'}
+                  maxLength={150}
                   style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
                 <datalist id="generalna-lista">
                   {jeMlin
@@ -452,7 +453,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
           </div>
 
           <textarea value={napomena} onChange={e => setNapomena(e.target.value)} placeholder="Napomena (opcionalno)"
-            style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, resize: 'none', minHeight: 70, boxSizing: 'border-box' }} />
+            maxLength={500} style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, resize: 'none', minHeight: 70, boxSizing: 'border-box' }} />
 
           <select value={radnikId} onChange={e => setRadnikId(e.target.value)}
             style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
@@ -856,9 +857,9 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
       {forma && (
         <div style={{ background: '#1A2E45', border: '1px solid #1B85B8', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>{forma === 'dodaj' ? 'NOVI RADNIK' : 'UREDI RADNIKA'}</h3>
-          <input value={ime} onChange={e => setIme(e.target.value)} placeholder="Ime i prezime" style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
-          <input value={telefon} onChange={e => setTelefon(e.target.value)} placeholder="Telefon" style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
-          {forma === 'dodaj' && <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />}
+          <input value={ime} onChange={e => setIme(e.target.value)} placeholder="Ime i prezime" maxLength={100} style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+          <input value={telefon} onChange={e => setTelefon(e.target.value)} placeholder="Telefon" maxLength={20} style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+          {forma === 'dodaj' && <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" maxLength={100} style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />}
           {poruka && <div style={{ color: poruka.tip === 'ok' ? '#2A9D8F' : '#E63946', fontSize: 13, marginBottom: 8 }}>{poruka.tekst}</div>}
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={forma === 'dodaj' ? dodajRadnika : editujRadnika} disabled={loading} style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>

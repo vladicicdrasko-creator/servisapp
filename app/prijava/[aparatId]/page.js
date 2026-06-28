@@ -291,7 +291,7 @@ export default function PrijavaPage({ params }) {
         <div style={{ marginBottom: 20 }}>
           <label style={s.label}>VAŠ KONTAKT *</label>
           <input value={kontaktIme} onChange={e => setKontaktIme(e.target.value)}
-            placeholder="Vaše ime"
+            placeholder="Vaše ime" maxLength={100}
             style={{ ...s.input, marginBottom: 8 }} />
           <input
             value={kontaktTel}

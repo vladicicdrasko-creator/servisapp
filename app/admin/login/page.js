@@ -49,6 +49,7 @@ export default function LoginPage() {
               onChange={e => setEmail(e.target.value)}
               className="w-full bg-gray-700 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="admin@example.com"
+              maxLength={100}
               required
             />
           </div>
@@ -62,6 +63,7 @@ export default function LoginPage() {
                 onChange={e => setPassword(e.target.value)}
                 className="w-full bg-gray-700 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 pr-12"
                 placeholder="••••••••"
+                maxLength={128}
                 required
               />
               <button

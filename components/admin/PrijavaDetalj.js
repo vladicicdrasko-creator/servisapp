@@ -239,10 +239,10 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
               <div style={{ color: '#2A9D8F', fontSize: 10, fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>NOVI PODACI</div>
               <div style={{ fontSize: 11, color: '#7B96B2', marginBottom: 3 }}>LOKAL</div>
               <input value={editLokal} onChange={e => setEditLokal(e.target.value)}
-                style={{ width: '100%', background: '#0D1B2A', border: '1px solid #2A9D8F', color: '#E8F4FD', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
+                maxLength={150} style={{ width: '100%', background: '#0D1B2A', border: '1px solid #2A9D8F', color: '#E8F4FD', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
               <div style={{ fontSize: 11, color: '#7B96B2', marginBottom: 3 }}>ADRESA</div>
               <input value={editAdresa} onChange={e => setEditAdresa(e.target.value)}
-                style={{ width: '100%', background: '#0D1B2A', border: '1px solid #2A9D8F', color: '#E8F4FD', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
+                maxLength={200} style={{ width: '100%', background: '#0D1B2A', border: '1px solid #2A9D8F', color: '#E8F4FD', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
               <div style={{ fontSize: 11, color: '#7B96B2', marginBottom: 4 }}>
                 GPS: {Number(montazaZahtjev.novi_lat).toFixed(5)}, {Number(montazaZahtjev.novi_lng).toFixed(5)}
               </div>

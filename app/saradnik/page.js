@@ -176,7 +176,7 @@ export default function SaradnikPage() {
           <p style={{ color: '#7B96B2', fontSize: 13, margin: '4px 0 0' }}>Saradnik</p>
         </div>
         <label style={s.label}>EMAIL</label>
-        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="vas@email.com" style={s.input} />
+        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="vas@email.com" maxLength={100} style={s.input} />
         <label style={s.label}>LOZINKA</label>
         <div style={{ position: 'relative' }}>
           <input type={showL ? 'text' : 'password'} value={lozinka} onChange={e => setLozinka(e.target.value)}
@@ -254,7 +254,7 @@ export default function SaradnikPage() {
                     <>
                       <label style={s.label}>PROCJENA — kad otprilike možeš završiti?</label>
                       <textarea value={procjenaUnos[n.id] || ''} onChange={e => setProcjenaUnos(prev => ({ ...prev, [n.id]: e.target.value }))}
-                        placeholder="npr. mogu sutra popodne / za 2-3 dana..." style={{ ...s.input, minHeight: 70, resize: 'none' }} />
+                        placeholder="npr. mogu sutra popodne / za 2-3 dana..." maxLength={500} style={{ ...s.input, minHeight: 70, resize: 'none' }} />
                       <button onClick={() => posaljiProcjenu(n)} disabled={slanje} style={{ ...s.btn, marginTop: 10 }}>{slanje ? 'Slanje...' : 'Pošalji procjenu adminu'}</button>
                     </>
                   )}
@@ -276,8 +276,8 @@ export default function SaradnikPage() {
                       </div>
                       {(radovi[n.id] || [{ opis: '', cijena: '' }]).map((r, i) => (
                         <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                          <input value={r.opis} onChange={e => setRed(n.id, i, 'opis', e.target.value)} placeholder="Opis..." style={{ ...s.input, flex: 3, margin: 0 }} />
-                          <input value={r.cijena} onChange={e => setRed(n.id, i, 'cijena', e.target.value)} placeholder="0" inputMode="decimal" style={{ ...s.input, flex: 1, margin: 0 }} />
+                          <input value={r.opis} onChange={e => setRed(n.id, i, 'opis', e.target.value)} placeholder="Opis..." maxLength={200} style={{ ...s.input, flex: 3, margin: 0 }} />
+                          <input value={r.cijena} onChange={e => setRed(n.id, i, 'cijena', e.target.value)} placeholder="0" inputMode="decimal" maxLength={10} style={{ ...s.input, flex: 1, margin: 0 }} />
                         </div>
                       ))}
                       <button onClick={() => dodajRed(n.id)} style={{ background: 'none', border: 'none', color: '#1B85B8', cursor: 'pointer', fontSize: 13, padding: '4px 0' }}>+ Dodaj red</button>

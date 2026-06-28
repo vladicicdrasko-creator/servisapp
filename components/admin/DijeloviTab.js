@@ -115,12 +115,12 @@ export default function DijeloviTab() {
         <div style={{ background: '#1A2E45', border: '1px solid #1B85B8', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>NOVI DIO</h3>
           <input value={noviDio.naziv} onChange={e => setNoviDio({ ...noviDio, naziv: e.target.value })}
-            placeholder="Naziv dijela * (npr. Elektroventil Parker 2/2)" style={inp} />
+            placeholder="Naziv dijela * (npr. Elektroventil Parker 2/2)" maxLength={150} style={inp} />
           <div style={{ display: 'flex', gap: 8 }}>
             <input type="number" value={noviDio.kolicina} onChange={e => setNoviDio({ ...noviDio, kolicina: e.target.value })}
               placeholder="Količina na stanju" style={{ ...inp, flex: 1 }} />
             <input value={noviDio.jedinica} onChange={e => setNoviDio({ ...noviDio, jedinica: e.target.value })}
-              placeholder="Jedinica" style={{ ...inp, width: 90 }} />
+              placeholder="Jedinica" maxLength={20} style={{ ...inp, width: 90 }} />
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={dodaj} disabled={!noviDio.naziv}
@@ -172,10 +172,10 @@ export default function DijeloviTab() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
           <div style={{ background: '#1A2E45', border: '1px solid #1B85B8', borderRadius: 12, padding: 20, width: '100%', maxWidth: 440 }}>
             <h3 style={{ margin: '0 0 14px', fontSize: 14, color: '#7B96B2' }}>UREDI DIO — {editDio.id}</h3>
-            <input value={editDio.naziv} onChange={e => setEditDio({ ...editDio, naziv: e.target.value })} placeholder="Naziv *" style={inp} />
+            <input value={editDio.naziv} onChange={e => setEditDio({ ...editDio, naziv: e.target.value })} placeholder="Naziv *" maxLength={150} style={inp} />
             <div style={{ display: 'flex', gap: 8 }}>
               <input type="number" value={editDio.kolicina} onChange={e => setEditDio({ ...editDio, kolicina: e.target.value })} placeholder="Količina" style={{ ...inp, flex: 1 }} />
-              <input value={editDio.jedinica || ''} onChange={e => setEditDio({ ...editDio, jedinica: e.target.value })} placeholder="Jedinica" style={{ ...inp, width: 90 }} />
+              <input value={editDio.jedinica || ''} onChange={e => setEditDio({ ...editDio, jedinica: e.target.value })} placeholder="Jedinica" maxLength={20} style={{ ...inp, width: 90 }} />
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={snimiEdit} style={{ flex: 1, background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>Sačuvaj</button>

@@ -55,7 +55,7 @@ export default function PostaviLozinku() {
           <label style={s.label}>NOVA LOZINKA</label>
           <div style={{ position: 'relative' }}>
             <input type={showL ? 'text' : 'password'} value={lozinka} onChange={e => setLozinka(e.target.value)}
-              placeholder="Min. 6 karaktera" style={s.inp} />
+              placeholder="Min. 6 karaktera" maxLength={128} style={s.inp} />
             <button type="button" onClick={() => setShowL(v => !v)}
               style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#7B96B2', cursor: 'pointer', fontSize: 16 }}>
               {showL ? '🙈' : '👁'}
@@ -67,7 +67,7 @@ export default function PostaviLozinku() {
           <label style={s.label}>POTVRDI LOZINKU</label>
           <div style={{ position: 'relative' }}>
             <input type={showP ? 'text' : 'password'} value={potvrda} onChange={e => setPotvrda(e.target.value)}
-              placeholder="Ponovi lozinku" style={s.inp} />
+              placeholder="Ponovi lozinku" maxLength={128} style={s.inp} />
             <button type="button" onClick={() => setShowP(v => !v)}
               style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#7B96B2', cursor: 'pointer', fontSize: 16 }}>
               {showP ? '🙈' : '👁'}

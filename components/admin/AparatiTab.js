@@ -266,10 +266,10 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>MODELI APARATA</h3>
           <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
             <input value={noviModel.naziv} onChange={e => setNoviModel({ ...noviModel, naziv: e.target.value })}
-              placeholder="Naziv modela *"
+              placeholder="Naziv modela *" maxLength={100}
               style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <input value={noviModel.proizvodjac} onChange={e => setNoviModel({ ...noviModel, proizvodjac: e.target.value })}
-              placeholder="Proizvođač"
+              placeholder="Proizvođač" maxLength={100}
               style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <button onClick={dodajModel} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>+ Dodaj</button>
           </div>
@@ -290,13 +290,13 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                 <div style={{ background: '#0D1B2A', borderRadius: 8, padding: 14, margin: '8px 0 12px' }}>
                   <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
                     <input value={editModel.naziv} onChange={e => setEditModel({ ...editModel, naziv: e.target.value })}
-                      placeholder="Naziv" style={{ flex: 1, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
+                      placeholder="Naziv" maxLength={100} style={{ flex: 1, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
                     <input value={editModel.proizvodjac || ''} onChange={e => setEditModel({ ...editModel, proizvodjac: e.target.value })}
-                      placeholder="Proizvođač" style={{ flex: 1, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
+                      placeholder="Proizvođač" maxLength={100} style={{ flex: 1, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
                   </div>
                   <textarea value={editModel.napomena || ''} onChange={e => setEditModel({ ...editModel, napomena: e.target.value })}
                     placeholder="Opšte napomene za ovaj model (posebnosti, poznati problemi...)"
-                    rows={2} style={{ width: '100%', background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px', resize: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
+                    rows={2} maxLength={500} style={{ width: '100%', background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px', resize: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                     <label style={{ background: '#132338', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12 }}>
                       📄 {editModel.pdf_url ? 'Zamijeni PDF' : 'Upload PDF priručnik'}
@@ -320,7 +320,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                       <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
                         <input value={novaStavka[kat] || ''} onChange={e => setNovaStavka(prev => ({ ...prev, [kat]: e.target.value }))}
                           onKeyDown={e => e.key === 'Enter' && dodajStavku(kat)}
-                          placeholder="Dodaj stavku..."
+                          placeholder="Dodaj stavku..." maxLength={200}
                           style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '4px 8px', fontSize: 12 }} />
                         <button onClick={() => dodajStavku(kat)} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>+</button>
                       </div>
@@ -344,16 +344,16 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
           </select>
 
           <input value={noviAparat.vlasnik} onChange={e => setNoviAparat({ ...noviAparat, vlasnik: e.target.value })}
-            placeholder="Vlasnik aparata (opcionalno)"
+            placeholder="Vlasnik aparata (opcionalno)" maxLength={100}
             style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
           <input value={noviAparat.lokal} onChange={e => setNoviAparat({ ...noviAparat, lokal: e.target.value })}
-            placeholder="Lokal (popunjava se pri montaži)"
+            placeholder="Lokal (popunjava se pri montaži)" maxLength={150}
             style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
           <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
             <input value={noviAparat.adresa} onChange={e => setNoviAparat({ ...noviAparat, adresa: e.target.value })}
-              placeholder="Adresa (popunjava se pri montaži)"
+              placeholder="Adresa (popunjava se pri montaži)" maxLength={200}
               style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <button onClick={() => setPokaziMapu(!pokaziMapu)} style={{
               background: pokaziMapu ? '#1B85B8' : '#0D1B2A', border: '1px solid #1B85B8',
@@ -379,7 +379,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
           <div style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
             <input value={noviAparat.serijski_broj}
               onChange={e => setNoviAparat({ ...noviAparat, serijski_broj: e.target.value })}
-              placeholder="Serijski broj (opcionalno)"
+              placeholder="Serijski broj (opcionalno)" maxLength={50}
               disabled={noviAparat.ostecen}
               style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: noviAparat.ostecen ? '#555' : '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <label style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#E63946', fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}>
@@ -418,20 +418,20 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             <h3 style={{ margin: '0 0 14px', fontSize: 14, color: '#7B96B2' }}>UREDI APARAT — {editAparat.id}</h3>
 
             <input value={editAparat.naziv} onChange={e => setEditAparat({ ...editAparat, naziv: e.target.value })}
-              placeholder="Naziv aparata *"
+              placeholder="Naziv aparata *" maxLength={100}
               style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
             <input value={editAparat.vlasnik || ''} onChange={e => setEditAparat({ ...editAparat, vlasnik: e.target.value })}
-              placeholder="Vlasnik aparata (opcionalno)"
+              placeholder="Vlasnik aparata (opcionalno)" maxLength={100}
               style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
             <input value={editAparat.lokal || ''} onChange={e => setEditAparat({ ...editAparat, lokal: e.target.value })}
-              placeholder="Lokal"
+              placeholder="Lokal" maxLength={150}
               style={{ width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
             <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
               <input value={editAparat.adresa || ''} onChange={e => setEditAparat({ ...editAparat, adresa: e.target.value })}
-                placeholder="Adresa"
+                placeholder="Adresa" maxLength={200}
                 style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
               <button onClick={() => setPokaziEditMapu(!pokaziEditMapu)} style={{
                 background: pokaziEditMapu ? '#1B85B8' : '#0D1B2A', border: '1px solid #1B85B8',
@@ -454,7 +454,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             <div style={{ display: 'flex', gap: 8, marginBottom: 14, alignItems: 'center' }}>
               <input value={editAparat.ostecen ? '' : (editAparat.serijski_broj || '')}
                 onChange={e => setEditAparat({ ...editAparat, serijski_broj: e.target.value })}
-                placeholder="Serijski broj (opcionalno)"
+                placeholder="Serijski broj (opcionalno)" maxLength={50}
                 disabled={editAparat.ostecen}
                 style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: editAparat.ostecen ? '#555' : '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
               <label style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#E63946', fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}>

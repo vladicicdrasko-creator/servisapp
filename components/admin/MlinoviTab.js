@@ -208,8 +208,8 @@ export default function MlinoviTab() {
         <div style={{ background: '#1A2E45', border: '1px solid #1E3A5A', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#7B96B2' }}>MODELI MLINOVA</h3>
           <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
-            <input value={noviModel.naziv} onChange={e => setNoviModel({ ...noviModel, naziv: e.target.value })} placeholder="Naziv modela *" style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
-            <input value={noviModel.proizvodjac} onChange={e => setNoviModel({ ...noviModel, proizvodjac: e.target.value })} placeholder="Proizvođač" style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <input value={noviModel.naziv} onChange={e => setNoviModel({ ...noviModel, naziv: e.target.value })} placeholder="Naziv modela *" maxLength={100} style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <input value={noviModel.proizvodjac} onChange={e => setNoviModel({ ...noviModel, proizvodjac: e.target.value })} placeholder="Proizvođač" maxLength={100} style={{ flex: '1 1 140px', minWidth: 0, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <button onClick={dodajModel} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>+ Dodaj</button>
           </div>
           {modeli.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13 }}>Nema modela.</div>}
@@ -224,10 +224,10 @@ export default function MlinoviTab() {
               {editModel?.id === m.id && (
                 <div style={{ background: '#0D1B2A', borderRadius: 8, padding: 14, margin: '8px 0 12px' }}>
                   <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-                    <input value={editModel.naziv} onChange={e => setEditModel({ ...editModel, naziv: e.target.value })} placeholder="Naziv" style={{ flex: '1 1 130px', minWidth: 0, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
-                    <input value={editModel.proizvodjac || ''} onChange={e => setEditModel({ ...editModel, proizvodjac: e.target.value })} placeholder="Proizvođač" style={{ flex: '1 1 130px', minWidth: 0, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
+                    <input value={editModel.naziv} onChange={e => setEditModel({ ...editModel, naziv: e.target.value })} placeholder="Naziv" maxLength={100} style={{ flex: '1 1 130px', minWidth: 0, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
+                    <input value={editModel.proizvodjac || ''} onChange={e => setEditModel({ ...editModel, proizvodjac: e.target.value })} placeholder="Proizvođač" maxLength={100} style={{ flex: '1 1 130px', minWidth: 0, background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px' }} />
                   </div>
-                  <textarea value={editModel.napomena || ''} onChange={e => setEditModel({ ...editModel, napomena: e.target.value })} placeholder="Opšte napomene za ovaj model" rows={2} style={{ width: '100%', background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px', resize: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
+                  <textarea value={editModel.napomena || ''} onChange={e => setEditModel({ ...editModel, napomena: e.target.value })} placeholder="Opšte napomene za ovaj model" rows={2} maxLength={500} style={{ width: '100%', background: '#132338', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '6px 10px', resize: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                     <label style={{ background: '#132338', border: '1px solid #1E3A5A', color: '#7B96B2', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12 }}>
                       📄 {editModel.pdf_url ? 'Zamijeni PDF' : 'Upload PDF priručnik'}
@@ -248,7 +248,7 @@ export default function MlinoviTab() {
                         </div>
                       ))}
                       <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-                        <input value={novaStavka[kat] || ''} onChange={e => setNovaStavka(prev => ({ ...prev, [kat]: e.target.value }))} onKeyDown={e => e.key === 'Enter' && dodajStavku(kat)} placeholder="Dodaj stavku..." style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '4px 8px', fontSize: 12 }} />
+                        <input value={novaStavka[kat] || ''} onChange={e => setNovaStavka(prev => ({ ...prev, [kat]: e.target.value }))} onKeyDown={e => e.key === 'Enter' && dodajStavku(kat)} placeholder="Dodaj stavku..." maxLength={200} style={{ flex: 1, background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 6, padding: '4px 8px', fontSize: 12 }} />
                         <button onClick={() => dodajStavku(kat)} style={{ background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>+</button>
                       </div>
                     </div>
@@ -271,13 +271,13 @@ export default function MlinoviTab() {
             {modeli.map(m => <option key={m.id} value={m.naziv}>{m.naziv}{m.proizvodjac ? ` (${m.proizvodjac})` : ''}</option>)}
           </select>
           <input value={noviMlin.marka} onChange={e => setNoviMlin({ ...noviMlin, marka: e.target.value })}
-            placeholder="Marka / Proizvođač" style={inp} />
+            placeholder="Marka / Proizvođač" maxLength={100} style={inp} />
           <select value={noviMlin.lokal} onChange={e => setNoviMlin({ ...noviMlin, lokal: e.target.value })} style={sel}>
             <option value="">-- Odaberi lokal</option>
             {lokali.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
           <input value={noviMlin.serijski_broj} onChange={e => setNoviMlin({ ...noviMlin, serijski_broj: e.target.value })}
-            placeholder="Serijski broj (opcionalno)" style={inp} />
+            placeholder="Serijski broj (opcionalno)" maxLength={50} style={inp} />
           <div style={{ marginBottom: 8 }}>
             <label style={{ color: '#7B96B2', fontSize: 12, display: 'block', marginBottom: 4 }}>SLIKA (opcionalno)</label>
             <input type="file" accept="image/*" onChange={e => setNoviMlin({ ...noviMlin, slika: e.target.files[0] })}
@@ -334,13 +334,13 @@ export default function MlinoviTab() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
           <div style={{ background: '#1A2E45', border: '1px solid #1B85B8', borderRadius: 12, padding: 20, width: '100%', maxWidth: 440 }}>
             <h3 style={{ margin: '0 0 14px', fontSize: 14, color: '#7B96B2' }}>UREDI MLIN — {editMlin.id}</h3>
-            <input value={editMlin.model} onChange={e => setEditMlin({ ...editMlin, model: e.target.value })} placeholder="Model *" style={inp} />
-            <input value={editMlin.marka || ''} onChange={e => setEditMlin({ ...editMlin, marka: e.target.value })} placeholder="Marka" style={inp} />
+            <input value={editMlin.model} onChange={e => setEditMlin({ ...editMlin, model: e.target.value })} placeholder="Model *" maxLength={100} style={inp} />
+            <input value={editMlin.marka || ''} onChange={e => setEditMlin({ ...editMlin, marka: e.target.value })} placeholder="Marka" maxLength={100} style={inp} />
             <select value={editMlin.lokal || ''} onChange={e => setEditMlin({ ...editMlin, lokal: e.target.value })} style={sel}>
               <option value="">-- Odaberi lokal</option>
               {lokali.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
-            <input value={editMlin.serijski_broj || ''} onChange={e => setEditMlin({ ...editMlin, serijski_broj: e.target.value })} placeholder="Serijski broj" style={inp} />
+            <input value={editMlin.serijski_broj || ''} onChange={e => setEditMlin({ ...editMlin, serijski_broj: e.target.value })} placeholder="Serijski broj" maxLength={50} style={inp} />
             {editMlin.slika_url && !editMlin.novaSlika && (
               <img src={editMlin.slika_url} alt="slika" style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginBottom: 8 }} />
             )}
