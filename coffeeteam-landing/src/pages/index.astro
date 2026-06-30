@@ -1,0 +1,277 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <!-- NAV -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-stone-950/90 backdrop-blur-sm border-b border-stone-800">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2">
+        <span class="text-amber-400 text-2xl">☕</span>
+        <span class="font-bold text-xl tracking-tight">Coffee<span class="text-amber-400">Team</span></span>
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm text-stone-400">
+        <a href="#usluge" class="hover:text-amber-400 transition-colors">Usluge</a>
+        <a href="#zasto-mi" class="hover:text-amber-400 transition-colors">Zašto mi</a>
+        <a href="#brendovi" class="hover:text-amber-400 transition-colors">Brendovi</a>
+        <a href="#kontakt" class="hover:text-amber-400 transition-colors">Kontakt</a>
+      </nav>
+      <a href="#kontakt" class="bg-amber-400 text-stone-950 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-amber-300 transition-colors">
+        Zakažite servis
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
+    <!-- Background gradient -->
+    <div class="absolute inset-0 bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950/30"></div>
+    <!-- Decorative circles -->
+    <div class="absolute top-1/4 right-10 w-72 h-72 bg-amber-400/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 left-10 w-96 h-96 bg-amber-600/5 rounded-full blur-3xl"></div>
+
+    <div class="relative max-w-6xl mx-auto px-6 py-24 text-center">
+      <div class="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 text-amber-400 text-sm px-4 py-2 rounded-full mb-8">
+        <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+        Ovlašteni servis · Podgorica, Crna Gora
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight" style="font-family: 'Playfair Display', serif;">
+        Servis koji vaša<br />
+        <span class="text-amber-400">kafa zaslužuje</span>
+      </h1>
+
+      <p class="text-stone-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        Profesionalni servis espresso aparata, mlinova i industrijske kafe opreme.
+        Brza dijagnostika, originalni dijelovi, garancija na rad.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#kontakt" class="bg-amber-400 text-stone-950 font-bold px-8 py-4 rounded-xl hover:bg-amber-300 transition-all hover:scale-105 text-lg">
+          Zakažite servis →
+        </a>
+        <a href="#usluge" class="border border-stone-700 text-stone-300 font-semibold px-8 py-4 rounded-xl hover:border-amber-400 hover:text-amber-400 transition-all text-lg">
+          Pogledajte usluge
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="mt-20 grid grid-cols-3 gap-8 max-w-xl mx-auto">
+        <div>
+          <div class="text-3xl font-bold text-amber-400">10+</div>
+          <div class="text-stone-500 text-sm mt-1">godina iskustva</div>
+        </div>
+        <div class="border-x border-stone-800">
+          <div class="text-3xl font-bold text-amber-400">500+</div>
+          <div class="text-stone-500 text-sm mt-1">servisiranih aparata</div>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-amber-400">24h</div>
+          <div class="text-stone-500 text-sm mt-1">odziv na poziv</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USLUGE -->
+  <section id="usluge" class="py-24 px-6 bg-stone-900">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold mb-4" style="font-family: 'Playfair Display', serif;">Naše usluge</h2>
+        <p class="text-stone-400 max-w-xl mx-auto">Kompletna briga o vašoj kafa opremi – od redovnog održavanja do složenih popravki.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[
+          {
+            icon: '⚙️',
+            title: 'Servis espresso aparata',
+            desc: 'Dijagnostika, čišćenje, zamjena dijelova i kalibracija profesionalnih espresso mašina svih tipova.',
+          },
+          {
+            icon: '⚡',
+            title: 'Popravka mlinova',
+            desc: 'Servis i podešavanje mlinova za kafu – od zamjene diskova do elektronskih komponenti.',
+          },
+          {
+            icon: '🔧',
+            title: 'Redovno održavanje',
+            desc: 'Preventivni servis i čišćenje po ugovoru – produžite životni vijek opreme i smanjite troškove.',
+          },
+          {
+            icon: '💧',
+            title: 'Omekšivači i filteri vode',
+            desc: 'Instalacija, zamjena i kalibracija filtera i omekšivača – ključno za kvalitet kafe i trajnost aparata.',
+          },
+          {
+            icon: '🏭',
+            title: 'Industrijska oprema',
+            desc: 'Servis industrijskih aparata za ugostiteljstvo – restorani, hoteli, kafe barovi.',
+          },
+          {
+            icon: '🚚',
+            title: 'Dolazimo kod vas',
+            desc: 'Mobilni servis – dolazimo na vašu lokaciju u Podgorici i šire, bez potrebe za transportom opreme.',
+          },
+        ].map((s) => (
+          <div class="bg-stone-950 border border-stone-800 rounded-2xl p-6 hover:border-amber-400/40 transition-colors group">
+            <div class="text-3xl mb-4">{s.icon}</div>
+            <h3 class="font-bold text-lg mb-2 group-hover:text-amber-400 transition-colors">{s.title}</h3>
+            <p class="text-stone-400 text-sm leading-relaxed">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ZAŠTO MI -->
+  <section id="zasto-mi" class="py-24 px-6 bg-stone-950">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <h2 class="text-4xl font-bold mb-6" style="font-family: 'Playfair Display', serif;">
+            Zašto izabrati<br /><span class="text-amber-400">CoffeeTeam?</span>
+          </h2>
+          <p class="text-stone-400 mb-8 leading-relaxed">
+            Sa višegodišnjim iskustvom u servisu profesionalne kafe opreme, garantujemo kvalitet rada i dugotrajnost vaše opreme.
+          </p>
+          <a href="#kontakt" class="inline-block bg-amber-400 text-stone-950 font-bold px-6 py-3 rounded-xl hover:bg-amber-300 transition-colors">
+            Kontaktirajte nas
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4">
+          {[
+            { icon: '✅', title: 'Certificirani tehničari', desc: 'Stručno osoblje sa certifikatima vodećih proizvođača opreme.' },
+            { icon: '🔩', title: 'Originalni dijelovi', desc: 'Koristimo isključivo originalne rezervne dijelove sa garancijom.' },
+            { icon: '⚡', title: 'Brz odziv', desc: 'Odgovaramo u roku od 24 sata, hitni slučajevi isti dan.' },
+            { icon: '📋', title: 'Garancija na rad', desc: 'Svaki servis pokriven garancijom – vaše zadovoljstvo je naš prioritet.' },
+          ].map((item) => (
+            <div class="flex gap-4 bg-stone-900 border border-stone-800 rounded-xl p-4">
+              <span class="text-2xl mt-0.5">{item.icon}</span>
+              <div>
+                <div class="font-semibold mb-1">{item.title}</div>
+                <div class="text-stone-400 text-sm">{item.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRENDOVI -->
+  <section id="brendovi" class="py-24 px-6 bg-stone-900">
+    <div class="max-w-6xl mx-auto text-center">
+      <h2 class="text-4xl font-bold mb-4" style="font-family: 'Playfair Display', serif;">Brendovi koje servisiramo</h2>
+      <p class="text-stone-400 mb-14">Iskustvo sa svim vodećim proizvođačima profesionalne kafe opreme.</p>
+
+      <div class="flex flex-wrap justify-center gap-4">
+        {[
+          'La Marzocco', 'Nuova Simonelli', 'Rancilio', 'Jura', 'DeLonghi',
+          'Saeco', 'Gaggia', 'Rocket Espresso', 'Victoria Arduino', 'Breville',
+        ].map((brand) => (
+          <div class="bg-stone-950 border border-stone-800 px-6 py-3 rounded-xl text-stone-300 font-medium hover:border-amber-400/50 hover:text-amber-400 transition-colors">
+            {brand}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- KONTAKT -->
+  <section id="kontakt" class="py-24 px-6 bg-stone-950">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold mb-4" style="font-family: 'Playfair Display', serif;">Kontaktirajte nas</h2>
+        <p class="text-stone-400">Zakažite servis ili postavite pitanje – tu smo za vas.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-12">
+        <!-- Contact info -->
+        <div class="space-y-6">
+          <div class="bg-stone-900 border border-stone-800 rounded-2xl p-6">
+            <div class="text-amber-400 text-2xl mb-3">📞</div>
+            <div class="font-semibold mb-1">Telefon</div>
+            <a href="tel:+38269000000" class="text-stone-400 hover:text-amber-400 transition-colors text-lg">
+              +382 69 000 000
+            </a>
+          </div>
+          <div class="bg-stone-900 border border-stone-800 rounded-2xl p-6">
+            <div class="text-amber-400 text-2xl mb-3">✉️</div>
+            <div class="font-semibold mb-1">Email</div>
+            <a href="mailto:info@coffeeteam.me" class="text-stone-400 hover:text-amber-400 transition-colors">
+              info@coffeeteam.me
+            </a>
+          </div>
+          <div class="bg-stone-900 border border-stone-800 rounded-2xl p-6">
+            <div class="text-amber-400 text-2xl mb-3">📍</div>
+            <div class="font-semibold mb-1">Lokacija</div>
+            <div class="text-stone-400">Podgorica, Crna Gora</div>
+          </div>
+          <div class="bg-stone-900 border border-stone-800 rounded-2xl p-6">
+            <div class="text-amber-400 text-2xl mb-3">🕐</div>
+            <div class="font-semibold mb-1">Radno vrijeme</div>
+            <div class="text-stone-400">Pon – Pet: 08:00 – 17:00</div>
+            <div class="text-stone-400">Sub: 09:00 – 14:00</div>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <form class="bg-stone-900 border border-stone-800 rounded-2xl p-8 space-y-5">
+          <div>
+            <label class="block text-sm font-medium text-stone-300 mb-2">Ime i prezime</label>
+            <input
+              type="text"
+              placeholder="Vaše ime"
+              class="w-full bg-stone-950 border border-stone-700 rounded-xl px-4 py-3 text-stone-100 placeholder-stone-600 focus:outline-none focus:border-amber-400 transition-colors"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-300 mb-2">Telefon / Email</label>
+            <input
+              type="text"
+              placeholder="+382 69 ..."
+              class="w-full bg-stone-950 border border-stone-700 rounded-xl px-4 py-3 text-stone-100 placeholder-stone-600 focus:outline-none focus:border-amber-400 transition-colors"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-300 mb-2">Aparat / oprema</label>
+            <input
+              type="text"
+              placeholder="Model aparata koji treba servisirati"
+              class="w-full bg-stone-950 border border-stone-700 rounded-xl px-4 py-3 text-stone-100 placeholder-stone-600 focus:outline-none focus:border-amber-400 transition-colors"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-300 mb-2">Opis problema</label>
+            <textarea
+              rows="4"
+              placeholder="Opišite problem ili vrstu servisa koji vam je potreban..."
+              class="w-full bg-stone-950 border border-stone-700 rounded-xl px-4 py-3 text-stone-100 placeholder-stone-600 focus:outline-none focus:border-amber-400 transition-colors resize-none"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-amber-400 text-stone-950 font-bold py-4 rounded-xl hover:bg-amber-300 transition-all hover:scale-[1.02] text-lg"
+          >
+            Pošaljite upit →
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-stone-800 py-8 px-6 bg-stone-950">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-stone-500 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="text-amber-400">☕</span>
+        <span>Coffee<span class="text-amber-400">Team</span></span>
+        <span class="mx-2">·</span>
+        <span>Podgorica, Crna Gora</span>
+      </div>
+      <div>© {new Date().getFullYear()} CoffeeTeam. Sva prava zadržana.</div>
+    </div>
+  </footer>
+</Layout>
