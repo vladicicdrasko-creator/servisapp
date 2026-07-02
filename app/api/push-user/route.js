@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import webpush from 'web-push'
 import { createClient } from '@supabase/supabase-js'
+import { dozvoljenOrigin } from '../../../lib/origin'
 
 if (process.env.VAPID_EMAIL && process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(
@@ -17,8 +18,7 @@ const supabase = createClient(
 
 // Javni endpoint — šalje web push konkretnom korisniku (po user_id)
 export async function POST(request) {
-  const origin = request.headers.get('origin') || ''
-  if (origin && !origin.includes('servisapp')) {
+  if (!dozvoljenOrigin(request.headers.get('origin'))) {
     return NextResponse.json({ error: 'Neautorizovano' }, { status: 403 })
   }
   const { user_id, title, body, url } = await request.json()

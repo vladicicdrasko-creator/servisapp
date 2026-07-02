@@ -11,7 +11,11 @@ const supabaseAdmin = createClient(
 async function provjeriAdmina() {
   const supabase = await createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
-  return user
+  if (!user) return null
+  // Admin = korisnik koji NIJE u radnici tabeli (isto pravilo kao middleware).
+  // Bez ovoga bi radnik/saradnik mogao kreirati i banovati korisnike.
+  const { data: r } = await supabaseAdmin.from('radnici').select('id').eq('email', user.email).maybeSingle()
+  return r ? null : user
 }
 
 // Dodaj radnika

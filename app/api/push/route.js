@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
 import webpush from 'web-push'
 import { createClient } from '@supabase/supabase-js'
-// Ovaj endpoint je javno dostupan (poziva ga forma za prijavu kvara).
+import { dozvoljenOrigin } from '../../../lib/origin'
+// Ovaj endpoint je javno dostupan (poziva ga forma za prijavu kvara i Flutter app).
 // Rizik je minimalan: napadač može poslati lažnu notifikaciju, ali ne može pristupiti podacima.
-// Zaštita: rate limiting u middleware.js (5 req/min po IP na /prijava rutama)
+// Zaštita: origin provjera + rate limiting u middleware.js (po IP na /api/push* rutama)
 
 if (process.env.VAPID_EMAIL && process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(
@@ -20,8 +21,7 @@ const supabase = createClient(
 
 export async function POST(request) {
   // Origin provjera: dozvoli native app (bez origin-a) i naš domen, blokiraj strane web origine
-  const origin = request.headers.get('origin') || ''
-  if (origin && !origin.includes('servisapp')) {
+  if (!dozvoljenOrigin(request.headers.get('origin'))) {
     return NextResponse.json({ error: 'Neautorizovano' }, { status: 403 })
   }
   const { title, body, url } = await request.json()

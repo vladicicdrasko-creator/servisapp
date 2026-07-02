@@ -38,18 +38,16 @@ async function getFcmAccessToken() {
   return data.access_token
 }
 
-import { createClient as createServerClient } from '../../../lib/supabase-server'
+import { dozvoljenOrigin } from '../../../lib/origin'
 
-async function provjeriAdmina() {
-  const supabase = await createServerClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  return user
-}
-
+// Javni endpoint (kao /api/push): zove ga i Flutter (magacioner → radnik) koji nema
+// cookie sesiju, pa cookie-auth ovdje ne radi. Zaštita: origin provjera + rate limit
+// u middleware.js. Rizik = samo slanje notifikacije radniku čiji UUID znaš.
 export async function POST(req) {
   try {
-    const user = await provjeriAdmina()
-    if (!user) return Response.json({ error: 'Neautorizovano' }, { status: 401 })
+    if (!dozvoljenOrigin(req.headers.get('origin'))) {
+      return Response.json({ error: 'Neautorizovano' }, { status: 403 })
+    }
     const { radnik_id, title, body } = await req.json()
     if (!radnik_id) return Response.json({ error: 'radnik_id required' }, { status: 400 })
 
