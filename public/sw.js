@@ -3,8 +3,8 @@ self.addEventListener('push', function(event) {
   const title = data.title || 'ServisApp'
   const options = {
     body: data.body || '',
-    icon: '/favicon.ico',
-    badge: '/favicon.ico',
+    icon: '/brand/icon-192.png',
+    badge: '/brand/badge-96.png',
     data: { url: data.url || '/admin' }
   }
   event.waitUntil(self.registration.showNotification(title, options))

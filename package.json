@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "brand:sync": "node scripts/brand-sync.mjs",
+    "brand:check": "node scripts/brand-check.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

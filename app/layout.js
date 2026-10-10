@@ -1,25 +1,34 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+import { BOJE } from "../lib/brand";
+
+// Fontovi iz knjige standarda (brand/tokens.json → fontovi)
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "700"],
 });
 
 export const metadata = {
-  title: "ServisApp — CoffeeTeam",
-  description: "Servis aparata za kafu — prijave kvarova, nalozi i magacin",
+  title: "Coffee Team — Servis",
+  description: "Coffee Team · Servis · Kafa · Oprema — prijave kvarova, nalozi i magacin",
+};
+
+export const viewport = {
+  themeColor: BOJE.espresso,
 };
 
 export default function RootLayout({ children }) {
   return (
     <html
       lang="sr-Latn"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${manrope.variable} ${jetbrains.variable} h-full antialiased`}
     >
       <head>
         <link

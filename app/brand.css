@@ -1,0 +1,24 @@
+/* GENERISANO iz servisapp/brand/tokens.json (npm run brand:sync) — NE MIJENJATI RUČNO. */
+:root {
+  --ct-espresso: #2A1A12; /* Primarna tamna. Pozadina aplikacije, negativ logo, polja za unos. */
+  --ct-tamno-braon: #3A2317; /* Znak i COFFEE na svijetlom. Kartice, traka sa naslovom i navigacija na tamnoj podlozi. */
+  --ct-bakar: #B0743F; /* Akcentna. TEAM, pečat, pozadina primarnih dugmadi i oznaka. */
+  --ct-krem: #FBF6EE; /* Primarna svijetla. Tekst na bakru i na statusnim bojama. */
+  --ct-svijetli-bakar: #C8894F; /* TEAM na tamnoj podlozi. Akcentni tekst, ikone i ivice na tamnom. */
+  --ct-krem-negativ: #EFE2D0; /* Znak i COFFEE na tamnoj podlozi. Osnovni tekst na tamnom. */
+  --ct-papir: #F2EADE; /* Svijetle površine (PDF, iskačući prozori na mapi). */
+  --ct-siva-kafa: #9A8068; /* Slogan na svijetlom. Prigušen tekst na svijetlom, neaktivno. */
+  --ct-siva-kafa-negativ: #A08A72; /* Slogan na tamnom (zvanični negativ SVG). Prigušen tekst i labele na tamnom. */
+  --ct-uspjeh: #2A9D8F; /* Riješeno, potvrđeno, aktivno. */
+  --ct-upozorenje: #F4A261; /* Dodijeljeno, čeka, upozorenje. */
+  --ct-greska: #E63946; /* Greška, kritično, vraćeno, brisanje. */
+  --ct-u-toku: #9B59B6; /* Nalog u toku. */
+  --ct-rub: #EFE2D024; /* Ivice kartica, polja i razdjelnici na tamnom. */
+  --ct-odabrano: #B0743F47; /* Pozadina odabrane stavke. */
+  --ct-zastor: #2A1A12CC; /* Zatamnjenje iza modalnih prozora, sjenke. */
+  --ct-uspjeh-pozadina: #2A9D8F24; /* Podloga poruke o uspjehu. */
+  --ct-upozorenje-pozadina: #F4A26124; /* Podloga upozorenja. */
+  --ct-greska-pozadina: #E6394624; /* Podloga poruke o grešci. */
+  --ct-font-sans: var(--font-manrope), 'Manrope', Arial, sans-serif;
+  --ct-font-mono: var(--font-jetbrains), 'JetBrains Mono', 'Courier New', monospace;
+}

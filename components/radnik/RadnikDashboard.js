@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import NalogDetalj from './NalogDetalj'
+import BrandLogo from '../BrandLogo'
+import { zaglavljeStil } from '../brendStil'
 
 export default function RadnikDashboard({ radnikId }) {
   const [tab, setTab] = useState('nalozi')
@@ -44,22 +46,22 @@ export default function RadnikDashboard({ radnikId }) {
   }
 
   const hitnostBoja = {
-    'kritična': '#E63946',
-    'visoka': '#F4A261',
-    'srednja': '#1B85B8',
-    'niska': '#2A9D8F'
+    'kritična': 'var(--ct-greska)',
+    'visoka': 'var(--ct-upozorenje)',
+    'srednja': 'var(--ct-svijetli-bakar)',
+    'niska': 'var(--ct-uspjeh)'
   }
 
   const TabBtn = ({ id, label, badge }) => (
     <button onClick={() => setTab(id)} style={{
-      flex: 1, background: tab === id ? '#1B85B8' : 'transparent',
-      border: 'none', color: tab === id ? '#fff' : '#7B96B2',
+      flex: 1, background: tab === id ? 'var(--ct-bakar)' : 'transparent',
+      border: 'none', color: tab === id ? 'var(--ct-krem)' : 'var(--ct-siva-kafa-negativ)',
       padding: '10px 8px', cursor: 'pointer', fontSize: 12, fontWeight: 600,
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
     }}>
       {label}
       {badge > 0 && (
-        <span style={{ background: '#E63946', color: '#fff', borderRadius: 10, fontSize: 10, padding: '1px 6px' }}>
+        <span style={{ background: 'var(--ct-greska)', color: 'var(--ct-krem)', borderRadius: 10, fontSize: 10, padding: '1px 6px' }}>
           {badge}
         </span>
       )}
@@ -67,14 +69,14 @@ export default function RadnikDashboard({ radnikId }) {
   )
 
   if (ucitava) return (
-    <div style={{ background: '#0D1B2A', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Segoe UI', sans-serif" }}>
-      <div style={{ color: '#7B96B2' }}>Učitavam...</div>
+    <div style={{ background: 'var(--ct-espresso)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ct-font-sans)' }}>
+      <div style={{ color: 'var(--ct-siva-kafa-negativ)' }}>Učitavam...</div>
     </div>
   )
 
   if (!radnik) return (
-    <div style={{ background: '#0D1B2A', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Segoe UI', sans-serif" }}>
-      <div style={{ color: '#E63946', fontWeight: 700 }}>Radnik nije pronađen.</div>
+    <div style={{ background: 'var(--ct-espresso)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ct-font-sans)' }}>
+      <div style={{ color: 'var(--ct-greska)', fontWeight: 700 }}>Radnik nije pronađen.</div>
     </div>
   )
 
@@ -89,14 +91,8 @@ export default function RadnikDashboard({ radnikId }) {
     <div style={s.wrapper}>
       {/* Header */}
       <div style={s.header}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={s.logo}>🔧</div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: 14 }}>ServisApp</div>
-            <div style={{ fontSize: 10, opacity: 0.7 }}>{radnik.ime}</div>
-          </div>
-        </div>
-        <div style={{ background: '#2A9D8F', color: '#fff', fontSize: 10, padding: '4px 10px', borderRadius: 20, fontWeight: 700 }}>
+        <BrandLogo visina={28} oznaka={radnik.ime} />
+        <div style={{ background: 'var(--ct-uspjeh)', color: 'var(--ct-krem)', fontSize: 10, padding: '4px 10px', borderRadius: 20, fontWeight: 700 }}>
           ● NA TERENU
         </div>
       </div>
@@ -116,7 +112,7 @@ export default function RadnikDashboard({ radnikId }) {
             </h3>
 
             {nalozi.length === 0 && (
-              <div style={{ color: '#7B96B2', textAlign: 'center', padding: 40 }}>
+              <div style={{ color: 'var(--ct-siva-kafa-negativ)', textAlign: 'center', padding: 40 }}>
                 Nema aktivnih naloga.
               </div>
             )}
@@ -124,20 +120,20 @@ export default function RadnikDashboard({ radnikId }) {
             {nalozi.map(n => (
               <div key={n.id} onClick={() => setOdabraniN(n)}
                 style={{
-                  background: '#1A2E45',
-                  border: `1px solid ${n.hitnost === 'kritična' ? '#E63946' : '#1E3A5A'}`,
+                  background: 'var(--ct-tamno-braon)',
+                  border: `1px solid ${n.hitnost === 'kritična' ? 'var(--ct-greska)' : 'var(--ct-rub)'}`,
                   borderRadius: 10, padding: 14, marginBottom: 10, cursor: 'pointer'
                 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <span style={{ color: '#1B85B8', fontWeight: 700, fontSize: 12 }}>{n.id}</span>
-                  <span style={{ color: hitnostBoja[n.hitnost] || '#7B96B2', fontSize: 11, fontWeight: 700 }}>
+                  <span style={{ color: 'var(--ct-svijetli-bakar)', fontWeight: 700, fontSize: 12 }}>{n.id}</span>
+                  <span style={{ color: hitnostBoja[n.hitnost] || 'var(--ct-siva-kafa-negativ)', fontSize: 11, fontWeight: 700 }}>
                     ● {n.hitnost?.toUpperCase()}
                   </span>
                 </div>
                 <div style={{ fontWeight: 700, marginBottom: 4 }}>{n.lokal}</div>
-                <div style={{ color: '#7B96B2', fontSize: 12, marginBottom: 6 }}>📍 {n.adresa}</div>
-                <div style={{ color: '#7B96B2', fontSize: 12, fontStyle: 'italic' }}>"{n.opis}"</div>
-                <div style={{ marginTop: 8, fontSize: 11, color: '#1B85B8', textAlign: 'right' }}>
+                <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, marginBottom: 6 }}>📍 {n.adresa}</div>
+                <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, fontStyle: 'italic' }}>"{n.opis}"</div>
+                <div style={{ marginTop: 8, fontSize: 11, color: 'var(--ct-svijetli-bakar)', textAlign: 'right' }}>
                   Tapni za detalje →
                 </div>
               </div>
@@ -154,16 +150,16 @@ export default function RadnikDashboard({ radnikId }) {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div style={{
                     width: 28, height: 28, borderRadius: '50%',
-                    background: '#1B85B8', display: 'flex', alignItems: 'center',
+                    background: 'var(--ct-bakar)', display: 'flex', alignItems: 'center',
                     justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0
                   }}>{i + 1}</div>
                   {i < nalozi.length - 1 && (
-                    <div style={{ width: 2, flex: 1, minHeight: 20, background: '#1E3A5A', margin: '4px 0' }} />
+                    <div style={{ width: 2, flex: 1, minHeight: 20, background: 'var(--ct-rub)', margin: '4px 0' }} />
                   )}
                 </div>
-                <div style={{ background: '#1A2E45', border: '1px solid #1E3A5A', borderRadius: 10, padding: 12, flex: 1 }}>
+                <div style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: 12, flex: 1 }}>
                   <div style={{ fontWeight: 700, fontSize: 13 }}>{n.lokal}</div>
-                  <div style={{ color: '#7B96B2', fontSize: 11 }}>{n.adresa}</div>
+                  <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11 }}>{n.adresa}</div>
                   <div style={{ color: hitnostBoja[n.hitnost], fontSize: 11, fontWeight: 700, marginTop: 4 }}>
                     ● {n.hitnost?.toUpperCase()}
                   </div>
@@ -174,8 +170,8 @@ export default function RadnikDashboard({ radnikId }) {
               <button
                 onClick={() => window.open("https://www.google.com/maps")}
                 style={{
-                  display: 'block', width: '100%', background: '#1B85B8',
-                  border: 'none', color: '#fff', borderRadius: 10, padding: 14,
+                  display: 'block', width: '100%', background: 'var(--ct-bakar)',
+                  border: 'none', color: 'var(--ct-krem)', borderRadius: 10, padding: 14,
                   fontSize: 14, fontWeight: 700, cursor: 'pointer', textAlign: 'center',
                   marginTop: 8
                 }}>
@@ -190,9 +186,8 @@ export default function RadnikDashboard({ radnikId }) {
 }
 
 const s = {
-  wrapper: { background: '#0D1B2A', minHeight: '100vh', fontFamily: "'Segoe UI', sans-serif", color: '#E8F4FD', display: 'flex', flexDirection: 'column' },
-  header: { background: '#0F4C75', padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
-  logo: { width: 34, height: 34, background: '#1B85B8', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  nav: { background: '#132338', borderBottom: '1px solid #1E3A5A', display: 'flex' },
+  wrapper: { background: 'var(--ct-espresso)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-krem-negativ)', display: 'flex', flexDirection: 'column' },
+  header: zaglavljeStil,
+  nav: { background: 'var(--ct-tamno-braon)', borderBottom: '1px solid var(--ct-rub)', display: 'flex' },
   sadrzaj: { flex: 1, overflow: 'auto', padding: 14, maxWidth: 600, width: '100%', margin: '0 auto' },
 }

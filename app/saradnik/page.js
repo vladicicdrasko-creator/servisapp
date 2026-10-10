@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '../../lib/supabase-browser'
+import BrandLogo, { BrandZaglavljeForme } from '../../components/BrandLogo'
+import { forma, zaglavljeStil } from '../../components/brendStil'
 
 const supabase = createClient()
 
@@ -164,27 +166,23 @@ export default function SaradnikPage() {
   })
   const dodajRed = (id) => setRadovi(prev => ({ ...prev, [id]: [...(prev[id] || [{ opis: '', cijena: '' }]), { opis: '', cijena: '' }] }))
 
-  if (ucitava) return <div style={s.centar}><div style={{ color: '#7B96B2' }}>Učitavam...</div></div>
+  if (ucitava) return <div style={s.centar}><div style={{ color: 'var(--ct-siva-kafa-negativ)' }}>Učitavam...</div></div>
 
   // Login
   if (!saradnik && !nemaPristup) return (
     <div style={s.centar}>
       <div style={s.loginCard}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={s.logo}>🔧</div>
-          <h1 style={{ color: '#E8F4FD', fontSize: 20, fontWeight: 800, margin: 0 }}>ServisApp</h1>
-          <p style={{ color: '#7B96B2', fontSize: 13, margin: '4px 0 0' }}>Saradnik</p>
-        </div>
+        <BrandZaglavljeForme oznaka="Saradnik" />
         <label style={s.label}>EMAIL</label>
-        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="vas@email.com" maxLength={100} style={s.input} />
+        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="vas@email.com" maxLength={100} style={forma.polje} />
         <label style={s.label}>LOZINKA</label>
         <div style={{ position: 'relative' }}>
           <input type={showL ? 'text' : 'password'} value={lozinka} onChange={e => setLozinka(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && prijava()} placeholder="••••••••" style={{ ...s.input, paddingRight: 40 }} />
-          <button onClick={() => setShowL(v => !v)} style={s.oko}>{showL ? '🙈' : '👁'}</button>
+            onKeyDown={e => e.key === 'Enter' && prijava()} placeholder="••••••••" style={{ ...forma.polje, paddingRight: 40 }} />
+          <button onClick={() => setShowL(v => !v)} style={{ ...forma.oko, top: 'calc(50% - 6px)' }}>{showL ? '🙈' : '👁'}</button>
         </div>
-        {greska && <div style={{ color: '#E63946', fontSize: 13, margin: '8px 0' }}>{greska}</div>}
-        <button onClick={prijava} disabled={loginLoading} style={{ ...s.btn, marginTop: 12 }}>{loginLoading ? 'Prijava...' : 'Prijavi se'}</button>
+        {greska && <div style={forma.greska}>{greska}</div>}
+        <button onClick={prijava} disabled={loginLoading} style={forma.dugme}>{loginLoading ? 'Prijava...' : 'Prijavi se'}</button>
       </div>
     </div>
   )
@@ -192,8 +190,8 @@ export default function SaradnikPage() {
   if (nemaPristup) return (
     <div style={s.centar}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ color: '#E63946', fontWeight: 700, marginBottom: 8 }}>Nemate pristup</div>
-        <p style={{ color: '#7B96B2', fontSize: 13 }}>Ovaj nalog nije saradnik.</p>
+        <div style={{ color: 'var(--ct-greska)', fontWeight: 700, marginBottom: 8 }}>Nemate pristup</div>
+        <p style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13 }}>Ovaj nalog nije saradnik.</p>
         <button onClick={odjava} style={{ ...s.btn, marginTop: 12, width: 'auto', padding: '10px 24px' }}>Odjava</button>
       </div>
     </div>
@@ -205,16 +203,13 @@ export default function SaradnikPage() {
   return (
     <div style={s.wrapper}>
       <div style={s.header}>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: 15 }}>ServisApp</div>
-          <div style={{ fontSize: 11, opacity: 0.7 }}>{saradnik.ime}</div>
-        </div>
+        <BrandLogo visina={28} oznaka={saradnik.ime} />
         <button onClick={odjava} style={s.odjavaBtn}>Odjava</button>
       </div>
 
       <div style={{ padding: 16, maxWidth: 600, margin: '0 auto' }}>
-        <div style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>MOJI NALOZI</div>
-        {aktivni.length === 0 && <div style={{ color: '#7B96B2', fontSize: 13, marginBottom: 16 }}>Nema aktivnih naloga.</div>}
+        <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>MOJI NALOZI</div>
+        {aktivni.length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13, marginBottom: 16 }}>Nema aktivnih naloga.</div>}
 
         {aktivni.map(n => {
           const jeOtvoren = otvoren === n.id
@@ -222,28 +217,28 @@ export default function SaradnikPage() {
             <div key={n.id} style={s.card}>
               <div onClick={() => setOtvoren(jeOtvoren ? null : n.id)} style={{ cursor: 'pointer' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                  <span style={{ color: '#1B85B8', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
-                  {n.procjena_status === 'poslata' && <span style={{ background: '#F4A261', color: '#0D1B2A', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ČEKA ODOBRENJE</span>}
-                  {n.procjena_status === 'odobrena' && <span style={{ background: '#2A9D8F', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ODOBRENO — ZAVRŠI</span>}
-                  {!n.procjena_status && <span style={{ background: '#1B85B8', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>NOVO</span>}
+                  <span style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
+                  {n.procjena_status === 'poslata' && <span style={{ background: 'var(--ct-upozorenje)', color: 'var(--ct-espresso)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ČEKA ODOBRENJE</span>}
+                  {n.procjena_status === 'odobrena' && <span style={{ background: 'var(--ct-uspjeh)', color: 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ODOBRENO — ZAVRŠI</span>}
+                  {!n.procjena_status && <span style={{ background: 'var(--ct-bakar)', color: 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>NOVO</span>}
                 </div>
                 <div style={{ fontWeight: 700, fontSize: 15 }}>{n.lokal || n.vrsta || n.kategorija}</div>
-                {n.adresa && <div style={{ color: '#7B96B2', fontSize: 12 }}>📍 {n.adresa}</div>}
+                {n.adresa && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>📍 {n.adresa}</div>}
               </div>
 
               {jeOtvoren && (
-                <div style={{ marginTop: 12, borderTop: '1px solid #1E3A5A', paddingTop: 12 }}>
-                  <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>OPIS POSLA</div>
+                <div style={{ marginTop: 12, borderTop: '1px solid var(--ct-rub)', paddingTop: 12 }}>
+                  <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>OPIS POSLA</div>
                   <div style={{ fontSize: 14, marginBottom: 12 }}>{n.opis || '—'}</div>
 
-                  <div style={{ color: '#7B96B2', fontSize: 11, marginBottom: 4 }}>LOKACIJA</div>
+                  <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>LOKACIJA</div>
                   <div style={{ fontSize: 14, marginBottom: 6 }}>{n.lokal || '—'}{n.adresa ? ` · ${n.adresa}` : ''}</div>
                   {(n.lat && n.lng) || n.adresa || n.lokal ? (
                     <a href={(n.lat && n.lng)
                         ? `https://www.google.com/maps?q=${n.lat},${n.lng}`
                         : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([n.lokal, n.adresa].filter(Boolean).join(' '))}`}
                       target="_blank" rel="noreferrer"
-                      style={{ display: 'inline-block', background: '#0F4C75', color: '#fff', borderRadius: 8, padding: '8px 14px', fontSize: 13, textDecoration: 'none', marginBottom: 12 }}>
+                      style={{ display: 'inline-block', background: 'var(--ct-odabrano)', color: 'var(--ct-krem)', borderRadius: 8, padding: '8px 14px', fontSize: 13, textDecoration: 'none', marginBottom: 12 }}>
                       📍 Otvori u Google Maps
                     </a>
                   ) : null}
@@ -261,17 +256,17 @@ export default function SaradnikPage() {
 
                   {/* FAZA 1 — čeka */}
                   {n.procjena_status === 'poslata' && (
-                    <div style={{ background: '#0D1B2A', borderRadius: 8, padding: 12 }}>
-                      <div style={{ color: '#F4A261', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>Procjena poslata — čeka odobrenje</div>
-                      <div style={{ fontSize: 13, color: '#E8F4FD' }}>{n.procjena}</div>
+                    <div style={{ background: 'var(--ct-espresso)', borderRadius: 8, padding: 12 }}>
+                      <div style={{ color: 'var(--ct-upozorenje)', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>Procjena poslata — čeka odobrenje</div>
+                      <div style={{ fontSize: 13, color: 'var(--ct-krem-negativ)' }}>{n.procjena}</div>
                     </div>
                   )}
 
                   {/* FAZA 2 — rad + obračun */}
                   {n.procjena_status === 'odobrena' && (
                     <>
-                      <div style={{ color: '#2A9D8F', fontSize: 12, marginBottom: 10 }}>✓ Procjena odobrena — unesi obračun i sliku.</div>
-                      <div style={{ display: 'flex', gap: 8, marginBottom: 6, fontSize: 11, color: '#7B96B2' }}>
+                      <div style={{ color: 'var(--ct-uspjeh)', fontSize: 12, marginBottom: 10 }}>✓ Procjena odobrena — unesi obračun i sliku.</div>
+                      <div style={{ display: 'flex', gap: 8, marginBottom: 6, fontSize: 11, color: 'var(--ct-siva-kafa-negativ)' }}>
                         <div style={{ flex: 3 }}>Opis</div><div style={{ flex: 1 }}>Cijena €</div>
                       </div>
                       {(radovi[n.id] || [{ opis: '', cijena: '' }]).map((r, i) => (
@@ -280,10 +275,10 @@ export default function SaradnikPage() {
                           <input value={r.cijena} onChange={e => setRed(n.id, i, 'cijena', e.target.value)} placeholder="0" inputMode="decimal" maxLength={10} style={{ ...s.input, flex: 1, margin: 0 }} />
                         </div>
                       ))}
-                      <button onClick={() => dodajRed(n.id)} style={{ background: 'none', border: 'none', color: '#1B85B8', cursor: 'pointer', fontSize: 13, padding: '4px 0' }}>+ Dodaj red</button>
+                      <button onClick={() => dodajRed(n.id)} style={{ background: 'none', border: 'none', color: 'var(--ct-svijetli-bakar)', cursor: 'pointer', fontSize: 13, padding: '4px 0' }}>+ Dodaj red</button>
                       <div style={{ marginTop: 8 }}>
                         <label style={s.label}>SLIKA (opciono)</label>
-                        <input type="file" accept="image/*" onChange={e => setSlike(prev => ({ ...prev, [n.id]: e.target.files[0] }))} style={{ color: '#7B96B2', fontSize: 12 }} />
+                        <input type="file" accept="image/*" onChange={e => setSlike(prev => ({ ...prev, [n.id]: e.target.files[0] }))} style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }} />
                       </div>
                       <button onClick={() => zavrsiNalog(n)} disabled={slanje} style={{ ...s.btn, marginTop: 12 }}>{slanje ? 'Slanje...' : 'Završi i pošalji obračun'}</button>
                     </>
@@ -296,12 +291,12 @@ export default function SaradnikPage() {
 
         {gotovi.length > 0 && (
           <>
-            <div style={{ color: '#7B96B2', fontSize: 11, fontWeight: 700, letterSpacing: 1, margin: '16px 0 8px' }}>ZAVRŠENI</div>
+            <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, fontWeight: 700, letterSpacing: 1, margin: '16px 0 8px' }}>ZAVRŠENI</div>
             {gotovi.map(n => (
               <div key={n.id} style={{ ...s.card, opacity: 0.7 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#1B85B8', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
-                  <span style={{ background: '#2A9D8F', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ZAVRŠENO</span>
+                  <span style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
+                  <span style={{ background: 'var(--ct-uspjeh)', color: 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ZAVRŠENO</span>
                 </div>
                 <div style={{ fontWeight: 600, fontSize: 14 }}>{n.lokal || n.vrsta || n.kategorija}</div>
               </div>
@@ -314,15 +309,14 @@ export default function SaradnikPage() {
 }
 
 const s = {
-  wrapper: { background: '#0D1B2A', minHeight: '100vh', fontFamily: "'Segoe UI', sans-serif", color: '#E8F4FD' },
-  centar: { background: '#0D1B2A', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Segoe UI', sans-serif", padding: 16 },
-  header: { background: '#0F4C75', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
-  loginCard: { background: '#132338', border: '1px solid #1E3A5A', borderRadius: 16, padding: 32, width: '100%', maxWidth: 380 },
-  logo: { width: 56, height: 56, background: '#1B85B8', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: 26 },
-  label: { color: '#7B96B2', fontSize: 12, display: 'block', marginBottom: 6, marginTop: 4 },
-  input: { width: '100%', background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD', borderRadius: 8, padding: '10px 12px', fontSize: 14, outline: 'none', boxSizing: 'border-box' },
-  oko: { position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#7B96B2', cursor: 'pointer', fontSize: 16 },
-  btn: { width: '100%', background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 10, padding: 13, fontSize: 15, fontWeight: 700, cursor: 'pointer' },
-  odjavaBtn: { background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 13 },
-  card: { background: '#132338', border: '1px solid #1E3A5A', borderRadius: 12, padding: 16, marginBottom: 12 },
+  wrapper: { background: 'var(--ct-espresso)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-krem-negativ)' },
+  centar: forma.centar,
+  header: zaglavljeStil,
+  loginCard: forma.kartica,
+  label: forma.label,
+  input: { width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '10px 12px', fontSize: 14, outline: 'none', boxSizing: 'border-box' },
+  oko: forma.oko,
+  btn: { width: '100%', background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 10, padding: 13, fontSize: 15, fontWeight: 700, cursor: 'pointer' },
+  odjavaBtn: { background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 13 },
+  card: { background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 16, marginBottom: 12 },
 }

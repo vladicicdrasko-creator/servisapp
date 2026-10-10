@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { use } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { noviDokument } from '../../../lib/pdf-brend'
+import BrandLogo from '../../../components/BrandLogo'
+import { zaglavljeStil } from '../../../components/brendStil'
 
 export default function PrijavaPage({ params }) {
   const { aparatId } = use(params)
@@ -100,92 +103,57 @@ export default function PrijavaPage({ params }) {
 
   if (ucitava) return (
     <div style={s.centar}>
-      <div style={{ color: '#7B96B2' }}>Učitavam...</div>
+      <div style={{ color: 'var(--ct-siva-kafa-negativ)' }}>Učitavam...</div>
     </div>
   )
 
   if (!aparat) return (
     <div style={s.centar}>
-      <div style={{ color: '#E63946', fontWeight: 700 }}>Aparat nije pronađen.</div>
+      <div style={{ color: 'var(--ct-greska)', fontWeight: 700 }}>Aparat nije pronađen.</div>
     </div>
   )
 
   const preuzmiPDF = async () => {
-    const { jsPDF } = await import('jspdf')
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+    const { doc, boja, sans, mono, metaRed, M, DESNO } = await noviDokument()
+    const vrijeme = vrijemePrijaveRef.current || new Date()
+    metaRed('Podgorica', vrijeme.toLocaleDateString('bs-BA'), brojPrijave)
 
-    const vrijeme = vrijemePrijaveRef.current
-    const datumStr = vrijeme ? vrijeme.toLocaleString('bs-BA') : new Date().toLocaleString('bs-BA')
+    sans(16, 'bold'); boja('tamnoBraon')
+    doc.text('Potvrda o prijavi kvara', M, 52)
+    sans(10, 'bold'); boja('uspjeh')
+    doc.text('Prijava je uspješno primljena', M, 59)
 
-    // Header traka
-    doc.setFillColor(15, 76, 117)
-    doc.rect(0, 0, 210, 28, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(18)
-    doc.setFont('helvetica', 'bold')
-    doc.text('ServisApp', 14, 12)
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Potvrda o prijavi kvara', 14, 20)
+    // Broj prijave — istaknuto (bakar)
+    boja('papir', 'Fill'); doc.roundedRect(M, 66, DESNO - M, 24, 3, 3, 'F')
+    mono(8); boja('sivaKafa')
+    doc.text('BROJ PRIJAVE', 105, 74, { align: 'center' })
+    sans(20, 'bold'); boja('bakar')
+    doc.text(brojPrijave, 105, 84, { align: 'center' })
 
-    // Zelena traka uspjeha
-    doc.setFillColor(42, 157, 143)
-    doc.rect(0, 28, 210, 16, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(12)
-    doc.setFont('helvetica', 'bold')
-    doc.text('Prijava je uspješno primljena', 14, 38)
-
-    // Broj prijave — istaknuto
-    doc.setFillColor(19, 35, 56)
-    doc.roundedRect(14, 52, 182, 22, 4, 4, 'F')
-    doc.setTextColor(27, 133, 184)
-    doc.setFontSize(22)
-    doc.setFont('helvetica', 'bold')
-    doc.text(brojPrijave, 105, 66, { align: 'center' })
-
-    doc.setTextColor(123, 150, 178)
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Broj prijave', 105, 58, { align: 'center' })
-
-    // Detalji prijave
     const detalji = [
-      ['Datum i vrijeme', datumStr],
+      ['Datum i vrijeme', vrijeme.toLocaleString('bs-BA')],
       ['Lokacija', aparat.lokal],
       ['Adresa', aparat.adresa],
-      ['Aparat ID', aparat.id],
+      ['Aparat', aparat.id],
       ['Vrsta kvara', kategorija],
       ['Opis', opis],
     ]
     const kontaktStr = [kontaktIme, kontaktTel].filter(Boolean).join(' / ')
     if (kontaktStr) detalji.push(['Kontakt', kontaktStr])
 
-    let y = 84
-    doc.setFontSize(10)
-    detalji.forEach(([label, value], i) => {
-      if (i % 2 === 0) {
-        doc.setFillColor(245, 247, 250)
-        doc.rect(14, y - 5, 182, 10, 'F')
-      }
-      doc.setTextColor(100, 120, 140)
-      doc.setFont('helvetica', 'normal')
-      doc.text(label + ':', 16, y)
-      doc.setTextColor(20, 40, 60)
-      doc.setFont('helvetica', 'bold')
-      const lines = doc.splitTextToSize(value || '—', 120)
-      doc.text(lines, 70, y)
-      y += lines.length > 1 ? lines.length * 6 + 4 : 10
+    let y = 102
+    detalji.forEach(([label, value]) => {
+      mono(7.5); boja('sivaKafa')
+      doc.text(label.toUpperCase(), M, y)
+      sans(10.5); boja('tamnoBraon')
+      const linije = doc.splitTextToSize(value || '—', DESNO - 70)
+      doc.text(linije, 70, y)
+      y += Math.max(1, linije.length) * 5.5 + 3
+      boja('papir', 'Draw'); doc.setLineWidth(0.2); doc.line(M, y - 4.5, DESNO, y - 4.5)
     })
 
-    // Footer
-    doc.setFillColor(230, 235, 240)
-    doc.rect(0, 275, 210, 22, 'F')
-    doc.setTextColor(100, 120, 140)
-    doc.setFontSize(8)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Tehnicar ce biti upucen u najkracem roku. Cuvajte ovaj dokument kao potvrdu vase prijave.', 105, 283, { align: 'center' })
-    doc.text('ServisApp © ' + new Date().getFullYear(), 105, 290, { align: 'center' })
+    sans(9.5); boja('tamnoBraon')
+    doc.text(doc.splitTextToSize('Serviser će biti upućen u najkraćem roku. Sačuvajte ovaj dokument kao potvrdu vaše prijave.', DESNO - M), M, y + 6)
 
     doc.save('prijava-' + brojPrijave + '.pdf')
   }
@@ -194,13 +162,13 @@ export default function PrijavaPage({ params }) {
     <div style={s.centar}>
       <div style={{ textAlign: 'center' }}>
         <div style={s.uspjehKrug}>✓</div>
-        <h2 style={{ color: '#E8F4FD', marginBottom: 8 }}>Prijava poslata!</h2>
-        <p style={{ color: '#7B96B2', marginBottom: 8 }}>Vaš broj prijave:</p>
+        <h2 style={{ color: 'var(--ct-krem-negativ)', marginBottom: 8 }}>Prijava poslata!</h2>
+        <p style={{ color: 'var(--ct-siva-kafa-negativ)', marginBottom: 8 }}>Vaš broj prijave:</p>
         <div style={s.brojPrijave}>{brojPrijave}</div>
-        <p style={{ color: '#7B96B2', fontSize: 12 }}>
+        <p style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>
           {vrijemePrijaveRef.current?.toLocaleString('bs-BA')}
         </p>
-        <p style={{ color: '#7B96B2', fontSize: 13, marginBottom: 24 }}>
+        <p style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13, marginBottom: 24 }}>
           Tehničar će biti upućen u najkraćem roku.
         </p>
         <button onClick={preuzmiPDF} style={s.pdfBtn}>
@@ -214,29 +182,25 @@ export default function PrijavaPage({ params }) {
     <div style={s.wrapper}>
       {/* Header */}
       <div style={s.header}>
-        <div style={s.headerIkona}>🔧</div>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: 15 }}>ServisApp</div>
-          <div style={{ fontSize: 11, opacity: 0.7 }}>{aparat.lokal}</div>
-        </div>
+        <BrandLogo visina={28} oznaka="Prijava kvara" />
       </div>
 
       {/* Info aparat/mlin */}
       <div style={s.card}>
         <div style={{ fontWeight: 600, fontSize: 14 }}>{aparat.tip === 'mlin' ? aparat.naziv : aparat.lokal}</div>
         {aparat.tip === 'mlin' ? (
-          aparat.lokal && <div style={{ color: '#7B96B2', fontSize: 12 }}>{aparat.lokal}</div>
+          aparat.lokal && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{aparat.lokal}</div>
         ) : (
-          <div style={{ color: '#7B96B2', fontSize: 12 }}>{aparat.adresa}</div>
+          <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{aparat.adresa}</div>
         )}
-        <div style={{ color: '#7B96B2', fontSize: 11, marginTop: 2 }}>
-          {aparat.tip === 'mlin' ? 'Mlin' : 'Aparat'}: <span style={{ color: '#1B85B8' }}>{aparat.id}</span>
+        <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginTop: 2 }}>
+          {aparat.tip === 'mlin' ? 'Mlin' : 'Aparat'}: <span style={{ color: 'var(--ct-svijetli-bakar)' }}>{aparat.id}</span>
         </div>
       </div>
 
       {/* Forma */}
       <div style={{ padding: '0 16px 16px' }}>
-        <h3 style={{ color: '#E8F4FD', marginBottom: 16, fontSize: 16 }}>
+        <h3 style={{ color: 'var(--ct-krem-negativ)', marginBottom: 16, fontSize: 16 }}>
           Prijavi kvar
         </h3>
 
@@ -246,7 +210,7 @@ export default function PrijavaPage({ params }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             {kategorije.map(k => (
               <button key={k} onClick={() => setKategorija(k)}
-                style={{ ...s.kategorijaBtn, background: kategorija === k ? '#1B85B8' : '#132338', border: `1px solid ${kategorija === k ? '#1B85B8' : '#1E3A5A'}` }}>
+                style={{ ...s.kategorijaBtn, background: kategorija === k ? 'var(--ct-bakar)' : 'var(--ct-tamno-braon)', border: `1px solid ${kategorija === k ? 'var(--ct-svijetli-bakar)' : 'var(--ct-rub)'}` }}>
                 {k}
               </button>
             ))}
@@ -267,13 +231,13 @@ export default function PrijavaPage({ params }) {
     <div style={{ marginBottom: 8, position: 'relative' }}>
       <img src={slikaPreview} alt="preview" style={{ width: '100%', borderRadius: 8, maxHeight: 200, objectFit: 'cover' }} />
       <button onClick={() => { setSlika(null); setSlikaPreview(null) }}
-        style={{ position: 'absolute', top: 8, right: 8, background: '#E63946', border: 'none', color: '#fff', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 16 }}>
+        style={{ position: 'absolute', top: 8, right: 8, background: 'var(--ct-greska)', border: 'none', color: 'var(--ct-krem)', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 16 }}>
         ×
       </button>
     </div>
   )}
   {!slikaPreview && (
-    <label style={{ display: 'block', background: '#132338', border: '1px dashed #1E3A5A', borderRadius: 8, padding: '20px', textAlign: 'center', cursor: 'pointer', color: '#7B96B2', fontSize: 13 }}>
+    <label style={{ display: 'block', background: 'var(--ct-tamno-braon)', border: '1px dashed var(--ct-rub)', borderRadius: 8, padding: '20px', textAlign: 'center', cursor: 'pointer', color: 'var(--ct-siva-kafa-negativ)', fontSize: 13 }}>
       📷 Klikni za dodavanje slike
       <input type="file" accept="image/*" capture="environment"
         onChange={e => {
@@ -312,7 +276,7 @@ export default function PrijavaPage({ params }) {
 
         <button onClick={posaljiPrijavu}
           disabled={!formaOk || saljem}
-          style={{ ...s.btn, background: formaOk ? '#1B85B8' : '#1E3A5A', cursor: formaOk ? 'pointer' : 'not-allowed' }}>
+          style={{ ...s.btn, background: formaOk ? 'var(--ct-bakar)' : 'var(--ct-rub)', cursor: formaOk ? 'pointer' : 'not-allowed' }}>
           {saljem ? 'Slanje...' : 'Pošalji prijavu'}
         </button>
       </div>
@@ -321,17 +285,16 @@ export default function PrijavaPage({ params }) {
 }
 
 const s = {
-  wrapper: { background: '#0D1B2A', minHeight: '100vh', fontFamily: "'Segoe UI', sans-serif", color: '#E8F4FD' },
-  centar: { background: '#0D1B2A', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Segoe UI', sans-serif" },
-  header: { background: '#0F4C75', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12 },
-  headerIkona: { width: 36, height: 36, background: '#1B85B8', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 },
-  card: { margin: 16, background: '#132338', borderRadius: 12, padding: 14, border: '1px solid #1E3A5A' },
-  label: { color: '#7B96B2', fontSize: 12, display: 'block', marginBottom: 6 },
-  kategorijaBtn: { color: '#E8F4FD', borderRadius: 8, padding: '10px 8px', fontSize: 12, cursor: 'pointer', textAlign: 'left' },
-  textarea: { width: '100%', background: '#132338', border: '1px solid #1E3A5A', borderRadius: 8, padding: '10px 12px', color: '#E8F4FD', fontSize: 13, resize: 'none', minHeight: 90, outline: 'none', boxSizing: 'border-box' },
-  input: { width: '100%', background: '#132338', border: '1px solid #1E3A5A', borderRadius: 8, padding: '10px 12px', color: '#E8F4FD', fontSize: 13, outline: 'none', boxSizing: 'border-box' },
-  btn: { width: '100%', border: 'none', color: '#fff', borderRadius: 10, padding: 14, fontSize: 15, fontWeight: 700 },
-  uspjehKrug: { width: 80, height: 80, background: '#2A9D8F', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: 36, color: '#fff' },
-  brojPrijave: { background: '#132338', border: '1px solid #1E3A5A', borderRadius: 10, padding: '12px 24px', display: 'inline-block', color: '#1B85B8', fontSize: 20, fontWeight: 700, letterSpacing: 2, marginBottom: 20 },
-  pdfBtn: { background: '#1B85B8', border: 'none', color: '#fff', borderRadius: 10, padding: '13px 28px', fontSize: 14, fontWeight: 700, cursor: 'pointer' },
+  wrapper: { background: 'var(--ct-espresso)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-krem-negativ)' },
+  centar: { background: 'var(--ct-espresso)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ct-font-sans)' },
+  header: zaglavljeStil,
+  card: { margin: 16, background: 'var(--ct-tamno-braon)', borderRadius: 12, padding: 14, border: '1px solid var(--ct-rub)' },
+  label: { fontFamily: 'var(--ct-font-mono)', textTransform: 'uppercase', letterSpacing: 1, color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, display: 'block', marginBottom: 6 },
+  kategorijaBtn: { color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '10px 8px', fontSize: 12, cursor: 'pointer', textAlign: 'left' },
+  textarea: { width: '100%', background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 8, padding: '10px 12px', color: 'var(--ct-krem-negativ)', fontSize: 13, resize: 'none', minHeight: 90, outline: 'none', boxSizing: 'border-box' },
+  input: { width: '100%', background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 8, padding: '10px 12px', color: 'var(--ct-krem-negativ)', fontSize: 13, outline: 'none', boxSizing: 'border-box' },
+  btn: { width: '100%', border: 'none', color: 'var(--ct-krem)', borderRadius: 10, padding: 14, fontSize: 15, fontWeight: 700 },
+  uspjehKrug: { width: 80, height: 80, background: 'var(--ct-uspjeh)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: 36, color: 'var(--ct-krem)' },
+  brojPrijave: { fontFamily: 'var(--ct-font-mono)', background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: '12px 24px', display: 'inline-block', color: 'var(--ct-svijetli-bakar)', fontSize: 20, fontWeight: 700, letterSpacing: 2, marginBottom: 20 },
+  pdfBtn: { background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 10, padding: '13px 28px', fontSize: 14, fontWeight: 700, cursor: 'pointer' },
 }

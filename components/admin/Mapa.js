@@ -78,14 +78,14 @@ export default function Mapa({ prijave = [], radnici = [] }) {
       markeriRef.current = []
 
       const krugIkona = (boja, velicina = 14) => L.default.divIcon({
-        html: `<div style="width:${velicina}px;height:${velicina}px;border-radius:50%;background:${boja};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.5)"></div>`,
+        html: `<div style="width:${velicina}px;height:${velicina}px;border-radius:50%;background:${boja};border:2px solid var(--ct-krem);box-shadow:0 2px 6px var(--ct-zastor)"></div>`,
         className: '',
         iconSize: [velicina, velicina],
         iconAnchor: [velicina / 2, velicina / 2],
       })
 
       const radnikIkona = (aktivan) => L.default.divIcon({
-        html: `<div style="width:22px;height:22px;border-radius:50%;background:${aktivan ? '#2A9D8F' : '#7B96B2'};border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;font-size:11px">👷</div>`,
+        html: `<div style="width:22px;height:22px;border-radius:50%;background:${aktivan ? 'var(--ct-uspjeh)' : 'var(--ct-siva-kafa-negativ)'};border:3px solid var(--ct-krem);box-shadow:0 2px 8px var(--ct-zastor);display:flex;align-items:center;justify-content:center;font-size:11px">👷</div>`,
         className: '',
         iconSize: [22, 22],
         iconAnchor: [11, 11],
@@ -94,18 +94,18 @@ export default function Mapa({ prijave = [], radnici = [] }) {
       // Nalozi
       filtriranePrijave.forEach(p => {
         if (!p.lat || !p.lng) return
-        const boja = p.status === 'riješena' ? '#2A9D8F' : p.status === 'u_toku' ? '#F4A261' : '#E63946'
+        const boja = p.status === 'riješena' ? 'var(--ct-uspjeh)' : p.status === 'u_toku' ? 'var(--ct-upozorenje)' : 'var(--ct-greska)'
         const datum = new Date(p.created_at).toLocaleString('bs-BA')
         const m = L.default.marker([p.lat, p.lng], { icon: krugIkona(boja) })
           .addTo(mapInstanceRef.current)
           .bindPopup(`
-            <div style="font-family:sans-serif;min-width:180px">
+            <div style="font-family:var(--ct-font-sans);min-width:180px">
               <div style="font-weight:700;margin-bottom:4px">${p.lokal || ''}</div>
-              <div style="color:#555;font-size:12px;margin-bottom:2px">${p.adresa || ''}</div>
-              <div style="margin-bottom:4px"><span style="background:${boja};color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;font-weight:600">${p.status}</span>
-              <span style="background:#eee;border-radius:4px;padding:1px 7px;font-size:11px;margin-left:4px">${p.kategorija || ''}</span></div>
-              <div style="font-size:12px;color:#333;font-style:italic;margin-bottom:4px">"${p.opis || ''}"</div>
-              <div style="font-size:11px;color:#888">${p.id} · ${datum}</div>
+              <div style="color:var(--ct-siva-kafa);font-size:12px;margin-bottom:2px">${p.adresa || ''}</div>
+              <div style="margin-bottom:4px"><span style="background:${boja};color:var(--ct-krem);border-radius:4px;padding:1px 7px;font-size:11px;font-weight:600">${p.status}</span>
+              <span style="background:var(--ct-papir);border-radius:4px;padding:1px 7px;font-size:11px;margin-left:4px">${p.kategorija || ''}</span></div>
+              <div style="font-size:12px;color:var(--ct-tamno-braon);font-style:italic;margin-bottom:4px">"${p.opis || ''}"</div>
+              <div style="font-size:11px;color:var(--ct-siva-kafa)">${p.id} · ${datum}</div>
             </div>
           `)
         markeriRef.current.push(m)
@@ -119,13 +119,13 @@ export default function Mapa({ prijave = [], radnici = [] }) {
         const m = L.default.marker([r.lat, r.lng], { icon: radnikIkona(aktivan) })
           .addTo(mapInstanceRef.current)
           .bindPopup(`
-            <div style="font-family:sans-serif;min-width:160px">
+            <div style="font-family:var(--ct-font-sans);min-width:160px">
               <div style="font-weight:700;margin-bottom:4px">👷 ${r.ime}</div>
-              <div style="margin-bottom:6px"><span style="background:${aktivan ? '#2A9D8F' : '#aaa'};color:#fff;border-radius:4px;padding:1px 8px;font-size:11px;font-weight:600">
+              <div style="margin-bottom:6px"><span style="background:${aktivan ? 'var(--ct-uspjeh)' : 'var(--ct-siva-kafa)'};color:var(--ct-krem);border-radius:4px;padding:1px 8px;font-size:11px;font-weight:600">
                 ${aktivan ? '● GPS aktivan' : '○ GPS neaktivan'}
               </span></div>
-              <div style="font-size:11px;color:#888;margin-top:4px">Zadnji put viđen: <b>${zadnjiPut}</b></div>
-              ${r.telefon ? `<div style="font-size:11px;color:#888;margin-top:2px">📞 ${r.telefon}</div>` : ''}
+              <div style="font-size:11px;color:var(--ct-siva-kafa);margin-top:4px">Zadnji put viđen: <b>${zadnjiPut}</b></div>
+              ${r.telefon ? `<div style="font-size:11px;color:var(--ct-siva-kafa);margin-top:2px">📞 ${r.telefon}</div>` : ''}
             </div>
           `)
         markeriRef.current.push(m)
@@ -134,13 +134,13 @@ export default function Mapa({ prijave = [], radnici = [] }) {
   }, [filtriranePrijave, filtriranRadnici])
 
   const selectStil = {
-    background: '#0D1B2A', border: '1px solid #1E3A5A', color: '#E8F4FD',
+    background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)',
     borderRadius: 8, padding: '6px 12px', fontSize: 13, cursor: 'pointer', outline: 'none'
   }
 
   return (
-    <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #1E3A5A' }}>
-      <div style={{ background: '#132338', padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+    <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid var(--ct-rub)' }}>
+      <div style={{ background: 'var(--ct-tamno-braon)', padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
         <select value={filterNalog} onChange={e => setFilterNalog(e.target.value)} style={selectStil}>
           {KATEGORIJE.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}
         </select>
