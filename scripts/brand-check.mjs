@@ -58,5 +58,18 @@ for (const [f, tip, baza] of fajlovi) {
     }
   })
 }
-console.log(greske ? `\n✗ ${greske} odstupanja od brend standarda` : `✓ Brend standard OK (${fajlovi.length} fajlova)`)
+
+// Fajlovi na koje kod pokazuje (logotipi, ikonice, fontovi) moraju postojati
+const dart = fs.readFileSync(path.join(FLUTTER, 'lib/theme/brand.dart'), 'utf8')
+const potrebni = [
+  ...[...dart.matchAll(/'(assets\/[^']+)'/g)].map(m => path.join(FLUTTER, m[1])),
+  ...['logo-horizontalni.svg', 'logo-horizontalni-krem.svg', 'logo-vertikalni.svg', 'logo-vertikalni-krem.svg', 'znak.svg', 'znak-krem.svg', 'logo-horizontalni.png', 'icon-192.png', 'badge-96.png']
+    .map(f => path.join(ROOT, 'public/brand', f)),
+  ...fs.readdirSync(path.join(ROOT, 'brand/fonts')).flatMap(f => [path.join(ROOT, 'public/brand/fonts', f), path.join(FLUTTER, 'assets/fonts', f)]),
+]
+for (const f of potrebni) {
+  if (!fs.existsSync(f)) { greske++; console.log(`FALI FAJL: ${path.relative(path.dirname(ROOT), f)}  → pokreni npm run brand:sync`) }
+}
+
+console.log(greske ? `\n✗ ${greske} odstupanja od brend standarda` : `✓ Brend standard OK (${fajlovi.length} fajlova, ${potrebni.length} brend fajlova postoji)`)
 process.exit(greske ? 1 : 0)
