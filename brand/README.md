@@ -39,6 +39,8 @@ izgled (web, sajt, Flutter) mijenja promjenom jedne riječi i `npm run brand:syn
 
 ## Pravila upotrebe
 
+- U kodu se koriste samo uloge (`var(--ct-pozadina)`, `bg-ct-povrsina`, `CT.tekst`…). Paleta direktno samo za
+  fiksne stvari: PDF memorandum i iskačući prozori na mapi (uvijek svijetli).
 - **Primarno dugme:** pozadina `bakar`, tekst `krem`.
 - **Statusne boje** (`uspjeh`, `upozorenje`, `greska`, `uToku`) samo za status — knjiga ih ne definiše, nikad za dekoraciju.
   Svaka tema ima svoje nijanse (u pozitivu tamnije, zbog kontrasta).
