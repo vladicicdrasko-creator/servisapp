@@ -232,7 +232,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
     link.click()
   }
 
-  if (loading) return <div style={{ color: 'var(--ct-siva-kafa-negativ)', padding: 40, textAlign: 'center' }}>Učitavam...</div>
+  if (loading) return <div style={{ color: 'var(--ct-prigusen)', padding: 40, textAlign: 'center' }}>Učitavam...</div>
 
   return (
     <>
@@ -245,11 +245,11 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13
           }}>↓ Export</button>
           <button onClick={() => { setPokaziModele(!pokaziModele); setForma(false) }} style={{
-            background: pokaziModele ? 'var(--ct-rub)' : 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)',
+            background: pokaziModele ? 'var(--ct-rub)' : 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)',
             padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600
           }}>☰ Modeli</button>
           <button onClick={() => { setForma(!forma); setPokaziModele(false) }} style={{
-            background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)',
+            background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)',
             padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600
           }}>+ Dodaj aparat</button>
         </div>
@@ -262,58 +262,58 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       )}
 
       {pokaziModele && (
-        <div style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--ct-siva-kafa-negativ)' }}>MODELI APARATA</h3>
+        <div style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--ct-prigusen)' }}>MODELI APARATA</h3>
           <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
             <input value={noviModel.naziv} onChange={e => setNoviModel({ ...noviModel, naziv: e.target.value })}
               placeholder="Naziv modela *" maxLength={100}
-              style={{ flex: '1 1 140px', minWidth: 0, background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+              style={{ flex: '1 1 140px', minWidth: 0, background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <input value={noviModel.proizvodjac} onChange={e => setNoviModel({ ...noviModel, proizvodjac: e.target.value })}
               placeholder="Proizvođač" maxLength={100}
-              style={{ flex: '1 1 140px', minWidth: 0, background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
-            <button onClick={dodajModel} style={{ background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>+ Dodaj</button>
+              style={{ flex: '1 1 140px', minWidth: 0, background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+            <button onClick={dodajModel} style={{ background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>+ Dodaj</button>
           </div>
-          {modeli.length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13 }}>Nema modela.</div>}
+          {modeli.length === 0 && <div style={{ color: 'var(--ct-prigusen)', fontSize: 13 }}>Nema modela.</div>}
           {modeli.map(m => (
             <div key={m.id}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: '1px solid var(--ct-espresso)' }}>
-                <div style={{ flex: 1, color: 'var(--ct-krem-negativ)', fontSize: 13, fontWeight: 600 }}>{m.naziv}</div>
-                <div style={{ flex: 1, color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{m.proizvodjac || '—'}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: '1px solid var(--ct-pozadina)' }}>
+                <div style={{ flex: 1, color: 'var(--ct-tekst)', fontSize: 13, fontWeight: 600 }}>{m.naziv}</div>
+                <div style={{ flex: 1, color: 'var(--ct-prigusen)', fontSize: 12 }}>{m.proizvodjac || '—'}</div>
                 <button onClick={() => editModel?.id === m.id ? (setEditModel(null), setModelCheckliste({})) : otvoriEditModel(m)}
-                  style={{ background: editModel?.id === m.id ? 'var(--ct-bakar)' : 'transparent', border: '1px solid var(--ct-rub)', color: editModel?.id === m.id ? 'var(--ct-krem)' : 'var(--ct-siva-kafa-negativ)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>
+                  style={{ background: editModel?.id === m.id ? 'var(--ct-dugme)' : 'transparent', border: '1px solid var(--ct-rub)', color: editModel?.id === m.id ? 'var(--ct-dugme-tekst)' : 'var(--ct-prigusen)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>
                   {editModel?.id === m.id ? 'Zatvori' : 'Uredi'}
                 </button>
                 <button onClick={() => obrisiModel(m.id)} style={{ background: 'transparent', border: '1px solid var(--ct-greska)', color: 'var(--ct-greska)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Briši</button>
               </div>
 
               {editModel?.id === m.id && (
-                <div style={{ background: 'var(--ct-espresso)', borderRadius: 8, padding: 14, margin: '8px 0 12px' }}>
+                <div style={{ background: 'var(--ct-pozadina)', borderRadius: 8, padding: 14, margin: '8px 0 12px' }}>
                   <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
                     <input value={editModel.naziv} onChange={e => setEditModel({ ...editModel, naziv: e.target.value })}
-                      placeholder="Naziv" maxLength={100} style={{ flex: 1, background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 6, padding: '6px 10px' }} />
+                      placeholder="Naziv" maxLength={100} style={{ flex: 1, background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 6, padding: '6px 10px' }} />
                     <input value={editModel.proizvodjac || ''} onChange={e => setEditModel({ ...editModel, proizvodjac: e.target.value })}
-                      placeholder="Proizvođač" maxLength={100} style={{ flex: 1, background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 6, padding: '6px 10px' }} />
+                      placeholder="Proizvođač" maxLength={100} style={{ flex: 1, background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 6, padding: '6px 10px' }} />
                   </div>
                   <textarea value={editModel.napomena || ''} onChange={e => setEditModel({ ...editModel, napomena: e.target.value })}
                     placeholder="Opšte napomene za ovaj model (posebnosti, poznati problemi...)"
-                    rows={2} maxLength={500} style={{ width: '100%', background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 6, padding: '6px 10px', resize: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
+                    rows={2} maxLength={500} style={{ width: '100%', background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 6, padding: '6px 10px', resize: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                    <label style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12 }}>
+                    <label style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12 }}>
                       📄 {editModel.pdf_url ? 'Zamijeni PDF' : 'Upload PDF priručnik'}
                       <input type="file" accept=".pdf" onChange={e => e.target.files[0] && uploadPdf(e.target.files[0])} style={{ display: 'none' }} />
                     </label>
-                    {editModel.pdf_url && <a href={editModel.pdf_url} target="_blank" rel="noreferrer" style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 12 }}>📄 Otvori PDF</a>}
+                    {editModel.pdf_url && <a href={editModel.pdf_url} target="_blank" rel="noreferrer" style={{ color: 'var(--ct-akcent)', fontSize: 12 }}>📄 Otvori PDF</a>}
                   </div>
-                  <button onClick={snimiModel} style={{ background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-krem)', borderRadius: 6, padding: '6px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 13, marginBottom: 16 }}>Snimi osnovne podatke</button>
+                  <button onClick={snimiModel} style={{ background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 6, padding: '6px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 13, marginBottom: 16 }}>Snimi osnovne podatke</button>
 
-                  <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>SAVJETI / STAVKE PO KATEGORIJI KVARA</div>
+                  <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-prigusen)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>SAVJETI / STAVKE PO KATEGORIJI KVARA</div>
                   {KATEGORIJE.map(kat => (
-                    <div key={kat} style={{ marginBottom: 12, background: 'var(--ct-tamno-braon)', borderRadius: 8, padding: 10 }}>
-                      <div style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 12, fontWeight: 700, marginBottom: 6 }}>{kat}</div>
+                    <div key={kat} style={{ marginBottom: 12, background: 'var(--ct-povrsina)', borderRadius: 8, padding: 10 }}>
+                      <div style={{ color: 'var(--ct-akcent)', fontSize: 12, fontWeight: 700, marginBottom: 6 }}>{kat}</div>
                       {(modelCheckliste[kat]?.stavke || []).map((stavka, idx) => (
                         <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                          <span style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 14 }}>•</span>
-                          <span style={{ flex: 1, color: 'var(--ct-krem-negativ)', fontSize: 13 }}>{stavka}</span>
+                          <span style={{ color: 'var(--ct-akcent)', fontSize: 14 }}>•</span>
+                          <span style={{ flex: 1, color: 'var(--ct-tekst)', fontSize: 13 }}>{stavka}</span>
                           <button onClick={() => obrisiStavku(kat, idx)} style={{ background: 'none', border: 'none', color: 'var(--ct-greska)', cursor: 'pointer', fontSize: 14, padding: '0 4px' }}>×</button>
                         </div>
                       ))}
@@ -321,8 +321,8 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                         <input value={novaStavka[kat] || ''} onChange={e => setNovaStavka(prev => ({ ...prev, [kat]: e.target.value }))}
                           onKeyDown={e => e.key === 'Enter' && dodajStavku(kat)}
                           placeholder="Dodaj stavku..." maxLength={200}
-                          style={{ flex: 1, background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 6, padding: '4px 8px', fontSize: 12 }} />
-                        <button onClick={() => dodajStavku(kat)} style={{ background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>+</button>
+                          style={{ flex: 1, background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 6, padding: '4px 8px', fontSize: 12 }} />
+                        <button onClick={() => dodajStavku(kat)} style={{ background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>+</button>
                       </div>
                     </div>
                   ))}
@@ -334,30 +334,30 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       )}
 
       {forma && (
-        <div style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-svijetli-bakar)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--ct-siva-kafa-negativ)' }}>NOVI APARAT</h3>
+        <div style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-akcent)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--ct-prigusen)' }}>NOVI APARAT</h3>
 
           <select value={noviAparat.naziv} onChange={e => setNoviAparat({ ...noviAparat, naziv: e.target.value })}
-            style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: noviAparat.naziv ? 'var(--ct-krem-negativ)' : 'var(--ct-siva-kafa-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }}>
+            style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: noviAparat.naziv ? 'var(--ct-tekst)' : 'var(--ct-prigusen)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }}>
             <option value="">-- Odaberi model aparata *</option>
             {modeli.map(m => <option key={m.id} value={m.naziv}>{m.naziv}{m.proizvodjac ? ` (${m.proizvodjac})` : ''}</option>)}
           </select>
 
           <input value={noviAparat.vlasnik} onChange={e => setNoviAparat({ ...noviAparat, vlasnik: e.target.value })}
             placeholder="Vlasnik aparata (opcionalno)" maxLength={100}
-            style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+            style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
           <input value={noviAparat.lokal} onChange={e => setNoviAparat({ ...noviAparat, lokal: e.target.value })}
             placeholder="Lokal (popunjava se pri montaži)" maxLength={150}
-            style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+            style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
           <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
             <input value={noviAparat.adresa} onChange={e => setNoviAparat({ ...noviAparat, adresa: e.target.value })}
               placeholder="Adresa (popunjava se pri montaži)" maxLength={200}
-              style={{ flex: 1, background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+              style={{ flex: 1, background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <button onClick={() => setPokaziMapu(!pokaziMapu)} style={{
-              background: pokaziMapu ? 'var(--ct-bakar)' : 'var(--ct-espresso)', border: '1px solid var(--ct-svijetli-bakar)',
-              color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', cursor: 'pointer', fontSize: 12, whiteSpace: 'nowrap'
+              background: pokaziMapu ? 'var(--ct-dugme)' : 'var(--ct-pozadina)', border: '1px solid var(--ct-akcent)',
+              color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', cursor: 'pointer', fontSize: 12, whiteSpace: 'nowrap'
             }}>
               📍 {noviAparat.lat ? `${noviAparat.lat.toFixed(4)}, ${noviAparat.lng.toFixed(4)}` : 'Odaberi na mapi'}
             </button>
@@ -381,7 +381,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
               onChange={e => setNoviAparat({ ...noviAparat, serijski_broj: e.target.value })}
               placeholder="Serijski broj (opcionalno)" maxLength={50}
               disabled={noviAparat.ostecen}
-              style={{ flex: 1, background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: noviAparat.ostecen ? 'var(--ct-siva-kafa)' : 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+              style={{ flex: 1, background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: noviAparat.ostecen ? 'var(--ct-prigusen)' : 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             <label style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--ct-greska)', fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}>
               <input type="checkbox" checked={noviAparat.ostecen}
                 onChange={e => setNoviAparat({ ...noviAparat, ostecen: e.target.checked, serijski_broj: '' })}
@@ -391,9 +391,9 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 6 }}>SLIKA APARATA (opcionalno)</div>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 6 }}>SLIKA APARATA (opcionalno)</div>
             <input type="file" accept="image/*" onChange={e => setNoviAparat({ ...noviAparat, slika: e.target.files[0] })}
-              style={{ color: 'var(--ct-krem-negativ)', fontSize: 12 }} />
+              style={{ color: 'var(--ct-tekst)', fontSize: 12 }} />
             {noviAparat.slika && (
               <img src={URL.createObjectURL(noviAparat.slika)} alt="preview"
                 style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginTop: 6 }} />
@@ -402,10 +402,10 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={dodajAparat} disabled={!noviAparat.naziv}
-              style={{ flex: 1, background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: !noviAparat.naziv ? 0.5 : 1 }}>
+              style={{ flex: 1, background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: !noviAparat.naziv ? 0.5 : 1 }}>
               Dodaj
             </button>
-            <button onClick={() => { setForma(false); setPokaziMapu(false) }} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
+            <button onClick={() => { setForma(false); setPokaziMapu(false) }} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
               Odustani
             </button>
           </div>
@@ -414,28 +414,28 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
 
       {editAparat && (
         <div style={{ position: 'fixed', inset: 0, background: 'var(--ct-zastor)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-svijetli-bakar)', borderRadius: 12, padding: 20, width: '100%', maxWidth: 480 }}>
-            <h3 style={{ margin: '0 0 14px', fontSize: 14, color: 'var(--ct-siva-kafa-negativ)' }}>UREDI APARAT — {editAparat.id}</h3>
+          <div style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-akcent)', borderRadius: 12, padding: 20, width: '100%', maxWidth: 480 }}>
+            <h3 style={{ margin: '0 0 14px', fontSize: 14, color: 'var(--ct-prigusen)' }}>UREDI APARAT — {editAparat.id}</h3>
 
             <input value={editAparat.naziv} onChange={e => setEditAparat({ ...editAparat, naziv: e.target.value })}
               placeholder="Naziv aparata *" maxLength={100}
-              style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+              style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
             <input value={editAparat.vlasnik || ''} onChange={e => setEditAparat({ ...editAparat, vlasnik: e.target.value })}
               placeholder="Vlasnik aparata (opcionalno)" maxLength={100}
-              style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+              style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
             <input value={editAparat.lokal || ''} onChange={e => setEditAparat({ ...editAparat, lokal: e.target.value })}
               placeholder="Lokal" maxLength={150}
-              style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+              style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
 
             <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
               <input value={editAparat.adresa || ''} onChange={e => setEditAparat({ ...editAparat, adresa: e.target.value })}
                 placeholder="Adresa" maxLength={200}
-                style={{ flex: 1, background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+                style={{ flex: 1, background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
               <button onClick={() => setPokaziEditMapu(!pokaziEditMapu)} style={{
-                background: pokaziEditMapu ? 'var(--ct-bakar)' : 'var(--ct-espresso)', border: '1px solid var(--ct-svijetli-bakar)',
-                color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 10px', cursor: 'pointer', fontSize: 11, whiteSpace: 'nowrap'
+                background: pokaziEditMapu ? 'var(--ct-dugme)' : 'var(--ct-pozadina)', border: '1px solid var(--ct-akcent)',
+                color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 10px', cursor: 'pointer', fontSize: 11, whiteSpace: 'nowrap'
               }}>
                 📍 {editAparat.lat ? `${Number(editAparat.lat).toFixed(4)}, ${Number(editAparat.lng).toFixed(4)}` : 'Mapa'}
               </button>
@@ -456,7 +456,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                 onChange={e => setEditAparat({ ...editAparat, serijski_broj: e.target.value })}
                 placeholder="Serijski broj (opcionalno)" maxLength={50}
                 disabled={editAparat.ostecen}
-                style={{ flex: 1, background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: editAparat.ostecen ? 'var(--ct-siva-kafa)' : 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+                style={{ flex: 1, background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: editAparat.ostecen ? 'var(--ct-prigusen)' : 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
               <label style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--ct-greska)', fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 <input type="checkbox" checked={editAparat.ostecen}
                   onChange={e => setEditAparat({ ...editAparat, ostecen: e.target.checked, serijski_broj: '' })}
@@ -466,7 +466,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             </div>
 
             <div style={{ marginBottom: 12 }}>
-              <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 6 }}>SLIKA APARATA</div>
+              <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 6 }}>SLIKA APARATA</div>
               {editAparat.slika_url && !editAparat.novaSlika && (
                 <img src={editAparat.slika_url} alt="trenutna"
                   style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginBottom: 6 }} />
@@ -476,16 +476,16 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                   style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginBottom: 6 }} />
               )}
               <input type="file" accept="image/*" onChange={e => setEditAparat({ ...editAparat, novaSlika: e.target.files[0] })}
-                style={{ color: 'var(--ct-krem-negativ)', fontSize: 12 }} />
+                style={{ color: 'var(--ct-tekst)', fontSize: 12 }} />
             </div>
 
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={snimiEdit} disabled={!editAparat.naziv}
-                style={{ flex: 1, background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: !editAparat.naziv ? 0.5 : 1 }}>
+                style={{ flex: 1, background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: !editAparat.naziv ? 0.5 : 1 }}>
                 Snimi
               </button>
               <button onClick={() => { setEditAparat(null); setPokaziEditMapu(false) }}
-                style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
+                style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
                 Odustani
               </button>
             </div>
@@ -505,18 +505,18 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
         const aktivne = aktuelne.filter(p => p.status !== 'riješena' && p.status !== 'zatvorena').length
 
         return (
-          <div key={a.id} style={{ background: 'var(--ct-tamno-braon)', border: `1px solid ${odabrani?.id === a.id ? 'var(--ct-svijetli-bakar)' : 'var(--ct-rub)'}`, borderRadius: 10, padding: 14, marginBottom: 10, cursor: 'pointer', opacity: a.status === 'neaktivan' ? 0.5 : 1 }}
+          <div key={a.id} style={{ background: 'var(--ct-povrsina)', border: `1px solid ${odabrani?.id === a.id ? 'var(--ct-akcent)' : 'var(--ct-rub)'}`, borderRadius: 10, padding: 14, marginBottom: 10, cursor: 'pointer', opacity: a.status === 'neaktivan' ? 0.5 : 1 }}
             onClick={(e) => { if (e.target.closest('button')) return; odaberiAparat(a) }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <div style={{ fontWeight: 700, fontSize: 15 }}>{a.naziv || a.lokal}</div>
-                {a.lokal && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{a.lokal}</div>}
-                {a.vlasnik && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{a.vlasnik}</div>}
-                {a.serijski_broj && <div style={{ color: a.serijski_broj === 'OŠTEĆEN' ? 'var(--ct-greska)' : 'var(--ct-siva-kafa-negativ)', fontSize: 11 }}>SN: {a.serijski_broj}</div>}
-                <div style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 11, marginTop: 2 }}>{a.id}</div>
+                {a.lokal && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>{a.lokal}</div>}
+                {a.vlasnik && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>{a.vlasnik}</div>}
+                {a.serijski_broj && <div style={{ color: a.serijski_broj === 'OŠTEĆEN' ? 'var(--ct-greska)' : 'var(--ct-prigusen)', fontSize: 11 }}>SN: {a.serijski_broj}</div>}
+                <div style={{ color: 'var(--ct-akcent)', fontSize: 11, marginTop: 2 }}>{a.id}</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ background: aktivne > 0 ? 'var(--ct-greska)' : 'var(--ct-uspjeh)', color: 'var(--ct-krem)', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>
+                <span style={{ background: aktivne > 0 ? 'var(--ct-greska)' : 'var(--ct-uspjeh)', color: 'var(--ct-dugme-tekst)', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>
                   {aktivne > 0 ? `${aktivne} aktivnih` : 'OK'}
                 </span>
                 <button onClick={(e) => toggleStatus(e, a)} style={{
@@ -526,8 +526,8 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                   {a.status === 'neaktivan' ? 'Aktiviraj' : 'Deaktiviraj'}
                 </button>
                 <button onClick={(e) => otvoriEdit(e, a)} style={{
-                  background: 'transparent', border: '1px solid var(--ct-svijetli-bakar)',
-                  color: 'var(--ct-svijetli-bakar)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12
+                  background: 'transparent', border: '1px solid var(--ct-akcent)',
+                  color: 'var(--ct-akcent)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12
                 }}>
                   ✏️ Edit
                 </button>
@@ -544,23 +544,23 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
                   <img src={qrUrl} alt="QR kod" style={{ width: 100, height: 100, borderRadius: 8 }} />
                   <div>
-                    <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>QR KOD</div>
-                    <div style={{ color: 'var(--ct-krem-negativ)', fontSize: 12, marginBottom: 8 }}>/prijava/{a.id}</div>
-                    <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 8 }}>Ukupno prijava: {svePrijave.length}</div>
-                    <button onClick={preuzmiQR} style={{ background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+                    <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 4 }}>QR KOD</div>
+                    <div style={{ color: 'var(--ct-tekst)', fontSize: 12, marginBottom: 8 }}>/prijava/{a.id}</div>
+                    <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 8 }}>Ukupno prijava: {svePrijave.length}</div>
+                    <button onClick={preuzmiQR} style={{ background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
                       📥 Preuzmi QR
                     </button>
                   </div>
                 </div>
 
-                <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 6 }}>
+                <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 6 }}>
                   AKTUELNE PRIJAVE {montazaDatum && `(od ${montazaDatum.toLocaleDateString('bs-BA')})`}
                 </div>
-                {aktuelne.length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, marginBottom: 8 }}>Nema prijava.</div>}
+                {aktuelne.length === 0 && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12, marginBottom: 8 }}>Nema prijava.</div>}
                 {aktuelne.map(p => (
                   <div key={p.id} onClick={e => { e.stopPropagation(); setPovijestModal(p) }}
-                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid var(--ct-espresso)', cursor: 'pointer' }}>
-                    <div style={{ fontSize: 12, color: 'var(--ct-krem-negativ)' }}>{p.id}</div>
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid var(--ct-pozadina)', cursor: 'pointer' }}>
+                    <div style={{ fontSize: 12, color: 'var(--ct-tekst)' }}>{p.id}</div>
                     <StatusBadge status={p.status} />
                   </div>
                 ))}
@@ -568,13 +568,13 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
                 {historijske.length > 0 && (
                   <div style={{ marginTop: 8 }}>
                     <button onClick={() => setPokaziIstoriju(prev => ({ ...prev, [a.id]: !prev[a.id] }))}
-                      style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 11, marginBottom: 6 }}>
+                      style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 11, marginBottom: 6 }}>
                       {pokaziIstoriju[a.id] ? '▲ Sakrij istoriju' : `▼ Istorija (${historijske.length})`}
                     </button>
                     {pokaziIstoriju[a.id] && historijske.map(p => (
                       <div key={p.id} onClick={e => { e.stopPropagation(); setPovijestModal(p) }}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid var(--ct-espresso)', cursor: 'pointer', opacity: 0.6 }}>
-                        <div style={{ fontSize: 12, color: 'var(--ct-krem-negativ)' }}>{p.id}</div>
+                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid var(--ct-pozadina)', cursor: 'pointer', opacity: 0.6 }}>
+                        <div style={{ fontSize: 12, color: 'var(--ct-tekst)' }}>{p.id}</div>
                         <StatusBadge status={p.status} />
                       </div>
                     ))}
@@ -589,15 +589,15 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       {aparati.filter(a => a.status === 'neaktivan').length > 0 && (
         <div style={{ marginTop: 8 }}>
           <button onClick={() => setPokaziNeaktivne(p => !p)}
-            style={{ background: 'transparent', border: 'none', color: 'var(--ct-siva-kafa-negativ)', cursor: 'pointer', fontSize: 12, padding: '4px 0' }}>
+            style={{ background: 'transparent', border: 'none', color: 'var(--ct-prigusen)', cursor: 'pointer', fontSize: 12, padding: '4px 0' }}>
             {pokaziNeaktivne ? '▲ Sakrij deaktivirane' : `▼ Deaktivirani aparati (${aparati.filter(a => a.status === 'neaktivan').length})`}
           </button>
           {pokaziNeaktivne && aparati.filter(a => a.status === 'neaktivan').map(a => (
-            <div key={a.id} style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: '10px 14px', marginTop: 6, opacity: 0.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div key={a.id} style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: '10px 14px', marginTop: 6, opacity: 0.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <div style={{ fontWeight: 600, fontSize: 14 }}>{a.naziv || a.lokal}</div>
-                <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{a.adresa}</div>
-                <div style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 11 }}>{a.id}</div>
+                <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>{a.adresa}</div>
+                <div style={{ color: 'var(--ct-akcent)', fontSize: 11 }}>{a.id}</div>
               </div>
               <button onClick={e => toggleStatus(e, a)} style={{
                 background: 'transparent', border: '1px solid var(--ct-uspjeh)',
@@ -614,32 +614,32 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
       <div onClick={() => setPovijestModal(null)}
         style={{ position: 'fixed', inset: 0, background: 'var(--ct-zastor)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div onClick={e => e.stopPropagation()}
-          style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 20, width: 340, maxWidth: '90vw' }}>
+          style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 20, width: 340, maxWidth: '90vw' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-            <span style={{ color: 'var(--ct-svijetli-bakar)', fontWeight: 700, fontSize: 13 }}>{povijestModal.id}</span>
+            <span style={{ color: 'var(--ct-akcent)', fontWeight: 700, fontSize: 13 }}>{povijestModal.id}</span>
             <StatusBadge status={povijestModal.status} />
           </div>
           <div style={{ marginBottom: 10 }}>
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 3 }}>LOKAL</div>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 3 }}>LOKAL</div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{povijestModal.lokal || '—'}</div>
           </div>
           <div style={{ marginBottom: 10 }}>
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 3 }}>ADRESA</div>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 3 }}>ADRESA</div>
             <div style={{ fontSize: 13 }}>{povijestModal.adresa || '—'}</div>
           </div>
           <div style={{ marginBottom: 14 }}>
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 3 }}>OPIS</div>
-            <div style={{ fontSize: 13, background: 'var(--ct-espresso)', borderRadius: 8, padding: 10 }}>{povijestModal.opis || '—'}</div>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 3 }}>OPIS</div>
+            <div style={{ fontSize: 13, background: 'var(--ct-pozadina)', borderRadius: 8, padding: 10 }}>{povijestModal.opis || '—'}</div>
           </div>
-          <div style={{ display: 'flex', gap: 12, fontSize: 11, color: 'var(--ct-siva-kafa-negativ)', marginBottom: 14 }}>
+          <div style={{ display: 'flex', gap: 12, fontSize: 11, color: 'var(--ct-prigusen)', marginBottom: 14 }}>
             <span>📂 {povijestModal.kategorija}</span>
             <span>🕐 {new Date(povijestModal.created_at).toLocaleDateString('bs-BA')}</span>
           </div>
           {modalDijelovi.length > 0 && (
             <div style={{ marginBottom: 16 }}>
-              <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 6 }}>ZAMIJENJENI DIJELOVI</div>
+              <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 6 }}>ZAMIJENJENI DIJELOVI</div>
               {modalDijelovi.map((d, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, background: 'var(--ct-espresso)', borderRadius: 6, padding: '6px 10px', marginBottom: 4 }}>
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, background: 'var(--ct-pozadina)', borderRadius: 6, padding: '6px 10px', marginBottom: 4 }}>
                   <span>🔧 {d.naziv}</span>
                   <span style={{ color: 'var(--ct-uspjeh)', fontWeight: 600 }}>×{d.kolicina}</span>
                 </div>
@@ -647,7 +647,7 @@ export default function AparatiTab({ onOdaberiPrijavu }) {
             </div>
           )}
           <button onClick={() => setPovijestModal(null)}
-            style={{ width: '100%', background: 'var(--ct-odabrano)', border: 'none', color: 'var(--ct-krem)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>
+            style={{ width: '100%', background: 'var(--ct-odabrano)', border: 'none', color: 'var(--ct-tekst)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>
             Zatvori
           </button>
         </div>

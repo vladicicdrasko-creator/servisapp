@@ -2,15 +2,15 @@
 @import "./brand.css";
 
 @theme inline {
-  --color-background: var(--ct-espresso);
-  --color-foreground: var(--ct-krem-negativ);
+  --color-background: var(--ct-pozadina);
+  --color-foreground: var(--ct-tekst);
   --font-sans: var(--ct-font-sans);
   --font-mono: var(--ct-font-mono);
 }
 
 body {
-  background: var(--ct-espresso);
-  color: var(--ct-krem-negativ);
+  background: var(--ct-pozadina);
+  color: var(--ct-tekst);
   font-family: var(--ct-font-sans);
 }
 
@@ -19,11 +19,11 @@ input, textarea, select, button {
 }
 
 ::placeholder {
-  color: var(--ct-siva-kafa-negativ);
+  color: var(--ct-prigusen);
   opacity: 0.7;
 }
 
-/* Iskačući prozori na mapi — svijetla varijanta (papir + tamno braon) */
+/* Iskačući prozori na mapi — uvijek svijetla varijanta (krem + tamno braon), u obje teme */
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
   background: var(--ct-krem);

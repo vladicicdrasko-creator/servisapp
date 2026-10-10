@@ -12,17 +12,19 @@ const T = JSON.parse(fs.readFileSync(path.join(ROOT, 'brand/tokens.json'), 'utf8
 const ZAGLAVLJE = 'GENERISANO iz servisapp/brand/tokens.json (npm run brand:sync) — NE MIJENJATI RUČNO.'
 
 const bez_ = o => Object.fromEntries(Object.entries(o).filter(([k]) => !k.startsWith('_')))
-const osnovne = { ...bez_(T.boje), ...bez_(T.status) }
+const TEMA = T.teme[T.aktivnaTema]
+if (!TEMA) throw new Error('Nepoznata aktivnaTema: ' + T.aktivnaTema)
+const osnovne = { ...bez_(T.boje), ...bez_(TEMA.status) }
 const alfaHex = a => Math.round(a * 255).toString(16).toUpperCase().padStart(2, '0')
 const sve = {} // ime -> { hex (#RRGGBB ili #RRGGBBAA), upotreba }
 for (const [k, v] of Object.entries(osnovne)) sve[k] = { hex: v.hex.toUpperCase(), upotreba: v.upotreba }
-for (const [k, v] of Object.entries(bez_(T.uloge))) sve[k] = { hex: osnovne[v.od].hex.toUpperCase() + alfaHex(v.alfa), upotreba: v.upotreba }
+for (const [k, v] of Object.entries(bez_(TEMA.uloge))) sve[k] = { hex: osnovne[v.od].hex.toUpperCase() + (v.alfa != null ? alfaHex(v.alfa) : ''), upotreba: v.upotreba }
 const kebab = s => s.replace(/[A-Z]/g, m => '-' + m.toLowerCase())
 const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16))
 const { sans, mono } = T.fontovi
 const pisi = (p, s) => { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, s); console.log('  ✓', path.relative(path.dirname(ROOT), p)) }
 
-console.log('Coffee Team brend → generišem:')
+console.log(`Coffee Team brend (tema: ${T.aktivnaTema}) → generišem:`)
 
 // 1) Web aplikacija — CSS varijable
 pisi(path.join(ROOT, 'app/brand.css'), `/* ${ZAGLAVLJE} */
@@ -40,6 +42,8 @@ export const BOJE = ${JSON.stringify(Object.fromEntries(Object.entries(sve).map(
 // RGB trojke osnovnih boja (jsPDF)
 export const RGB = ${JSON.stringify(Object.fromEntries(Object.entries(osnovne).map(([k, v]) => [k, rgb(v.hex)])))}
 
+export const TEMA = ${JSON.stringify({ naziv: T.aktivnaTema, logo: TEMA.logo })}
+
 export const KONTAKT = ${JSON.stringify(T.kontakt, null, 2)}
 `)
 
@@ -55,6 +59,7 @@ const fontUrl = 'https://fonts.googleapis.com/css2?' + [sans, mono].map(f => `fa
 pisi(path.join(LANDING, 'src/brand.ts'), `// ${ZAGLAVLJE}
 export const FONT_URL = ${JSON.stringify(fontUrl)}
 export const BOJE = ${JSON.stringify(Object.fromEntries(Object.entries(sve).map(([k, v]) => [k, v.hex])), null, 2)} as const
+export const TEMA = ${JSON.stringify({ naziv: T.aktivnaTema, logo: TEMA.logo })} as const
 export const KONTAKT = ${JSON.stringify(T.kontakt, null, 2)} as const
 `)
 
@@ -68,6 +73,13 @@ class CT {
   CT._();
 
 ${Object.entries(sve).map(([k, v]) => `  /// ${v.upotreba}\n  static const ${k} = Color(${dartHex(v.hex)});`).join('\n\n')}
+
+  /// Aktivna tema: ${T.aktivnaTema}
+  static const svijetlaTema = ${TEMA.logo === 'pozitiv'};
+
+  /// Logo za aktivnu temu (${TEMA.logo === 'pozitiv' ? 'pozitiv' : 'krem negativ'})
+  static const logoVertikalni = 'assets/brand/logo-vertikalni${TEMA.logo === 'pozitiv' ? '' : '-krem'}.png';
+  static const logoHorizontalni = 'assets/brand/logo-horizontalni${TEMA.logo === 'pozitiv' ? '' : '-krem'}.png';
 
   /// ${sans.upotreba}
   static const fontSans = '${sans.flutter}';
@@ -109,6 +121,8 @@ for (const f of fs.readdirSync(BRAND).filter(f => f.endsWith('.svg'))) {
 console.log('  ✓ coffeeteam-landing/public/brand/*.svg (kopije zvaničnog logotipa)')
 await png(svg('logo-vertikalni-krem.svg'), path.join(FLUTTER, 'assets/brand/logo-vertikalni-krem.png'), { density: 300, sirina: 900 })
 await png(svg('logo-horizontalni-krem.svg'), path.join(FLUTTER, 'assets/brand/logo-horizontalni-krem.png'), { density: 300, sirina: 1200 })
+await png(svg('logo-vertikalni.svg'), path.join(FLUTTER, 'assets/brand/logo-vertikalni.png'), { density: 300, sirina: 900 })
+await png(svg('logo-horizontalni.svg'), path.join(FLUTTER, 'assets/brand/logo-horizontalni.png'), { density: 300, sirina: 1200 })
 await png(ikona(1024, { udio: 0.62 }), path.join(FLUTTER, 'assets/brand/launcher.png'))
 await png(ikona(1024, { pozadina: null, udio: 0.50 }), path.join(FLUTTER, 'assets/brand/launcher_fg.png'))
 // 6) Fontovi (brand/fonts) -> web (PDF potvrde) i Flutter

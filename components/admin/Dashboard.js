@@ -133,14 +133,14 @@ export default function Dashboard() {
 
   const TabBtn = ({ id, label, badge }) => (
     <button onClick={() => naviguj(id)} style={{
-      background: tab === id ? 'var(--ct-bakar)' : 'transparent',
-      border: 'none', color: tab === id ? 'var(--ct-krem)' : 'var(--ct-siva-kafa-negativ)',
+      background: tab === id ? 'var(--ct-dugme)' : 'transparent',
+      border: 'none', color: tab === id ? 'var(--ct-dugme-tekst)' : 'var(--ct-prigusen)',
       padding: '8px 10px', borderRadius: 8, cursor: 'pointer',
       fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap'
     }}>
       {label}
       {badge > 0 && (
-        <span style={{ background: 'var(--ct-greska)', color: 'var(--ct-krem)', borderRadius: 10, fontSize: 10, padding: '1px 6px' }}>
+        <span style={{ background: 'var(--ct-greska)', color: 'var(--ct-dugme-tekst)', borderRadius: 10, fontSize: 10, padding: '1px 6px' }}>
           {badge}
         </span>
       )}
@@ -148,8 +148,8 @@ export default function Dashboard() {
   )
 
   if (ucitava) return (
-    <div style={{ ...s.centar, background: 'var(--ct-espresso)' }}>
-      <div style={{ color: 'var(--ct-siva-kafa-negativ)' }}>Učitavam...</div>
+    <div style={{ ...s.centar, background: 'var(--ct-pozadina)' }}>
+      <div style={{ color: 'var(--ct-prigusen)' }}>Učitavam...</div>
     </div>
   )
 
@@ -159,13 +159,13 @@ export default function Dashboard() {
         <BrandLogo visina={30} oznaka="Admin" />
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {nova > 0 && (
-            <div style={{ background: 'var(--ct-greska)', color: 'var(--ct-krem)', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 700 }}>
+            <div style={{ background: 'var(--ct-greska)', color: 'var(--ct-dugme-tekst)', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 700 }}>
               🔔 {nova} nova
             </div>
           )}
-          <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13 }}>👤 {adminIme}</div>
+          <div style={{ color: 'var(--ct-prigusen)', fontSize: 13 }}>👤 {adminIme}</div>
           <button onClick={handleLogout} style={{
-            background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)',
+            background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)',
             padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 12
           }}>Odjava</button>
         </div>
@@ -209,10 +209,10 @@ export default function Dashboard() {
 }
 
 const tipBoja = {
-  montaza: { bg: 'var(--ct-bakar)', label: 'MONTAŽA' },
-  demontaza: { bg: 'var(--ct-upozorenje)', label: 'DEMONTAŽA', color: 'var(--ct-espresso)' },
+  montaza: { bg: 'var(--ct-dugme)', label: 'MONTAŽA' },
+  demontaza: { bg: 'var(--ct-upozorenje)', label: 'DEMONTAŽA', color: 'var(--ct-dugme-tekst)' },
   kvar: { bg: 'var(--ct-greska)', label: 'KVAR' },
-  ostalo: { bg: 'var(--ct-siva-kafa-negativ)', label: 'OSTALO', color: 'var(--ct-espresso)' },
+  ostalo: { bg: 'var(--ct-prigusen)', label: 'OSTALO', color: 'var(--ct-dugme-tekst)' },
   prijava: { bg: 'var(--ct-greska)', label: 'PRIJAVA' },
 }
 
@@ -388,7 +388,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
             padding: '8px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13
           }}>⬇ Export</button>
           <button onClick={() => setPokaziFormu(!pokaziFormu)} style={{
-            background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)',
+            background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)',
             padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600
           }}>+ Dodaj nalog</button>
         </div>
@@ -397,15 +397,15 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
       {poruka && <div style={{ color: poruka.tip === 'ok' ? 'var(--ct-uspjeh)' : 'var(--ct-greska)', fontSize: 13, marginBottom: 12 }}>{poruka.tekst}</div>}
 
       {pokaziFormu && (
-        <div style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-svijetli-bakar)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--ct-siva-kafa-negativ)' }}>NOVI NALOG</h3>
+        <div style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-akcent)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--ct-prigusen)' }}>NOVI NALOG</h3>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
              {Object.entries(tipBoja).filter(([key]) => key !== 'prijava').map(([key, val]) => (
               <button key={key} onClick={() => setTip(key)} style={{
-                background: tip === key ? val.bg : 'var(--ct-espresso)',
+                background: tip === key ? val.bg : 'var(--ct-pozadina)',
                 border: `2px solid ${val.bg}`,
-                color: tip === key ? (val.color || 'var(--ct-krem)') : val.bg,
+                color: tip === key ? (val.color || 'var(--ct-dugme-tekst)') : val.bg,
                 borderRadius: 8, padding: '10px', cursor: 'pointer', fontWeight: 700, fontSize: 13
               }}>{val.label}</button>
             ))}
@@ -413,9 +413,9 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
 
           {jeOstalo && (
             <div style={{ marginTop: 4, marginBottom: 12, paddingTop: 12, borderTop: '1px solid var(--ct-rub)' }}>
-              <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 6 }}>VRSTA</div>
+              <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 6 }}>VRSTA</div>
               <select value={ostaloVrsta} onChange={e => setOstaloVrsta(e.target.value)}
-                style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px' }}>
+                style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px' }}>
                 <option value='generalna'>Generalna</option>
                 <option value='drugo'>Drugo</option>
               </select>
@@ -424,13 +424,13 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
 
           {tip && (
             <div style={{ marginTop: 4, marginBottom: 12, paddingTop: jeOstalo ? 0 : 12, borderTop: jeOstalo ? 'none' : '1px solid var(--ct-rub)' }}>
-              <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 6 }}>TIP OPREME</div>
+              <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 6 }}>TIP OPREME</div>
               <div style={{ display: 'flex', gap: 8 }}>
                 {['aparat', 'mlin'].map(ot => (
                   <button key={ot} onClick={() => setOpremaTip(ot)} style={{
-                    flex: 1, background: opremaTip === ot ? 'var(--ct-bakar)' : 'var(--ct-espresso)',
-                    border: `1px solid ${opremaTip === ot ? 'var(--ct-svijetli-bakar)' : 'var(--ct-rub)'}`,
-                    color: opremaTip === ot ? 'var(--ct-krem)' : 'var(--ct-siva-kafa-negativ)',
+                    flex: 1, background: opremaTip === ot ? 'var(--ct-dugme)' : 'var(--ct-pozadina)',
+                    border: `1px solid ${opremaTip === ot ? 'var(--ct-akcent)' : 'var(--ct-rub)'}`,
+                    color: opremaTip === ot ? 'var(--ct-dugme-tekst)' : 'var(--ct-prigusen)',
                     borderRadius: 8, padding: '8px', cursor: 'pointer', fontWeight: 600, fontSize: 13
                   }}>{ot === 'aparat' ? 'Aparat' : 'Mlin'}</button>
                 ))}
@@ -445,7 +445,7 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
                   list="generalna-lista"
                   placeholder={jeMlin ? 'Upiši ili izaberi mlin *' : 'Upiši ili izaberi aparat *'}
                   maxLength={150}
-                  style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
                 <datalist id="generalna-lista">
                   {jeMlin
                     ? mlinovi.map(m => <option key={m.id} value={m.model}>{m.lokal || ''}</option>)
@@ -454,19 +454,19 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
               </>
             ) : jeMlin ? (
               <select value={mlinId} onChange={e => setMlinId(e.target.value)}
-                style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px' }}>
+                style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px' }}>
                 <option value=''>Odaberi mlin *</option>
                 {mlinovi.map(m => <option key={m.id} value={m.id}>{m.model}{m.lokal ? ` – ${m.lokal}` : ''}</option>)}
               </select>
             ) : (
               <>
-                <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>FILTER PO GRADU</div>
+                <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 4 }}>FILTER PO GRADU</div>
                 <select value={filterGrad} onChange={e => setFilterGrad(e.target.value)}
-                  style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8 }}>
+                  style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8 }}>
                   {gradovi.map(g => <option key={g} value={g}>{g === 'svi' ? 'Svi gradovi' : g}</option>)}
                 </select>
                 <select value={aparatId} onChange={e => setAparatId(e.target.value)}
-                  style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px' }}>
+                  style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px' }}>
                   <option value=''>Odaberi aparat *</option>
                   {aparatiFiltrirani.map(a => <option key={a.id} value={a.id}>{a.lokal} – {a.adresa}</option>)}
                 </select>
@@ -475,19 +475,19 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
           </div>
 
           <textarea value={napomena} onChange={e => setNapomena(e.target.value)} placeholder="Napomena (opcionalno)"
-            maxLength={500} style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, resize: 'none', minHeight: 70, boxSizing: 'border-box' }} />
+            maxLength={500} style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, resize: 'none', minHeight: 70, boxSizing: 'border-box' }} />
 
           <select value={radnikId} onChange={e => setRadnikId(e.target.value)}
-            style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
+            style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
             <option value=''>Dodijeli radniku (opcionalno)</option>
             {radnici.filter(r => r.status !== 'deaktiviran' && r.uloga !== 'magacioner').map(r => <option key={r.id} value={r.id}>{r.ime}{r.uloga === 'saradnik' ? ' (saradnik)' : ''}</option>)}
           </select>
 
           <div style={{ marginBottom: 12 }}>
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>ZAKAZANO ZA</div>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 4 }}>ZAKAZANO ZA</div>
             <input type="date" value={zakazanoDatum} min={danas}
               onChange={e => setZakazanoDatum(e.target.value)}
-              style={{ width: '100%', background: 'var(--ct-espresso)', border: `1px solid ${zakazanoDatum > danas ? 'var(--ct-upozorenje)' : 'var(--ct-rub)'}`, color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
+              style={{ width: '100%', background: 'var(--ct-pozadina)', border: `1px solid ${zakazanoDatum > danas ? 'var(--ct-upozorenje)' : 'var(--ct-rub)'}`, color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', boxSizing: 'border-box' }} />
             {zakazanoDatum > danas && (
               <div style={{ color: 'var(--ct-upozorenje)', fontSize: 11, marginTop: 4 }}>
                 📅 Zakazano za budući datum — radnik neće vidjeti dok ne dođe taj dan
@@ -497,10 +497,10 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={dodajNalog} disabled={!naloziValidan || loading}
-              style={{ flex: 1, background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: !naloziValidan ? 0.5 : 1 }}>
+              style={{ flex: 1, background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600, opacity: !naloziValidan ? 0.5 : 1 }}>
               {loading ? 'Čekaj...' : 'Kreiraj nalog'}
             </button>
-            <button onClick={() => setPokaziFormu(false)} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
+            <button onClick={() => setPokaziFormu(false)} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>
               Odustani
             </button>
           </div>
@@ -515,22 +515,22 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <button onClick={() => setFilterDatum('danas')} style={{
-          background: filterDatum === 'danas' ? 'var(--ct-bakar)' : 'transparent',
-          border: '1px solid var(--ct-svijetli-bakar)', color: filterDatum === 'danas' ? 'var(--ct-krem)' : 'var(--ct-svijetli-bakar)',
+          background: filterDatum === 'danas' ? 'var(--ct-dugme)' : 'transparent',
+          border: '1px solid var(--ct-akcent)', color: filterDatum === 'danas' ? 'var(--ct-dugme-tekst)' : 'var(--ct-akcent)',
           padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
         }}>Danas</button>
         <button onClick={() => setFilterDatum('sve')} style={{
-          background: filterDatum === 'sve' ? 'var(--ct-bakar)' : 'transparent',
-          border: '1px solid var(--ct-rub)', color: filterDatum === 'sve' ? 'var(--ct-krem)' : 'var(--ct-siva-kafa-negativ)',
+          background: filterDatum === 'sve' ? 'var(--ct-dugme)' : 'transparent',
+          border: '1px solid var(--ct-rub)', color: filterDatum === 'sve' ? 'var(--ct-dugme-tekst)' : 'var(--ct-prigusen)',
           padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
         }}>Sve</button>
         {filterDatum === 'datum' && (
-          <span style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 12, fontWeight: 600 }}>
+          <span style={{ color: 'var(--ct-akcent)', fontSize: 12, fontWeight: 600 }}>
             📅 {new Date(datum + 'T00:00:00').toLocaleDateString('bs-BA')}
           </span>
         )}
         <select value={filterTip} onChange={e => setFilterTip(e.target.value)} style={{
-          background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: filterTip === 'svi' ? 'var(--ct-siva-kafa-negativ)' : 'var(--ct-krem-negativ)',
+          background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: filterTip === 'svi' ? 'var(--ct-prigusen)' : 'var(--ct-tekst)',
           padding: '6px 10px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600, marginLeft: 'auto'
         }}>
           <option value="svi">Sve kategorije</option>
@@ -544,62 +544,62 @@ function NaloziTab({ prijave, aparati, mlinovi = [], radnici, pendingMontaza = [
       </div>
 
       {prijaveF.length === 0 && (
-        <div style={{ color: 'var(--ct-siva-kafa-negativ)', textAlign: 'center', padding: 40 }}>Nema naloga.</div>
+        <div style={{ color: 'var(--ct-prigusen)', textAlign: 'center', padding: 40 }}>Nema naloga.</div>
       )}
 
       {prijaveF.map(p => {
       const t = tipBoja[p.kategorija] || tipBoja.prijava
         return (
           <div key={p.id} onClick={() => onOdaberi(p)} style={{
-            background: 'var(--ct-tamno-braon)',
+            background: 'var(--ct-povrsina)',
             border: '1px solid var(--ct-rub)',
             borderRadius: 10, padding: 14, marginBottom: 10, cursor: 'pointer'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <span style={{ color: 'var(--ct-svijetli-bakar)', fontWeight: 700, fontSize: 12 }}>{p.id}</span>
+              <span style={{ color: 'var(--ct-akcent)', fontWeight: 700, fontSize: 12 }}>{p.id}</span>
               <div style={{ display: 'flex', gap: 6 }}>
-                <span style={{ background: t.bg, color: t.color || 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20 }}>{p.vrsta ? p.vrsta.toUpperCase() : t.label}</span>
+                <span style={{ background: t.bg, color: t.color || 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20 }}>{p.vrsta ? p.vrsta.toUpperCase() : t.label}</span>
                 <StatusBadge status={p.status} />
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
               <div style={{ fontWeight: 700 }}>{p.lokal}</div>
               {pendingMontaza.includes(p.id) && (
-                <span style={{ background: 'var(--ct-greska)', color: 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, animation: 'pulse 1.5s infinite' }}>
+                <span style={{ background: 'var(--ct-greska)', color: 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, animation: 'pulse 1.5s infinite' }}>
                   🔔 Čeka odgovor
                 </span>
               )}
               {p.ishod === 'neriješena' && (
-                <span style={{ background: 'var(--ct-greska)', color: 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
+                <span style={{ background: 'var(--ct-greska)', color: 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
                   ↩ VRAĆEN — nije riješeno
                 </span>
               )}
               {p.status === 'vraceno' && (
-                <span style={{ background: 'var(--ct-greska)', color: 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
+                <span style={{ background: 'var(--ct-greska)', color: 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
                   ↩ VRAĆEN — bez pristupa
                 </span>
               )}
               {p.procjena_status === 'poslata' && (
-                <span style={{ background: 'var(--ct-upozorenje)', color: 'var(--ct-espresso)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
+                <span style={{ background: 'var(--ct-upozorenje)', color: 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
                   🕐 PROCJENA — čeka odobrenje
                 </span>
               )}
             </div>
             {(p.ishod === 'neriješena' || p.status === 'vraceno') && p.napomena_radnika && (
-              <div style={{ background: 'var(--ct-greska-pozadina)', border: '1px solid var(--ct-greska)', borderRadius: 8, padding: '6px 10px', marginBottom: 6, fontSize: 12, color: 'var(--ct-krem-negativ)' }}>
+              <div style={{ background: 'var(--ct-greska-pozadina)', border: '1px solid var(--ct-greska)', borderRadius: 8, padding: '6px 10px', marginBottom: 6, fontSize: 12, color: 'var(--ct-tekst)' }}>
                 💬 Radnik: {p.napomena_radnika}
               </div>
             )}
             {p.zakazano_za && p.zakazano_za > danas && (
-              <div style={{ display: 'inline-block', background: 'var(--ct-upozorenje)', color: 'var(--ct-espresso)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, marginBottom: 6 }}>
+              <div style={{ display: 'inline-block', background: 'var(--ct-upozorenje)', color: 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, marginBottom: 6 }}>
                 📅 {new Date(p.zakazano_za + 'T00:00:00').toLocaleDateString('bs-BA')}
               </div>
             )}
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, marginBottom: 6 }}>{p.opis}</div>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 12, marginBottom: 6 }}>{p.opis}</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11 }}>{p.adresa}</span>
+              <span style={{ color: 'var(--ct-prigusen)', fontSize: 11 }}>{p.adresa}</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11 }}>
+                <span style={{ color: 'var(--ct-prigusen)', fontSize: 11 }}>
                   {(p.status === 'riješena' || p.status === 'zatvorena')
                     ? `Riješeno: ${new Date(p.rijeseno_at || p.updated_at || p.created_at).toLocaleString('bs-BA')}`
                     : new Date(p.created_at).toLocaleString('bs-BA')}
@@ -646,7 +646,7 @@ function DashboardTab({ prijave, radnici, mapaOtvorena, setMapaOtvorena, onOdabe
   }
 
   const statusi = [
-    { key: 'nova', label: 'Nove', val: nova, color: 'var(--ct-svijetli-bakar)' },
+    { key: 'nova', label: 'Nove', val: nova, color: 'var(--ct-akcent)' },
     { key: 'dodijeljena', label: 'Dodijeljene', val: dodijeljena, color: 'var(--ct-upozorenje)' },
     { key: 'u_toku', label: 'U toku', val: uToku, color: 'var(--ct-u-toku)' },
     { key: 'riješena', label: 'Riješene', val: rijesena, color: 'var(--ct-uspjeh)' },
@@ -657,7 +657,7 @@ function DashboardTab({ prijave, radnici, mapaOtvorena, setMapaOtvorena, onOdabe
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={s.naslov}>Pregled danas</h2>
         <button onClick={() => setMapaOtvorena(v => !v)}
-          style={{ background: mapaOtvorena ? 'var(--ct-bakar)' : 'transparent', border: '1px solid var(--ct-rub)', color: mapaOtvorena ? 'var(--ct-krem)' : 'var(--ct-siva-kafa-negativ)', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+          style={{ background: mapaOtvorena ? 'var(--ct-dugme)' : 'transparent', border: '1px solid var(--ct-rub)', color: mapaOtvorena ? 'var(--ct-dugme-tekst)' : 'var(--ct-prigusen)', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
           🗺 {mapaOtvorena ? 'Zatvori mapu' : 'Prikaži mapu'}
         </button>
       </div>
@@ -673,7 +673,7 @@ function DashboardTab({ prijave, radnici, mapaOtvorena, setMapaOtvorena, onOdabe
         {statusi.map(k => (
           <div key={k.key} onClick={() => setOdabraniStatus(odabraniStatus === k.key ? null : k.key)}
             style={{ ...s.statCard, cursor: 'pointer', border: odabraniStatus === k.key ? `1px solid ${k.color}` : '1px solid var(--ct-rub)' }}>
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 6 }}>{k.label.toUpperCase()}</div>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 6 }}>{k.label.toUpperCase()}</div>
             <div style={{ fontSize: 36, fontWeight: 800, color: k.color }}>{k.val}</div>
           </div>
         ))}
@@ -681,11 +681,11 @@ function DashboardTab({ prijave, radnici, mapaOtvorena, setMapaOtvorena, onOdabe
       {odabraniStatus && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <h3 style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13, margin: 0 }}>
+            <h3 style={{ color: 'var(--ct-prigusen)', fontSize: 13, margin: 0 }}>
               {statusi.find(s => s.key === odabraniStatus)?.label.toUpperCase()} – SVE ({filtrirane.length})
             </h3>
             {filtrirane.length > 5 && (
-              <button onClick={exportExcel} style={{ background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-krem)', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+              <button onClick={exportExcel} style={{ background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-dugme-tekst)', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
                 📥 Export Excel
               </button>
             )}
@@ -693,11 +693,11 @@ function DashboardTab({ prijave, radnici, mapaOtvorena, setMapaOtvorena, onOdabe
           {filtrirane.map(p => (
             <div key={p.id} onClick={() => onOdaberi(p)} style={{ ...s.card, cursor: 'pointer', marginBottom: 8 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ color: 'var(--ct-svijetli-bakar)', fontWeight: 700, fontSize: 12 }}>{p.id}</span>
+                <span style={{ color: 'var(--ct-akcent)', fontWeight: 700, fontSize: 12 }}>{p.id}</span>
                 <StatusBadge status={p.status} />
               </div>
               <div style={{ fontWeight: 600 }}>{p.lokal}</div>
-              <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{p.opis}</div>
+              <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>{p.opis}</div>
             </div>
           ))}
         </div>
@@ -862,66 +862,66 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h2 style={{ fontSize: 18, margin: 0 }}>Radnici</h2>
-        <button onClick={otvoriDodaj} style={{ background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>+ Dodaj radnika</button>
+        <button onClick={otvoriDodaj} style={{ background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>+ Dodaj radnika</button>
       </div>
 
       {prenosiCeka.length > 0 && (
         <div style={{ background: 'var(--ct-upozorenje-pozadina)', border: '1px solid var(--ct-upozorenje)', borderRadius: 10, padding: 12, marginBottom: 16 }}>
           <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-upozorenje)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>⏳ PRENOSI KOJI ČEKAJU POTVRDU</div>
           {prenosiCeka.map(p => (
-            <div key={p.id} style={{ fontSize: 13, color: 'var(--ct-krem-negativ)', padding: '3px 0' }}>
-              {p.naziv} ×{p.kolicina} — <span style={{ color: 'var(--ct-siva-kafa-negativ)' }}>{p.od?.ime} → {p.na?.ime}</span>
+            <div key={p.id} style={{ fontSize: 13, color: 'var(--ct-tekst)', padding: '3px 0' }}>
+              {p.naziv} ×{p.kolicina} — <span style={{ color: 'var(--ct-prigusen)' }}>{p.od?.ime} → {p.na?.ime}</span>
             </div>
           ))}
         </div>
       )}
 
       {forma && (
-        <div style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-svijetli-bakar)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--ct-siva-kafa-negativ)' }}>{forma === 'dodaj' ? 'NOVI RADNIK' : 'UREDI RADNIKA'}</h3>
-          <input value={ime} onChange={e => setIme(e.target.value)} placeholder="Ime i prezime" maxLength={100} style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
-          <input value={telefon} onChange={e => setTelefon(e.target.value)} placeholder="Telefon" maxLength={20} style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
-          {forma === 'dodaj' && <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" maxLength={100} style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />}
+        <div style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-akcent)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--ct-prigusen)' }}>{forma === 'dodaj' ? 'NOVI RADNIK' : 'UREDI RADNIKA'}</h3>
+          <input value={ime} onChange={e => setIme(e.target.value)} placeholder="Ime i prezime" maxLength={100} style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+          <input value={telefon} onChange={e => setTelefon(e.target.value)} placeholder="Telefon" maxLength={20} style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />
+          {forma === 'dodaj' && <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" maxLength={100} style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 12px', marginBottom: 8, boxSizing: 'border-box' }} />}
           {poruka && <div style={{ color: poruka.tip === 'ok' ? 'var(--ct-uspjeh)' : 'var(--ct-greska)', fontSize: 13, marginBottom: 8 }}>{poruka.tekst}</div>}
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={forma === 'dodaj' ? dodajRadnika : editujRadnika} disabled={loading} style={{ flex: 1, background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>
+            <button onClick={forma === 'dodaj' ? dodajRadnika : editujRadnika} disabled={loading} style={{ flex: 1, background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>
               {loading ? 'Čekaj...' : forma === 'dodaj' ? 'Dodaj i pošalji pozivnicu' : 'Sačuvaj'}
             </button>
-            <button onClick={zatvori} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>Odustani</button>
+            <button onClick={zatvori} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>Odustani</button>
           </div>
         </div>
       )}
-      {radnici.length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', textAlign: 'center', padding: 40 }}>Nema radnika.</div>}
+      {radnici.length === 0 && <div style={{ color: 'var(--ct-prigusen)', textAlign: 'center', padding: 40 }}>Nema radnika.</div>}
       {radnici.map(r => (
         <div key={r.id} style={{ ...s.card, marginBottom: 10, opacity: r.status === 'deaktiviran' ? 0.5 : 1, cursor: 'pointer' }}
           onClick={(e) => { if (e.target.closest('button')) return; const novi = odabraniRadnik === r.id ? null : r.id; setOdabraniRadnik(novi); if (novi) ucitajLog(novi) }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontWeight: 700 }}>{r.ime}</div>
-              <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{r.telefon} {r.email && `· ${r.email}`}</div>
+              <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>{r.telefon} {r.email && `· ${r.email}`}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {r.status === 'deaktiviran'
-                ? <span style={{ background: 'var(--ct-siva-kafa)', color: 'var(--ct-krem)', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>DEAKTIVIRAN</span>
+                ? <span style={{ background: 'var(--ct-prigusen)', color: 'var(--ct-dugme-tekst)', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>DEAKTIVIRAN</span>
                 : radniciAktivni.has(r.id)
-                  ? <span style={{ background: 'var(--ct-upozorenje)', color: 'var(--ct-espresso)', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>RADI</span>
+                  ? <span style={{ background: 'var(--ct-upozorenje)', color: 'var(--ct-dugme-tekst)', fontSize: 10, padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>RADI</span>
                   : null
               }
               {r.telefon && (
                 <a href={`tel:${r.telefon.replace(/\s/g, '')}`}
                   onClick={e => e.stopPropagation()}
-                  style={{ display: typeof window !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent) ? 'inline-block' : 'none', background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-krem)', borderRadius: 6, padding: '2px 7px', cursor: 'pointer', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}>
+                  style={{ display: typeof window !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent) ? 'inline-block' : 'none', background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 6, padding: '2px 7px', cursor: 'pointer', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}>
                   📞
                 </a>
               )}
-              <button onClick={() => otvoriEdit(r)} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Uredi</button>
+              <button onClick={() => otvoriEdit(r)} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>Uredi</button>
               <button onClick={() => toggleAktivan(r)} style={{ background: 'transparent', border: `1px solid ${r.status === 'deaktiviran' ? 'var(--ct-uspjeh)' : 'var(--ct-greska)'}`, color: r.status === 'deaktiviran' ? 'var(--ct-uspjeh)' : 'var(--ct-greska)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12 }}>
                 {r.status === 'deaktiviran' ? 'Aktiviraj' : 'Deaktiviraj'}
               </button>
             </div>
           </div>
-          <div style={{ marginTop: 8, fontSize: 12, color: 'var(--ct-siva-kafa-negativ)' }}>
-            Aktivnih naloga: <span style={{ color: 'var(--ct-krem-negativ)', fontWeight: 700 }}>{prijave.filter(p => p.radnik_id === r.id && p.status !== 'riješena').length}</span>
+          <div style={{ marginTop: 8, fontSize: 12, color: 'var(--ct-prigusen)' }}>
+            Aktivnih naloga: <span style={{ color: 'var(--ct-tekst)', fontWeight: 700 }}>{prijave.filter(p => p.radnik_id === r.id && p.status !== 'riješena').length}</span>
           </div>
           {odabraniRadnik === r.id && (
             <div style={{ marginTop: 12, borderTop: '1px solid var(--ct-rub)', paddingTop: 12 }}>
@@ -931,7 +931,7 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
                   const naziv = { nalozi: 'Nalozi', aktivnost: 'Aktivnost', dopune: 'Dopune', obracuni: 'Obračuni' }[t]
                   return (
                     <button key={t} onClick={e => { e.stopPropagation(); setRadnikLogTab(prev => ({ ...prev, [r.id]: t })); if (t === 'dopune') ucitajDopune(r.id); if (t === 'obracuni') ucitajObracuni(r.id) }}
-                      style={{ background: aktivan ? 'var(--ct-bakar)' : 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontSize: 11, fontWeight: 600 }}>
+                      style={{ background: aktivan ? 'var(--ct-dugme)' : 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontSize: 11, fontWeight: 600 }}>
                       {naziv}
                     </button>
                   )
@@ -940,12 +940,12 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
 
               {(radnikLogTab[r.id] || 'nalozi') === 'nalozi' && (
                 <>
-                  {prijave.filter(p => p.radnik_id === r.id).length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>Nema naloga.</div>}
+                  {prijave.filter(p => p.radnik_id === r.id).length === 0 && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>Nema naloga.</div>}
                   {prijave.filter(p => p.radnik_id === r.id).map(p => (
-                    <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--ct-espresso)' }}>
+                    <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--ct-pozadina)' }}>
                       <div>
                         <div style={{ fontWeight: 600, fontSize: 13 }}>{p.lokal}</div>
-                        <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11 }}>{new Date(p.created_at).toLocaleDateString('bs-BA')}</div>
+                        <div style={{ color: 'var(--ct-prigusen)', fontSize: 11 }}>{new Date(p.created_at).toLocaleDateString('bs-BA')}</div>
                       </div>
                       <StatusBadge status={p.status} />
                     </div>
@@ -985,8 +985,8 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
                       ↓ Export Excel
                     </button>
                   )}
-                  {!radnikLog[r.id] && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>Učitavam...</div>}
-                  {radnikLog[r.id]?.length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>Nema zabilježene aktivnosti.</div>}
+                  {!radnikLog[r.id] && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>Učitavam...</div>}
+                  {radnikLog[r.id]?.length === 0 && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>Nema zabilježene aktivnosti.</div>}
                   {radnikLog[r.id] && (() => {
                     // Grupiraj po danu
                     const poDanu = {}
@@ -1015,7 +1015,7 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
                       return (
                         <div key={dan} style={{ marginBottom: 12 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                            <div style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 11, fontWeight: 700 }}>{dan}</div>
+                            <div style={{ color: 'var(--ct-akcent)', fontSize: 11, fontWeight: 700 }}>{dan}</div>
                             {trajanjeTekst && (
                               <div style={{ background: 'var(--ct-uspjeh-pozadina)', border: '1px solid var(--ct-uspjeh)', borderRadius: 6, padding: '2px 8px', fontSize: 11, color: 'var(--ct-uspjeh)', fontWeight: 700 }}>
                                 ⏱ {trajanjeTekst}
@@ -1025,14 +1025,14 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
                           {logovi.map(log => {
                             const vrijemeStr = new Date(log.created_at).toLocaleTimeString('bs-BA', { hour: '2-digit', minute: '2-digit' })
                             return (
-                              <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid var(--ct-espresso)' }}>
+                              <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid var(--ct-pozadina)' }}>
                                 <div>
-                                  <span style={{ fontSize: 12, color: log.akcija === 'otvorio' ? 'var(--ct-svijetli-bakar)' : 'var(--ct-uspjeh)', fontWeight: 600 }}>
+                                  <span style={{ fontSize: 12, color: log.akcija === 'otvorio' ? 'var(--ct-akcent)' : 'var(--ct-uspjeh)', fontWeight: 600 }}>
                                     {log.akcija === 'otvorio' ? '▶' : '■'}
                                   </span>
-                                  <span style={{ fontSize: 12, color: 'var(--ct-krem-negativ)', marginLeft: 6 }}>{log.nalog_id}</span>
+                                  <span style={{ fontSize: 12, color: 'var(--ct-tekst)', marginLeft: 6 }}>{log.nalog_id}</span>
                                 </div>
-                                <div style={{ fontSize: 11, color: 'var(--ct-siva-kafa-negativ)' }}>{vrijemeStr}</div>
+                                <div style={{ fontSize: 11, color: 'var(--ct-prigusen)' }}>{vrijemeStr}</div>
                               </div>
                             )
                           })}
@@ -1045,45 +1045,45 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
 
               {radnikLogTab[r.id] === 'dopune' && (
                 <>
-                  {!radnikDopune[r.id] && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>Učitavam...</div>}
+                  {!radnikDopune[r.id] && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>Učitavam...</div>}
 
                   {/* Zahtjevi za odobravanje */}
                   {(radnikDopune[r.id] || []).map(d => (
-                    <div key={d.id} style={{ background: 'var(--ct-espresso)', borderRadius: 8, padding: 10, marginBottom: 10, border: `1px solid ${d.status === 'zahtjev' ? 'var(--ct-upozorenje)' : 'var(--ct-rub)'}` }}>
+                    <div key={d.id} style={{ background: 'var(--ct-pozadina)', borderRadius: 8, padding: 10, marginBottom: 10, border: `1px solid ${d.status === 'zahtjev' ? 'var(--ct-upozorenje)' : 'var(--ct-rub)'}` }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 11, fontWeight: 700 }}>{d.id}</span>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ct-siva-kafa-negativ)' }}>{d.status.toUpperCase()}</span>
+                        <span style={{ color: 'var(--ct-akcent)', fontSize: 11, fontWeight: 700 }}>{d.id}</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ct-prigusen)' }}>{d.status.toUpperCase()}</span>
                       </div>
                       {(d.dopuna_stavke || []).map(st => (
                         <div key={st.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 0' }}>
-                          <span style={{ fontSize: 13, color: 'var(--ct-krem-negativ)' }}>{st.naziv}</span>
+                          <span style={{ fontSize: 13, color: 'var(--ct-tekst)' }}>{st.naziv}</span>
                           {d.status === 'zahtjev' ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <button onClick={() => izmijeniStavku(r.id, d.id, st.id, -1)} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 4, width: 22, height: 22, cursor: 'pointer' }}>−</button>
-                              <span style={{ fontSize: 13, color: 'var(--ct-krem-negativ)', fontWeight: 700, minWidth: 30, textAlign: 'center' }}>{st.kolicina_odobrena}{st.kolicina_trazena !== st.kolicina_odobrena ? ` (tražio ${st.kolicina_trazena})` : ''}</span>
-                              <button onClick={() => izmijeniStavku(r.id, d.id, st.id, 1)} style={{ background: 'transparent', border: '1px solid var(--ct-svijetli-bakar)', color: 'var(--ct-svijetli-bakar)', borderRadius: 4, width: 22, height: 22, cursor: 'pointer' }}>+</button>
+                              <button onClick={() => izmijeniStavku(r.id, d.id, st.id, -1)} style={{ background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)', borderRadius: 4, width: 22, height: 22, cursor: 'pointer' }}>−</button>
+                              <span style={{ fontSize: 13, color: 'var(--ct-tekst)', fontWeight: 700, minWidth: 30, textAlign: 'center' }}>{st.kolicina_odobrena}{st.kolicina_trazena !== st.kolicina_odobrena ? ` (tražio ${st.kolicina_trazena})` : ''}</span>
+                              <button onClick={() => izmijeniStavku(r.id, d.id, st.id, 1)} style={{ background: 'transparent', border: '1px solid var(--ct-akcent)', color: 'var(--ct-akcent)', borderRadius: 4, width: 22, height: 22, cursor: 'pointer' }}>+</button>
                             </div>
                           ) : (
-                            <span style={{ fontSize: 13, color: 'var(--ct-siva-kafa-negativ)', fontWeight: 600 }}>×{st.kolicina_odobrena}{d.status === 'spakovano' ? ` (spakovano ${st.kolicina_spremljena})` : ''}</span>
+                            <span style={{ fontSize: 13, color: 'var(--ct-prigusen)', fontWeight: 600 }}>×{st.kolicina_odobrena}{d.status === 'spakovano' ? ` (spakovano ${st.kolicina_spremljena})` : ''}</span>
                           )}
                         </div>
                       ))}
                       {d.status === 'zahtjev' && (
                         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                          <button onClick={() => odobriDopunu(r.id, d)} style={{ flex: 1, background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-krem)', borderRadius: 6, padding: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>✓ Odobri</button>
+                          <button onClick={() => odobriDopunu(r.id, d)} style={{ flex: 1, background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 6, padding: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>✓ Odobri</button>
                           <button onClick={() => odbijDopunu(r.id, d.id)} style={{ background: 'transparent', border: '1px solid var(--ct-greska)', color: 'var(--ct-greska)', borderRadius: 6, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>Odbij</button>
                         </div>
                       )}
                     </div>
                   ))}
-                  {radnikDopune[r.id]?.length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, marginBottom: 10 }}>Nema aktivnih zahtjeva.</div>}
+                  {radnikDopune[r.id]?.length === 0 && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12, marginBottom: 10 }}>Nema aktivnih zahtjeva.</div>}
 
                   {/* Trenutno stanje radnika */}
-                  <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginTop: 6, marginBottom: 6 }}>STANJE RADNIKA</div>
-                  {(radnikStanje[r.id] || []).length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>Nema dijelova na stanju.</div>}
+                  <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-prigusen)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginTop: 6, marginBottom: 6 }}>STANJE RADNIKA</div>
+                  {(radnikStanje[r.id] || []).length === 0 && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>Nema dijelova na stanju.</div>}
                   {(radnikStanje[r.id] || []).map((st, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--ct-espresso)' }}>
-                      <span style={{ fontSize: 13, color: 'var(--ct-krem-negativ)' }}>{st.dijelovi?.naziv}</span>
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--ct-pozadina)' }}>
+                      <span style={{ fontSize: 13, color: 'var(--ct-tekst)' }}>{st.dijelovi?.naziv}</span>
                       <span style={{ fontSize: 13, color: 'var(--ct-uspjeh)', fontWeight: 700 }}>{st.kolicina} {st.dijelovi?.jedinica}</span>
                     </div>
                   ))}
@@ -1092,23 +1092,23 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
 
               {radnikLogTab[r.id] === 'obracuni' && (
                 <>
-                  {!radnikObracuni[r.id] && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>Učitavam...</div>}
-                  {radnikObracuni[r.id]?.length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>Nema obračuna.</div>}
+                  {!radnikObracuni[r.id] && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>Učitavam...</div>}
+                  {radnikObracuni[r.id]?.length === 0 && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>Nema obračuna.</div>}
                   {(radnikObracuni[r.id] || []).map(o => (
-                    <div key={o.id} style={{ background: 'var(--ct-espresso)', borderRadius: 8, padding: 10, marginBottom: 10, border: `1px solid ${o.status === 'poslato' ? 'var(--ct-upozorenje)' : o.status === 'prihvaceno' ? 'var(--ct-uspjeh)' : 'var(--ct-greska)'}` }}>
+                    <div key={o.id} style={{ background: 'var(--ct-pozadina)', borderRadius: 8, padding: 10, marginBottom: 10, border: `1px solid ${o.status === 'poslato' ? 'var(--ct-upozorenje)' : o.status === 'prihvaceno' ? 'var(--ct-uspjeh)' : 'var(--ct-greska)'}` }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 11, fontWeight: 700 }}>{o.id}</span>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ct-siva-kafa-negativ)' }}>{o.status.toUpperCase()}</span>
+                        <span style={{ color: 'var(--ct-akcent)', fontSize: 11, fontWeight: 700 }}>{o.id}</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ct-prigusen)' }}>{o.status.toUpperCase()}</span>
                       </div>
                       {(o.saradnik_stavke || []).map(st => (
                         <div key={st.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
-                          <span style={{ fontSize: 13, color: 'var(--ct-krem-negativ)' }}>{st.opis}</span>
-                          <span style={{ fontSize: 13, color: 'var(--ct-siva-kafa-negativ)', fontWeight: 600 }}>{Number(st.cijena).toFixed(2)}€</span>
+                          <span style={{ fontSize: 13, color: 'var(--ct-tekst)' }}>{st.opis}</span>
+                          <span style={{ fontSize: 13, color: 'var(--ct-prigusen)', fontWeight: 600 }}>{Number(st.cijena).toFixed(2)}€</span>
                         </div>
                       ))}
                       <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--ct-rub)', marginTop: 6, paddingTop: 6 }}>
-                        <span style={{ fontSize: 11, color: 'var(--ct-siva-kafa-negativ)', fontWeight: 700 }}>UKUPNO</span>
-                        <span style={{ fontSize: 15, color: 'var(--ct-krem-negativ)', fontWeight: 800 }}>{Number(o.ukupno).toFixed(2)}€</span>
+                        <span style={{ fontSize: 11, color: 'var(--ct-prigusen)', fontWeight: 700 }}>UKUPNO</span>
+                        <span style={{ fontSize: 15, color: 'var(--ct-tekst)', fontWeight: 800 }}>{Number(o.ukupno).toFixed(2)}€</span>
                       </div>
                     </div>
                   ))}
@@ -1124,30 +1124,30 @@ function RadniciTab({ radnici, prijave, onRefresh }) {
 
 export function StatusBadge({ status }) {
   const mapa = {
-    nova: { label: 'NOVA', bg: 'var(--ct-bakar)' },
-    dodijeljena: { label: 'DODIJELJENA', bg: 'var(--ct-upozorenje)', color: 'var(--ct-espresso)' },
+    nova: { label: 'NOVA', bg: 'var(--ct-dugme)' },
+    dodijeljena: { label: 'DODIJELJENA', bg: 'var(--ct-upozorenje)', color: 'var(--ct-dugme-tekst)' },
     u_toku: { label: 'U TOKU', bg: 'var(--ct-u-toku)' },
-    ceka_potvrdu: { label: 'ČEKA POTVRDU', bg: 'var(--ct-bakar)' },
+    ceka_potvrdu: { label: 'ČEKA POTVRDU', bg: 'var(--ct-dugme)' },
     'riješena': { label: 'RIJEŠENA', bg: 'var(--ct-uspjeh)' },
     vraceno: { label: 'VRAĆENO', bg: 'var(--ct-greska)' },
-    zatvorena: { label: 'ZATVORIO ADMIN', bg: 'var(--ct-siva-kafa-negativ)', color: 'var(--ct-espresso)' },
+    zatvorena: { label: 'ZATVORIO ADMIN', bg: 'var(--ct-prigusen)', color: 'var(--ct-dugme-tekst)' },
   }
   const s = mapa[status] || mapa.nova
   return (
-    <span style={{ fontFamily: 'var(--ct-font-mono)', background: s.bg, color: s.color || 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20, letterSpacing: 1 }}>
+    <span style={{ fontFamily: 'var(--ct-font-mono)', background: s.bg, color: s.color || 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20, letterSpacing: 1 }}>
       {s.label}
     </span>
   )
 }
 
 const s = {
-  wrapper: { background: 'var(--ct-espresso)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-krem-negativ)', display: 'flex', flexDirection: 'column' },
+  wrapper: { background: 'var(--ct-pozadina)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-tekst)', display: 'flex', flexDirection: 'column' },
   centar: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ct-font-sans)' },
   topbar: zaglavljeStil,
-  nav: { background: 'var(--ct-tamno-braon)', borderBottom: '1px solid var(--ct-rub)', padding: '6px 8px', display: 'flex', gap: 2, justifyContent: 'center', overflowX: 'auto', WebkitOverflowScrolling: 'touch' },
+  nav: { background: 'var(--ct-povrsina)', borderBottom: '1px solid var(--ct-rub)', padding: '6px 8px', display: 'flex', gap: 2, justifyContent: 'center', overflowX: 'auto', WebkitOverflowScrolling: 'touch' },
   sadrzaj: { flex: 1, overflow: 'auto', padding: 16, maxWidth: 900, width: '100%', margin: '0 auto' },
   naslov: { marginBottom: 16, fontSize: 18 },
   grid4: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 },
-  statCard: { background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 16 },
-  card: { background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: 14 },
+  statCard: { background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 16 },
+  card: { background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: 14 },
 }

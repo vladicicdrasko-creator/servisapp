@@ -1,6 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { KONTAKT } from '../brand';
+import { KONTAKT, TEMA } from '../brand';
+
+// Logo prema aktivnoj temi (brand/tokens.json)
+const ton = TEMA.logo === 'krem' ? '-krem' : '';
 
 const usluge = [
   { title: 'Servis espresso aparata', desc: 'Dijagnostika, čišćenje, zamjena dijelova i kalibracija profesionalnih espresso mašina svih tipova.' },
@@ -24,22 +27,22 @@ const br = (i: number) => String(i + 1).padStart(2, '0');
 
 // Zajednički stilovi (isti obrasci kao u knjizi standarda)
 const oznaka = 'font-mono text-xs uppercase tracking-[0.25em]';
-const dugme = 'inline-block bg-ct-bakar text-ct-krem font-bold rounded-xl hover:bg-ct-svijetli-bakar transition-colors';
-const polje = 'w-full bg-ct-espresso border border-ct-rub rounded-xl px-4 py-3 text-ct-krem-negativ placeholder-ct-siva-kafa-negativ/70 focus:outline-none focus:border-ct-svijetli-bakar transition-colors';
+const dugme = 'inline-block bg-ct-dugme text-ct-dugme-tekst font-bold rounded-xl hover:bg-ct-dugme-hover transition-colors';
+const polje = 'w-full bg-ct-pozadina border border-ct-rub rounded-xl px-4 py-3 text-ct-tekst placeholder-ct-prigusen/70 focus:outline-none focus:border-ct-akcent transition-colors';
 ---
 
 <Layout>
   <!-- ZAGLAVLJE -->
-  <header class="fixed top-0 left-0 right-0 z-50 bg-ct-espresso/90 backdrop-blur-sm border-b border-ct-rub">
+  <header class="fixed top-0 left-0 right-0 z-50 bg-ct-pozadina/90 backdrop-blur-sm border-b border-ct-rub">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
       <a href="#" aria-label="Coffee Team">
-        <img src="/brand/logo-horizontalni-krem.svg" alt="Coffee Team" width="171" height="32" class="h-8 w-auto" />
+        <img src={`/brand/logo-horizontalni${ton}.svg`} alt="Coffee Team" width="171" height="32" class="h-8 w-auto" />
       </a>
-      <nav class={`hidden md:flex items-center gap-8 text-ct-siva-kafa-negativ ${oznaka}`}>
-        <a href="#usluge" class="hover:text-ct-svijetli-bakar transition-colors">Usluge</a>
-        <a href="#zasto-mi" class="hover:text-ct-svijetli-bakar transition-colors">Zašto mi</a>
-        <a href="#brendovi" class="hover:text-ct-svijetli-bakar transition-colors">Brendovi</a>
-        <a href="#kontakt" class="hover:text-ct-svijetli-bakar transition-colors">Kontakt</a>
+      <nav class={`hidden md:flex items-center gap-8 text-ct-prigusen ${oznaka}`}>
+        <a href="#usluge" class="hover:text-ct-akcent transition-colors">Usluge</a>
+        <a href="#zasto-mi" class="hover:text-ct-akcent transition-colors">Zašto mi</a>
+        <a href="#brendovi" class="hover:text-ct-akcent transition-colors">Brendovi</a>
+        <a href="#kontakt" class="hover:text-ct-akcent transition-colors">Kontakt</a>
       </nav>
       <a href="#kontakt" class={`${dugme} text-sm px-4 py-2 whitespace-nowrap`}>Zakažite servis</a>
     </div>
@@ -48,63 +51,63 @@ const polje = 'w-full bg-ct-espresso border border-ct-rub rounded-xl px-4 py-3 t
   <!-- UVOD -->
   <section class="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
     <!-- Znak kao dekoracija (kao na objavama iz knjige standarda) -->
-    <img src="/brand/znak.svg" alt="" aria-hidden="true" class="absolute -right-24 top-1/2 -translate-y-1/2 w-[38rem] max-w-none opacity-40 pointer-events-none select-none" />
+    <img src="/brand/znak.svg" alt="" aria-hidden="true" class="absolute -right-24 top-1/2 -translate-y-1/2 w-[38rem] max-w-none opacity-[0.07] pointer-events-none select-none" />
 
     <div class="relative max-w-6xl mx-auto px-6 py-24 text-center">
-      <div class={`inline-flex items-center gap-3 border border-ct-rub text-ct-svijetli-bakar px-4 py-2 rounded-full mb-8 ${oznaka}`}>
-        <span class="w-2 h-2 bg-ct-svijetli-bakar rounded-full animate-pulse"></span>
+      <div class={`inline-flex items-center gap-3 border border-ct-rub text-ct-akcent px-4 py-2 rounded-full mb-8 ${oznaka}`}>
+        <span class="w-2 h-2 bg-ct-akcent rounded-full animate-pulse"></span>
         Ovlašteni servis · Podgorica
       </div>
 
       <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
         Servis koji vaša<br />
-        <span class="text-ct-svijetli-bakar">kafa zaslužuje</span>
+        <span class="text-ct-akcent">kafa zaslužuje</span>
       </h1>
 
-      <p class="text-ct-siva-kafa-negativ text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+      <p class="text-ct-prigusen text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
         Profesionalni servis espresso aparata, mlinova i industrijske kafe opreme.
         Brza dijagnostika, originalni dijelovi, garancija na rad.
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a href="#kontakt" class={`${dugme} px-8 py-4 text-lg`}>Zakažite servis →</a>
-        <a href={`tel:${KONTAKT.telefonLink}`} class="border border-ct-rub text-ct-krem-negativ font-mono px-8 py-4 rounded-xl hover:border-ct-svijetli-bakar hover:text-ct-svijetli-bakar transition-colors text-lg">
+        <a href={`tel:${KONTAKT.telefonLink}`} class="border border-ct-rub text-ct-tekst font-mono px-8 py-4 rounded-xl hover:border-ct-akcent hover:text-ct-akcent transition-colors text-lg">
           {KONTAKT.telefon}
         </a>
       </div>
 
       <div class="mt-20 grid grid-cols-3 gap-8 max-w-xl mx-auto">
         <div>
-          <div class="text-3xl font-extrabold text-ct-svijetli-bakar">10+</div>
-          <div class={`text-ct-siva-kafa-negativ mt-2 ${oznaka} text-[10px]`}>godina iskustva</div>
+          <div class="text-3xl font-extrabold text-ct-akcent">10+</div>
+          <div class={`text-ct-prigusen mt-2 ${oznaka} text-[10px]`}>godina iskustva</div>
         </div>
         <div class="border-x border-ct-rub">
-          <div class="text-3xl font-extrabold text-ct-svijetli-bakar">500+</div>
-          <div class={`text-ct-siva-kafa-negativ mt-2 ${oznaka} text-[10px]`}>servisiranih aparata</div>
+          <div class="text-3xl font-extrabold text-ct-akcent">500+</div>
+          <div class={`text-ct-prigusen mt-2 ${oznaka} text-[10px]`}>servisiranih aparata</div>
         </div>
         <div>
-          <div class="text-3xl font-extrabold text-ct-svijetli-bakar">24h</div>
-          <div class={`text-ct-siva-kafa-negativ mt-2 ${oznaka} text-[10px]`}>odziv na poziv</div>
+          <div class="text-3xl font-extrabold text-ct-akcent">24h</div>
+          <div class={`text-ct-prigusen mt-2 ${oznaka} text-[10px]`}>odziv na poziv</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- USLUGE -->
-  <section id="usluge" class="py-24 px-6 bg-ct-tamno-braon">
+  <section id="usluge" class="py-24 px-6 bg-ct-povrsina">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-16">
-        <div class={`text-ct-svijetli-bakar mb-4 ${oznaka}`}>Servis · Kafa · Oprema</div>
+        <div class={`text-ct-akcent mb-4 ${oznaka}`}>Servis · Kafa · Oprema</div>
         <h2 class="text-4xl font-extrabold mb-4 tracking-tight">Naše usluge</h2>
-        <p class="text-ct-siva-kafa-negativ max-w-xl mx-auto">Kompletna briga o vašoj kafe opremi – od redovnog održavanja do složenih popravki.</p>
+        <p class="text-ct-prigusen max-w-xl mx-auto">Kompletna briga o vašoj kafe opremi – od redovnog održavanja do složenih popravki.</p>
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {usluge.map((s, i) => (
-          <div class="bg-ct-espresso border border-ct-rub rounded-2xl p-6 hover:border-ct-svijetli-bakar transition-colors group">
-            <div class="font-mono text-2xl text-ct-svijetli-bakar mb-4">{br(i)}</div>
-            <h3 class="font-bold text-lg mb-2 group-hover:text-ct-svijetli-bakar transition-colors">{s.title}</h3>
-            <p class="text-ct-siva-kafa-negativ text-sm leading-relaxed">{s.desc}</p>
+          <div class="bg-ct-pozadina border border-ct-rub rounded-2xl p-6 hover:border-ct-akcent transition-colors group">
+            <div class="font-mono text-2xl text-ct-akcent mb-4">{br(i)}</div>
+            <h3 class="font-bold text-lg mb-2 group-hover:text-ct-akcent transition-colors">{s.title}</h3>
+            <p class="text-ct-prigusen text-sm leading-relaxed">{s.desc}</p>
           </div>
         ))}
       </div>
@@ -112,15 +115,15 @@ const polje = 'w-full bg-ct-espresso border border-ct-rub rounded-xl px-4 py-3 t
   </section>
 
   <!-- ZAŠTO MI (krem podloga) -->
-  <section id="zasto-mi" class="py-24 px-6 bg-ct-krem text-ct-tamno-braon">
+  <section id="zasto-mi" class="py-24 px-6 bg-ct-pozadina">
     <div class="max-w-6xl mx-auto">
       <div class="grid lg:grid-cols-2 gap-16 items-center">
         <div>
-          <div class={`text-ct-bakar mb-4 ${oznaka}`}>Zašto Coffee Team</div>
+          <div class={`text-ct-akcent mb-4 ${oznaka}`}>Zašto Coffee Team</div>
           <h2 class="text-4xl font-extrabold mb-6 tracking-tight">
             Jedan znak.<br />Jedan glas.
           </h2>
-          <p class="text-ct-tamno-braon/80 mb-8 leading-relaxed">
+          <p class="text-ct-prigusen mb-8 leading-relaxed">
             Brigu o kafi i preciznost servisa radimo svaki dan. Sa višegodišnjim iskustvom u servisu profesionalne kafe opreme, garantujemo kvalitet rada i dugotrajnost vaše opreme.
           </p>
           <a href="#kontakt" class={`${dugme} px-6 py-3`}>Kontaktirajte nas</a>
@@ -128,11 +131,11 @@ const polje = 'w-full bg-ct-espresso border border-ct-rub rounded-xl px-4 py-3 t
 
         <div class="grid grid-cols-1 gap-4">
           {prednosti.map((item, i) => (
-            <div class="flex gap-5 bg-ct-papir border border-ct-krem-negativ rounded-xl p-5">
-              <span class="font-mono text-xl text-ct-bakar">{br(i)}</span>
+            <div class="flex gap-5 bg-ct-povrsina border border-ct-rub rounded-xl p-5">
+              <span class="font-mono text-xl text-ct-akcent">{br(i)}</span>
               <div>
                 <div class="font-bold mb-1">{item.title}</div>
-                <div class="text-ct-tamno-braon/80 text-sm">{item.desc}</div>
+                <div class="text-ct-prigusen text-sm">{item.desc}</div>
               </div>
             </div>
           ))}
@@ -142,14 +145,14 @@ const polje = 'w-full bg-ct-espresso border border-ct-rub rounded-xl px-4 py-3 t
   </section>
 
   <!-- BRENDOVI -->
-  <section id="brendovi" class="py-24 px-6 bg-ct-espresso">
+  <section id="brendovi" class="py-24 px-6 bg-ct-povrsina">
     <div class="max-w-6xl mx-auto text-center">
       <h2 class="text-4xl font-extrabold mb-4 tracking-tight">Brendovi koje servisiramo</h2>
-      <p class="text-ct-siva-kafa-negativ mb-14">Iskustvo sa svim vodećim proizvođačima profesionalne kafe opreme.</p>
+      <p class="text-ct-prigusen mb-14">Iskustvo sa svim vodećim proizvođačima profesionalne kafe opreme.</p>
 
       <div class="flex flex-wrap justify-center gap-4">
         {brendovi.map((brend) => (
-          <div class="bg-ct-tamno-braon border border-ct-rub px-6 py-3 rounded-xl font-medium hover:border-ct-svijetli-bakar hover:text-ct-svijetli-bakar transition-colors">
+          <div class="bg-ct-pozadina border border-ct-rub px-6 py-3 rounded-xl font-medium hover:border-ct-akcent hover:text-ct-akcent transition-colors">
             {brend}
           </div>
         ))}
@@ -158,48 +161,48 @@ const polje = 'w-full bg-ct-espresso border border-ct-rub rounded-xl px-4 py-3 t
   </section>
 
   <!-- KONTAKT -->
-  <section id="kontakt" class="py-24 px-6 bg-ct-tamno-braon">
+  <section id="kontakt" class="py-24 px-6 bg-ct-pozadina">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-16">
         <h2 class="text-4xl font-extrabold mb-4 tracking-tight">Kontaktirajte nas</h2>
-        <p class="text-ct-siva-kafa-negativ">Zakažite servis ili postavite pitanje – tu smo za vas.</p>
+        <p class="text-ct-prigusen">Zakažite servis ili postavite pitanje – tu smo za vas.</p>
       </div>
 
       <div class="grid lg:grid-cols-2 gap-12">
         <!-- Kontakt podaci (kao poleđina vizit karte) -->
-        <div class="bg-ct-espresso border border-ct-rub rounded-2xl p-8 flex flex-col">
-          <img src="/brand/znak-krem.svg" alt="" aria-hidden="true" width="48" height="42" class="w-12 h-auto mb-8" />
-          <div class={`text-ct-svijetli-bakar mb-8 ${oznaka}`}>Ovlašteni servis espresso aparata</div>
+        <div class="bg-ct-povrsina border border-ct-rub rounded-2xl p-8 flex flex-col">
+          <img src={`/brand/znak${ton}.svg`} alt="" aria-hidden="true" width="48" height="42" class="w-12 h-auto mb-8" />
+          <div class={`text-ct-akcent mb-8 ${oznaka}`}>Ovlašteni servis espresso aparata</div>
           <dl class="grid grid-cols-[6rem_1fr] gap-y-4 font-mono text-sm">
-            <dt class="text-ct-svijetli-bakar">TEL</dt>
-            <dd><a href={`tel:${KONTAKT.telefonLink}`} class="hover:text-ct-svijetli-bakar transition-colors">{KONTAKT.telefon}</a></dd>
-            <dt class="text-ct-svijetli-bakar">ADRESA</dt>
+            <dt class="text-ct-akcent">TEL</dt>
+            <dd><a href={`tel:${KONTAKT.telefonLink}`} class="hover:text-ct-akcent transition-colors">{KONTAKT.telefon}</a></dd>
+            <dt class="text-ct-akcent">ADRESA</dt>
             <dd>{KONTAKT.adresa}, Podgorica</dd>
-            <dt class="text-ct-svijetli-bakar">RADIMO</dt>
+            <dt class="text-ct-akcent">RADIMO</dt>
             <dd>Pon – Pet 08:00 – 17:00<br />Sub 09:00 – 14:00</dd>
-            <dt class="text-ct-svijetli-bakar">EMAIL</dt>
-            <dd><a href="mailto:info@coffeeteam.me" class="hover:text-ct-svijetli-bakar transition-colors">info@coffeeteam.me</a></dd>
-            <dt class="text-ct-svijetli-bakar">INSTAGRAM</dt>
+            <dt class="text-ct-akcent">EMAIL</dt>
+            <dd><a href="mailto:info@coffeeteam.me" class="hover:text-ct-akcent transition-colors">info@coffeeteam.me</a></dd>
+            <dt class="text-ct-akcent">INSTAGRAM</dt>
             <dd>@{KONTAKT.instagram}</dd>
           </dl>
         </div>
 
         <!-- Forma -->
-        <form class="bg-ct-espresso border border-ct-rub rounded-2xl p-8 space-y-5">
+        <form class="bg-ct-povrsina border border-ct-rub rounded-2xl p-8 space-y-5">
           <div>
-            <label class={`block text-ct-siva-kafa-negativ mb-2 ${oznaka}`}>Ime i prezime</label>
+            <label class={`block text-ct-prigusen mb-2 ${oznaka}`}>Ime i prezime</label>
             <input type="text" placeholder="Vaše ime" maxlength="100" class={polje} />
           </div>
           <div>
-            <label class={`block text-ct-siva-kafa-negativ mb-2 ${oznaka}`}>Telefon / Email</label>
+            <label class={`block text-ct-prigusen mb-2 ${oznaka}`}>Telefon / Email</label>
             <input type="text" placeholder="+382 69 ..." maxlength="100" class={polje} />
           </div>
           <div>
-            <label class={`block text-ct-siva-kafa-negativ mb-2 ${oznaka}`}>Aparat / oprema</label>
+            <label class={`block text-ct-prigusen mb-2 ${oznaka}`}>Aparat / oprema</label>
             <input type="text" placeholder="Model aparata koji treba servisirati" maxlength="150" class={polje} />
           </div>
           <div>
-            <label class={`block text-ct-siva-kafa-negativ mb-2 ${oznaka}`}>Opis problema</label>
+            <label class={`block text-ct-prigusen mb-2 ${oznaka}`}>Opis problema</label>
             <textarea rows="4" placeholder="Opišite problem ili vrstu servisa koji vam je potreban..." maxlength="500" class={`${polje} resize-none`}></textarea>
           </div>
           <button type="submit" class={`${dugme} w-full py-4 text-lg`}>Pošaljite upit →</button>
@@ -209,9 +212,9 @@ const polje = 'w-full bg-ct-espresso border border-ct-rub rounded-xl px-4 py-3 t
   </section>
 
   <!-- PODNOŽJE (kao zadnja strana knjige standarda) -->
-  <footer class="border-t border-ct-rub py-14 px-6 bg-ct-espresso text-center">
-    <img src="/brand/logo-vertikalni-krem.svg" alt="Coffee Team" width="146" height="80" class="h-20 w-auto mx-auto mb-8" />
-    <div class="font-mono text-xs text-ct-siva-kafa-negativ space-y-2">
+  <footer class="border-t border-ct-rub py-14 px-6 bg-ct-povrsina text-center">
+    <img src={`/brand/logo-vertikalni${ton}.svg`} alt="Coffee Team" width="146" height="80" class="h-20 w-auto mx-auto mb-8" />
+    <div class="font-mono text-xs text-ct-prigusen space-y-2">
       <div>{KONTAKT.firma}</div>
       <div>{KONTAKT.adresa}, {KONTAKT.grad}</div>
       <div>{KONTAKT.telefon} · PIB {KONTAKT.pib} · Reg. br. {KONTAKT.registarski}</div>

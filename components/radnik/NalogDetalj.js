@@ -55,8 +55,8 @@ export default function NalogDetalj({ nalog, onNazad }) {
     <div style={{ ...s.wrapper, ...s.centar }}>
       <div style={{ textAlign: 'center' }}>
         <div style={s.uspjehKrug}>✓</div>
-        <h2 style={{ color: 'var(--ct-krem-negativ)', marginBottom: 8 }}>Nalog zatvoren!</h2>
-        <p style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13, marginBottom: 20 }}>
+        <h2 style={{ color: 'var(--ct-tekst)', marginBottom: 8 }}>Nalog zatvoren!</h2>
+        <p style={{ color: 'var(--ct-prigusen)', fontSize: 13, marginBottom: 20 }}>
           Prijava {nalog.id} je uspješno zatvorena.
         </p>
         <button onClick={onNazad} style={s.btn}>
@@ -72,14 +72,14 @@ export default function NalogDetalj({ nalog, onNazad }) {
       <button onClick={onNazad} style={s.nazadBtn}>← Nazad</button>
 
       <div style={{ ...s.card, marginBottom: 16 }}>
-        <div style={{ color: 'var(--ct-svijetli-bakar)', fontWeight: 800, fontSize: 12, marginBottom: 4 }}>{nalog.id}</div>
+        <div style={{ color: 'var(--ct-akcent)', fontWeight: 800, fontSize: 12, marginBottom: 4 }}>{nalog.id}</div>
         <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{nalog.lokal}</div>
-        <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>📍 {nalog.adresa}</div>
+        <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>📍 {nalog.adresa}</div>
       </div>
 
       <div style={{ ...s.card, textAlign: 'center', marginBottom: 16 }}>
-        <div style={{ fontSize: 11, color: 'var(--ct-siva-kafa-negativ)', marginBottom: 4, fontWeight: 700 }}>KORAK 1 OD 2</div>
-        <div style={{ fontSize: 13, color: 'var(--ct-siva-kafa-negativ)', marginBottom: 20, lineHeight: 1.5 }}>
+        <div style={{ fontSize: 11, color: 'var(--ct-prigusen)', marginBottom: 4, fontWeight: 700 }}>KORAK 1 OD 2</div>
+        <div style={{ fontSize: 13, color: 'var(--ct-prigusen)', marginBottom: 20, lineHeight: 1.5 }}>
           Skeniraj QR kod na aparatu. GPS lokacija se provjerava automatski.
         </div>
         <button onClick={skeniranjQr} style={{ ...s.btn, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
@@ -87,9 +87,9 @@ export default function NalogDetalj({ nalog, onNazad }) {
         </button>
       </div>
 
-      <div style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: 12, display: 'flex', gap: 10 }}>
+      <div style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: 12, display: 'flex', gap: 10 }}>
         <span>ℹ️</span>
-        <span style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, lineHeight: 1.5 }}>
+        <span style={{ color: 'var(--ct-prigusen)', fontSize: 11, lineHeight: 1.5 }}>
           Sistem automatski provjerava da li si na lokaciji aparata (tolerancija {GPS_TOLERANCIJA}m).
         </span>
       </div>
@@ -101,7 +101,7 @@ export default function NalogDetalj({ nalog, onNazad }) {
     <div style={{ ...s.wrapper, ...s.centar }}>
       <div style={{ fontSize: 48, marginBottom: 16 }}>🛰️</div>
       <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>Provjera lokacije...</div>
-      <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{nalog.lokal}</div>
+      <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>{nalog.lokal}</div>
     </div>
   )
 
@@ -110,12 +110,12 @@ export default function NalogDetalj({ nalog, onNazad }) {
     <div style={{ ...s.wrapper, ...s.centar }}>
       <div style={s.uspjehKrug}>✓</div>
       <div style={{ fontWeight: 800, fontSize: 18, color: 'var(--ct-uspjeh)', marginBottom: 8 }}>Lokacija potvrđena!</div>
-      <div style={{ background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: '12px 24px', textAlign: 'center' }}>
-        <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 10 }}>DISTANCA OD APARATA</div>
+      <div style={{ background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: '12px 24px', textAlign: 'center' }}>
+        <div style={{ color: 'var(--ct-prigusen)', fontSize: 10 }}>DISTANCA OD APARATA</div>
         <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--ct-uspjeh)' }}>{distanca}m</div>
-        <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 10 }}>/ {GPS_TOLERANCIJA}m dozvoljeno</div>
+        <div style={{ color: 'var(--ct-prigusen)', fontSize: 10 }}>/ {GPS_TOLERANCIJA}m dozvoljeno</div>
       </div>
-      <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, marginTop: 12 }}>Otvaram nalog...</div>
+      <div style={{ color: 'var(--ct-prigusen)', fontSize: 12, marginTop: 12 }}>Otvaram nalog...</div>
     </div>
   )
 
@@ -126,16 +126,16 @@ export default function NalogDetalj({ nalog, onNazad }) {
       <div style={{ background: 'var(--ct-greska-pozadina)', border: '1px solid var(--ct-greska)', borderRadius: 14, padding: 24, textAlign: 'center' }}>
         <div style={{ fontSize: 48, marginBottom: 12 }}>🚫</div>
         <div style={{ fontWeight: 800, fontSize: 17, color: 'var(--ct-greska)', marginBottom: 8 }}>Nisi na lokaciji!</div>
-        <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13, marginBottom: 20 }}>
+        <div style={{ color: 'var(--ct-prigusen)', fontSize: 13, marginBottom: 20 }}>
           GPS registrovao da si previše udaljen od aparata.
         </div>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 20 }}>
-          <div style={{ background: 'var(--ct-tamno-braon)', borderRadius: 10, padding: '12px 18px', textAlign: 'center' }}>
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 10 }}>TVOJA DISTANCA</div>
+          <div style={{ background: 'var(--ct-povrsina)', borderRadius: 10, padding: '12px 18px', textAlign: 'center' }}>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 10 }}>TVOJA DISTANCA</div>
             <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--ct-greska)' }}>{distanca}m</div>
           </div>
-          <div style={{ background: 'var(--ct-tamno-braon)', borderRadius: 10, padding: '12px 18px', textAlign: 'center' }}>
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 10 }}>DOZVOLJENO</div>
+          <div style={{ background: 'var(--ct-povrsina)', borderRadius: 10, padding: '12px 18px', textAlign: 'center' }}>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 10 }}>DOZVOLJENO</div>
             <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--ct-uspjeh)' }}>{GPS_TOLERANCIJA}m</div>
           </div>
         </div>
@@ -151,15 +151,15 @@ export default function NalogDetalj({ nalog, onNazad }) {
 
       <div style={{ background: 'var(--ct-uspjeh-pozadina)', border: '1px solid var(--ct-uspjeh)', borderRadius: 8, padding: '8px 12px', marginBottom: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ color: 'var(--ct-uspjeh)', fontSize: 12, fontWeight: 700 }}>📍 Lokacija potvrđena – {distanca}m</span>
-        <span style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 10 }}>QR ✓ · GPS ✓</span>
+        <span style={{ color: 'var(--ct-prigusen)', fontSize: 10 }}>QR ✓ · GPS ✓</span>
       </div>
 
       <div style={{ ...s.card, marginBottom: 12 }}>
-        <div style={{ color: 'var(--ct-svijetli-bakar)', fontWeight: 800, marginBottom: 4 }}>{nalog.id}</div>
+        <div style={{ color: 'var(--ct-akcent)', fontWeight: 800, marginBottom: 4 }}>{nalog.id}</div>
         <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{nalog.lokal}</div>
-        <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, marginBottom: 10 }}>📍 {nalog.adresa}</div>
-        <div style={{ background: 'var(--ct-espresso)', borderRadius: 8, padding: 10 }}>
-          <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>OPIS KVARA</div>
+        <div style={{ color: 'var(--ct-prigusen)', fontSize: 12, marginBottom: 10 }}>📍 {nalog.adresa}</div>
+        <div style={{ background: 'var(--ct-pozadina)', borderRadius: 8, padding: 10 }}>
+          <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 4 }}>OPIS KVARA</div>
           <div style={{ fontSize: 13 }}>{nalog.opis}</div>
         </div>
       </div>
@@ -177,8 +177,8 @@ export default function NalogDetalj({ nalog, onNazad }) {
             ].map(s2 => (
               <button key={s2.val} onClick={() => setNoviStatus(s2.val)}
                 style={{
-                  flex: 1, background: noviStatus === s2.val ? s2.color : 'var(--ct-espresso)',
-                  border: 'none', color: 'var(--ct-krem)', borderRadius: 8,
+                  flex: 1, background: noviStatus === s2.val ? s2.color: 'var(--ct-dugme-tekst)',
+                  border: 'none', color: noviStatus === s2.val ? 'var(--ct-dugme-tekst)' : 'var(--ct-tekst)', borderRadius: 8,
                   padding: '8px 4px', cursor: 'pointer', fontSize: 10, fontWeight: 700
                 }}>
                 {s2.label}
@@ -191,15 +191,15 @@ export default function NalogDetalj({ nalog, onNazad }) {
           value={napomena}
           onChange={e => setNapomena(e.target.value)}
           placeholder="Napomena o izvršenom servisu..."
-          style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', borderRadius: 8, padding: '10px 12px', color: 'var(--ct-krem-negativ)', fontSize: 12, resize: 'none', minHeight: 80, outline: 'none', boxSizing: 'border-box', marginBottom: 10 }}
+          style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', borderRadius: 8, padding: '10px 12px', color: 'var(--ct-tekst)', fontSize: 12, resize: 'none', minHeight: 80, outline: 'none', boxSizing: 'border-box', marginBottom: 10 }}
         />
 
         <div
           onClick={() => setPotpis(true)}
-          style={{ background: 'var(--ct-espresso)', border: '2px dashed ' + (potpis ? 'var(--ct-uspjeh)' : 'var(--ct-rub)'), borderRadius: 8, padding: 16, textAlign: 'center', marginBottom: 10, cursor: 'pointer' }}>
+          style={{ background: 'var(--ct-pozadina)', border: '2px dashed ' + (potpis ? 'var(--ct-uspjeh)' : 'var(--ct-rub)'), borderRadius: 8, padding: 16, textAlign: 'center', marginBottom: 10, cursor: 'pointer' }}>
           {potpis
             ? <span style={{ color: 'var(--ct-uspjeh)', fontWeight: 700 }}>✓ Potpis klijenta zabilježen</span>
-            : <span style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>✍️ Tapnite za potpis klijenta</span>}
+            : <span style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>✍️ Tapnite za potpis klijenta</span>}
         </div>
 
         <button onClick={zatvoriNalog} disabled={!potpis || saljem}
@@ -212,11 +212,11 @@ export default function NalogDetalj({ nalog, onNazad }) {
 }
 
 const s = {
-  wrapper: { background: 'var(--ct-espresso)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-krem-negativ)', padding: 16 },
+  wrapper: { background: 'var(--ct-pozadina)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-tekst)', padding: 16 },
   centar: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 },
-  card: { background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 14 },
-  label: { fontFamily: 'var(--ct-font-mono)', textTransform: 'uppercase', letterSpacing: 1, color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, display: 'block', marginBottom: 8 },
-  nazadBtn: { background: 'transparent', border: 'none', color: 'var(--ct-svijetli-bakar)', cursor: 'pointer', fontSize: 13, marginBottom: 16, padding: 0 },
-  btn: { width: '100%', background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 10, padding: 14, fontSize: 14, fontWeight: 700, cursor: 'pointer' },
-  uspjehKrug: { width: 80, height: 80, background: 'var(--ct-uspjeh)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, color: 'var(--ct-krem)' },
+  card: { background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 14 },
+  label: { fontFamily: 'var(--ct-font-mono)', textTransform: 'uppercase', letterSpacing: 1, color: 'var(--ct-prigusen)', fontSize: 11, display: 'block', marginBottom: 8 },
+  nazadBtn: { background: 'transparent', border: 'none', color: 'var(--ct-akcent)', cursor: 'pointer', fontSize: 13, marginBottom: 16, padding: 0 },
+  btn: { width: '100%', background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 10, padding: 14, fontSize: 14, fontWeight: 700, cursor: 'pointer' },
+  uspjehKrug: { width: 80, height: 80, background: 'var(--ct-uspjeh)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, color: 'var(--ct-dugme-tekst)' },
 }

@@ -9,16 +9,24 @@
   --ct-papir: #F2EADE; /* Svijetle površine (PDF, iskačući prozori na mapi). */
   --ct-siva-kafa: #9A8068; /* Slogan na svijetlom. Prigušen tekst na svijetlom, neaktivno. */
   --ct-siva-kafa-negativ: #A08A72; /* Slogan na tamnom (zvanični negativ SVG). Prigušen tekst i labele na tamnom. */
-  --ct-uspjeh: #2A9D8F; /* Riješeno, potvrđeno, aktivno. */
-  --ct-upozorenje: #F4A261; /* Dodijeljeno, čeka, upozorenje. */
-  --ct-greska: #E63946; /* Greška, kritično, vraćeno, brisanje. */
-  --ct-u-toku: #9B59B6; /* Nalog u toku. */
-  --ct-rub: #EFE2D024; /* Ivice kartica, polja i razdjelnici na tamnom. */
-  --ct-odabrano: #B0743F47; /* Pozadina odabrane stavke. */
-  --ct-zastor: #2A1A12CC; /* Zatamnjenje iza modalnih prozora, sjenke. */
-  --ct-uspjeh-pozadina: #2A9D8F24; /* Podloga poruke o uspjehu. */
-  --ct-upozorenje-pozadina: #F4A26124; /* Podloga upozorenja. */
-  --ct-greska-pozadina: #E6394624; /* Podloga poruke o grešci. */
+  --ct-uspjeh: #1F7A6F; /* Riješeno, potvrđeno, aktivno. */
+  --ct-upozorenje: #946200; /* Dodijeljeno, čeka, upozorenje. */
+  --ct-greska: #C1272D; /* Greška, kritično, vraćeno, brisanje. */
+  --ct-u-toku: #7D3C98; /* Nalog u toku. */
+  --ct-pozadina: #F2EADE; /* Pozadina stranice, polja za unos, umetnuti paneli. */
+  --ct-povrsina: #FBF6EE; /* Kartice, zaglavlje, navigacija, modalni prozori. */
+  --ct-tekst: #3A2317; /* Osnovni tekst. */
+  --ct-prigusen: #3A2317B3; /* Prigušen tekst, labele, ikone u mirovanju. */
+  --ct-akcent: #B0743F; /* Akcentni tekst, ikone, ivice, odabrano. */
+  --ct-dugme: #B0743F; /* Pozadina primarnog dugmeta i oznaka. */
+  --ct-dugme-tekst: #FBF6EE; /* Tekst na dugmetu, na bakru i na statusnim bojama. */
+  --ct-dugme-hover: #3A2317; /* Pozadina dugmeta pod mišem (sajt). */
+  --ct-rub: #3A231724; /* Ivice kartica i polja, razdjelnici. */
+  --ct-odabrano: #B0743F29; /* Pozadina odabrane stavke. */
+  --ct-zastor: #2A1A128C; /* Zatamnjenje iza modalnih prozora, sjenke. */
+  --ct-uspjeh-pozadina: #1F7A6F1F; /* Podloga poruke o uspjehu. */
+  --ct-upozorenje-pozadina: #9462001F; /* Podloga upozorenja. */
+  --ct-greska-pozadina: #C1272D1F; /* Podloga poruke o grešci. */
   --ct-font-sans: var(--font-manrope), 'Manrope', Arial, sans-serif;
   --ct-font-mono: var(--font-jetbrains), 'JetBrains Mono', 'Courier New', monospace;
 }

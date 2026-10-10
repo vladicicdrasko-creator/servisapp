@@ -103,7 +103,7 @@ export default function PrijavaPage({ params }) {
 
   if (ucitava) return (
     <div style={s.centar}>
-      <div style={{ color: 'var(--ct-siva-kafa-negativ)' }}>Učitavam...</div>
+      <div style={{ color: 'var(--ct-prigusen)' }}>Učitavam...</div>
     </div>
   )
 
@@ -162,13 +162,13 @@ export default function PrijavaPage({ params }) {
     <div style={s.centar}>
       <div style={{ textAlign: 'center' }}>
         <div style={s.uspjehKrug}>✓</div>
-        <h2 style={{ color: 'var(--ct-krem-negativ)', marginBottom: 8 }}>Prijava poslata!</h2>
-        <p style={{ color: 'var(--ct-siva-kafa-negativ)', marginBottom: 8 }}>Vaš broj prijave:</p>
+        <h2 style={{ color: 'var(--ct-tekst)', marginBottom: 8 }}>Prijava poslata!</h2>
+        <p style={{ color: 'var(--ct-prigusen)', marginBottom: 8 }}>Vaš broj prijave:</p>
         <div style={s.brojPrijave}>{brojPrijave}</div>
-        <p style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>
+        <p style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>
           {vrijemePrijaveRef.current?.toLocaleString('bs-BA')}
         </p>
-        <p style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13, marginBottom: 24 }}>
+        <p style={{ color: 'var(--ct-prigusen)', fontSize: 13, marginBottom: 24 }}>
           Tehničar će biti upućen u najkraćem roku.
         </p>
         <button onClick={preuzmiPDF} style={s.pdfBtn}>
@@ -189,18 +189,18 @@ export default function PrijavaPage({ params }) {
       <div style={s.card}>
         <div style={{ fontWeight: 600, fontSize: 14 }}>{aparat.tip === 'mlin' ? aparat.naziv : aparat.lokal}</div>
         {aparat.tip === 'mlin' ? (
-          aparat.lokal && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{aparat.lokal}</div>
+          aparat.lokal && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>{aparat.lokal}</div>
         ) : (
-          <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>{aparat.adresa}</div>
+          <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>{aparat.adresa}</div>
         )}
-        <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginTop: 2 }}>
-          {aparat.tip === 'mlin' ? 'Mlin' : 'Aparat'}: <span style={{ color: 'var(--ct-svijetli-bakar)' }}>{aparat.id}</span>
+        <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginTop: 2 }}>
+          {aparat.tip === 'mlin' ? 'Mlin' : 'Aparat'}: <span style={{ color: 'var(--ct-akcent)' }}>{aparat.id}</span>
         </div>
       </div>
 
       {/* Forma */}
       <div style={{ padding: '0 16px 16px' }}>
-        <h3 style={{ color: 'var(--ct-krem-negativ)', marginBottom: 16, fontSize: 16 }}>
+        <h3 style={{ color: 'var(--ct-tekst)', marginBottom: 16, fontSize: 16 }}>
           Prijavi kvar
         </h3>
 
@@ -210,7 +210,7 @@ export default function PrijavaPage({ params }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             {kategorije.map(k => (
               <button key={k} onClick={() => setKategorija(k)}
-                style={{ ...s.kategorijaBtn, background: kategorija === k ? 'var(--ct-bakar)' : 'var(--ct-tamno-braon)', border: `1px solid ${kategorija === k ? 'var(--ct-svijetli-bakar)' : 'var(--ct-rub)'}` }}>
+                style={{ ...s.kategorijaBtn, background: kategorija === k ? 'var(--ct-dugme)' : 'var(--ct-povrsina)', border: `1px solid ${kategorija === k ? 'var(--ct-akcent)' : 'var(--ct-rub)'}` }}>
                 {k}
               </button>
             ))}
@@ -231,13 +231,13 @@ export default function PrijavaPage({ params }) {
     <div style={{ marginBottom: 8, position: 'relative' }}>
       <img src={slikaPreview} alt="preview" style={{ width: '100%', borderRadius: 8, maxHeight: 200, objectFit: 'cover' }} />
       <button onClick={() => { setSlika(null); setSlikaPreview(null) }}
-        style={{ position: 'absolute', top: 8, right: 8, background: 'var(--ct-greska)', border: 'none', color: 'var(--ct-krem)', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 16 }}>
+        style={{ position: 'absolute', top: 8, right: 8, background: 'var(--ct-greska)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 16 }}>
         ×
       </button>
     </div>
   )}
   {!slikaPreview && (
-    <label style={{ display: 'block', background: 'var(--ct-tamno-braon)', border: '1px dashed var(--ct-rub)', borderRadius: 8, padding: '20px', textAlign: 'center', cursor: 'pointer', color: 'var(--ct-siva-kafa-negativ)', fontSize: 13 }}>
+    <label style={{ display: 'block', background: 'var(--ct-povrsina)', border: '1px dashed var(--ct-rub)', borderRadius: 8, padding: '20px', textAlign: 'center', cursor: 'pointer', color: 'var(--ct-prigusen)', fontSize: 13 }}>
       📷 Klikni za dodavanje slike
       <input type="file" accept="image/*" capture="environment"
         onChange={e => {
@@ -276,7 +276,7 @@ export default function PrijavaPage({ params }) {
 
         <button onClick={posaljiPrijavu}
           disabled={!formaOk || saljem}
-          style={{ ...s.btn, background: formaOk ? 'var(--ct-bakar)' : 'var(--ct-rub)', cursor: formaOk ? 'pointer' : 'not-allowed' }}>
+          style={{ ...s.btn, background: formaOk ? 'var(--ct-dugme)' : 'var(--ct-rub)', cursor: formaOk ? 'pointer' : 'not-allowed' }}>
           {saljem ? 'Slanje...' : 'Pošalji prijavu'}
         </button>
       </div>
@@ -285,16 +285,16 @@ export default function PrijavaPage({ params }) {
 }
 
 const s = {
-  wrapper: { background: 'var(--ct-espresso)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-krem-negativ)' },
-  centar: { background: 'var(--ct-espresso)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ct-font-sans)' },
+  wrapper: { background: 'var(--ct-pozadina)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-tekst)' },
+  centar: { background: 'var(--ct-pozadina)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ct-font-sans)' },
   header: zaglavljeStil,
-  card: { margin: 16, background: 'var(--ct-tamno-braon)', borderRadius: 12, padding: 14, border: '1px solid var(--ct-rub)' },
-  label: { fontFamily: 'var(--ct-font-mono)', textTransform: 'uppercase', letterSpacing: 1, color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, display: 'block', marginBottom: 6 },
-  kategorijaBtn: { color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '10px 8px', fontSize: 12, cursor: 'pointer', textAlign: 'left' },
-  textarea: { width: '100%', background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 8, padding: '10px 12px', color: 'var(--ct-krem-negativ)', fontSize: 13, resize: 'none', minHeight: 90, outline: 'none', boxSizing: 'border-box' },
-  input: { width: '100%', background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 8, padding: '10px 12px', color: 'var(--ct-krem-negativ)', fontSize: 13, outline: 'none', boxSizing: 'border-box' },
-  btn: { width: '100%', border: 'none', color: 'var(--ct-krem)', borderRadius: 10, padding: 14, fontSize: 15, fontWeight: 700 },
-  uspjehKrug: { width: 80, height: 80, background: 'var(--ct-uspjeh)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: 36, color: 'var(--ct-krem)' },
-  brojPrijave: { fontFamily: 'var(--ct-font-mono)', background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: '12px 24px', display: 'inline-block', color: 'var(--ct-svijetli-bakar)', fontSize: 20, fontWeight: 700, letterSpacing: 2, marginBottom: 20 },
-  pdfBtn: { background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 10, padding: '13px 28px', fontSize: 14, fontWeight: 700, cursor: 'pointer' },
+  card: { margin: 16, background: 'var(--ct-povrsina)', borderRadius: 12, padding: 14, border: '1px solid var(--ct-rub)' },
+  label: { fontFamily: 'var(--ct-font-mono)', textTransform: 'uppercase', letterSpacing: 1, color: 'var(--ct-prigusen)', fontSize: 12, display: 'block', marginBottom: 6 },
+  kategorijaBtn: { color: 'var(--ct-tekst)', borderRadius: 8, padding: '10px 8px', fontSize: 12, cursor: 'pointer', textAlign: 'left' },
+  textarea: { width: '100%', background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 8, padding: '10px 12px', color: 'var(--ct-tekst)', fontSize: 13, resize: 'none', minHeight: 90, outline: 'none', boxSizing: 'border-box' },
+  input: { width: '100%', background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 8, padding: '10px 12px', color: 'var(--ct-tekst)', fontSize: 13, outline: 'none', boxSizing: 'border-box' },
+  btn: { width: '100%', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 10, padding: 14, fontSize: 15, fontWeight: 700 },
+  uspjehKrug: { width: 80, height: 80, background: 'var(--ct-uspjeh)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: 36, color: 'var(--ct-dugme-tekst)' },
+  brojPrijave: { fontFamily: 'var(--ct-font-mono)', background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 10, padding: '12px 24px', display: 'inline-block', color: 'var(--ct-akcent)', fontSize: 20, fontWeight: 700, letterSpacing: 2, marginBottom: 20 },
+  pdfBtn: { background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 10, padding: '13px 28px', fontSize: 14, fontWeight: 700, cursor: 'pointer' },
 }

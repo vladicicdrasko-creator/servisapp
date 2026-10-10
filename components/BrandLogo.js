@@ -1,5 +1,6 @@
 // Coffee Team logo — JEDINA komponenta za prikaz logotipa. Koristi zvanične SVG fajlove iz knjige standarda (public/brand).
-// ton: 'krem' = negativ (za tamne podloge), 'pozitiv' = za svijetle podloge
+// ton: podrazumijevano prema aktivnoj temi (brand/tokens.json); 'krem' = negativ za tamne podloge, 'pozitiv' za svijetle
+import { TEMA } from '../lib/brand'
 const VARIJANTE = {
   horizontalni: { fajl: 'logo-horizontalni', odnos: 708.63 / 132.78, minVisina: 23 }, // min. 120 px širine
   vertikalni: { fajl: 'logo-vertikalni', odnos: 383.6 / 210.68, minVisina: 40 },
@@ -7,7 +8,7 @@ const VARIJANTE = {
 }
 
 // oznaka: opciono ime sekcije pored logotipa (npr. "ADMIN") — JetBrains Mono, velika slova, razmak
-export default function BrandLogo({ varijanta = 'horizontalni', ton = 'krem', visina = 32, oznaka, style }) {
+export default function BrandLogo({ varijanta = 'horizontalni', ton = TEMA.logo, visina = 32, oznaka, style }) {
   const v = VARIJANTE[varijanta]
   const h = Math.max(visina, v.minVisina)
   const slika = (
@@ -25,7 +26,7 @@ export default function BrandLogo({ varijanta = 'horizontalni', ton = 'krem', vi
       {slika}
       <span style={{
         fontFamily: 'var(--ct-font-mono)', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase',
-        color: 'var(--ct-siva-kafa-negativ)', borderLeft: '1px solid var(--ct-rub)', paddingLeft: 12, lineHeight: `${h}px`,
+        color: 'var(--ct-prigusen)', borderLeft: '1px solid var(--ct-rub)', paddingLeft: 12, lineHeight: `${h}px`,
       }}>{oznaka}</span>
     </div>
   )
@@ -39,7 +40,7 @@ export function BrandZaglavljeForme({ oznaka }) {
       {oznaka && (
         <div style={{
           fontFamily: 'var(--ct-font-mono)', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase',
-          color: 'var(--ct-siva-kafa-negativ)', marginTop: 16,
+          color: 'var(--ct-prigusen)', marginTop: 16,
         }}>{oznaka}</div>
       )}
     </div>

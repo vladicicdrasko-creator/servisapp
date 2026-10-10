@@ -39,7 +39,7 @@ export default function PostaviLozinku() {
       <div style={{ ...s.kartica, textAlign: 'center' }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>✓</div>
         <h2 style={{ color: 'var(--ct-uspjeh)', marginBottom: 8 }}>Lozinka postavljena!</h2>
-        <p style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 14 }}>Možete se prijaviti u Coffee Team aplikaciju sa vašim emailom i novom lozinkom.</p>
+        <p style={{ color: 'var(--ct-prigusen)', fontSize: 14 }}>Možete se prijaviti u Coffee Team aplikaciju sa vašim emailom i novom lozinkom.</p>
       </div>
     </div>
   )
@@ -55,7 +55,7 @@ export default function PostaviLozinku() {
             <input type={showL ? 'text' : 'password'} value={lozinka} onChange={e => setLozinka(e.target.value)}
               placeholder="Min. 6 karaktera" maxLength={128} style={s.inp} />
             <button type="button" onClick={() => setShowL(v => !v)}
-              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--ct-siva-kafa-negativ)', cursor: 'pointer', fontSize: 16 }}>
+              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--ct-prigusen)', cursor: 'pointer', fontSize: 16 }}>
               {showL ? '🙈' : '👁'}
             </button>
           </div>
@@ -67,7 +67,7 @@ export default function PostaviLozinku() {
             <input type={showP ? 'text' : 'password'} value={potvrda} onChange={e => setPotvrda(e.target.value)}
               placeholder="Ponovi lozinku" maxLength={128} style={s.inp} />
             <button type="button" onClick={() => setShowP(v => !v)}
-              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--ct-siva-kafa-negativ)', cursor: 'pointer', fontSize: 16 }}>
+              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--ct-prigusen)', cursor: 'pointer', fontSize: 16 }}>
               {showP ? '🙈' : '👁'}
             </button>
           </div>

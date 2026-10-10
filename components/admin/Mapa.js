@@ -134,13 +134,13 @@ export default function Mapa({ prijave = [], radnici = [] }) {
   }, [filtriranePrijave, filtriranRadnici])
 
   const selectStil = {
-    background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)',
+    background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)',
     borderRadius: 8, padding: '6px 12px', fontSize: 13, cursor: 'pointer', outline: 'none'
   }
 
   return (
     <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid var(--ct-rub)' }}>
-      <div style={{ background: 'var(--ct-tamno-braon)', padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+      <div style={{ background: 'var(--ct-povrsina)', padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
         <select value={filterNalog} onChange={e => setFilterNalog(e.target.value)} style={selectStil}>
           {KATEGORIJE.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}
         </select>

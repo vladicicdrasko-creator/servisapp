@@ -188,26 +188,26 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
       {/* Info prijave */}
       <div style={{ ...s.card, marginBottom: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-          <span style={{ color: 'var(--ct-svijetli-bakar)', fontWeight: 800, fontSize: 14 }}>{prijava.id}</span>
+          <span style={{ color: 'var(--ct-akcent)', fontWeight: 800, fontSize: 14 }}>{prijava.id}</span>
           <StatusBadge status={prijava.status} />
         </div>
         <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 4 }}>{prijava.lokal}</div>
-        <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, marginBottom: 12 }}>📍 {prijava.adresa}</div>
-        <div style={{ background: 'var(--ct-espresso)', borderRadius: 8, padding: 12, marginBottom: 10 }}>
-          <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>OPIS</div>
+        <div style={{ color: 'var(--ct-prigusen)', fontSize: 12, marginBottom: 12 }}>📍 {prijava.adresa}</div>
+        <div style={{ background: 'var(--ct-pozadina)', borderRadius: 8, padding: 12, marginBottom: 10 }}>
+          <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 4 }}>OPIS</div>
           <div style={{ fontSize: 14 }}>{prijava.opis}</div>
         </div>
-        <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--ct-siva-kafa-negativ)', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--ct-prigusen)', flexWrap: 'wrap' }}>
           <span>📂 {prijava.vrsta || prijava.kategorija}</span>
           <span>🕐 Prijava: {new Date(prijava.created_at).toLocaleString('bs-BA')}</span>
           {(prijava.status === 'riješena' || prijava.status === 'zatvorena') && (prijava.rijeseno_at || prijava.updated_at) && (
             <span style={{ color: 'var(--ct-uspjeh)' }}>✓ Riješeno: {new Date(prijava.rijeseno_at || prijava.updated_at).toLocaleString('bs-BA')}</span>
           )}
         </div>
-        {prijava.kontakt && <div style={{ marginTop: 8, fontSize: 12, color: 'var(--ct-siva-kafa-negativ)' }}>📞 {prijava.kontakt}</div>}
+        {prijava.kontakt && <div style={{ marginTop: 8, fontSize: 12, color: 'var(--ct-prigusen)' }}>📞 {prijava.kontakt}</div>}
         {prijava.slika_url && (
           <div style={{ marginTop: 12 }}>
-            <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 6 }}>SLIKA</div>
+            <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 6 }}>SLIKA</div>
             <img src={prijava.slika_url} alt="slika prijave"
               style={{ width: '100%', borderRadius: 8, maxHeight: 300, objectFit: 'cover', cursor: 'pointer' }}
               onClick={() => window.open(prijava.slika_url, '_blank')} />
@@ -219,9 +219,9 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
       {prijava.procjena_status === 'poslata' && (
         <div style={{ ...s.card, marginBottom: 12, border: '1px solid var(--ct-upozorenje)' }}>
           <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-upozorenje)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>PROCJENA SARADNIKA — ČEKA ODOBRENJE</div>
-          <div style={{ background: 'var(--ct-espresso)', borderRadius: 8, padding: 12, marginBottom: 12, fontSize: 14 }}>{prijava.procjena}</div>
+          <div style={{ background: 'var(--ct-pozadina)', borderRadius: 8, padding: 12, marginBottom: 12, fontSize: 14 }}>{prijava.procjena}</div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={odobriProcjenu} style={{ flex: 1, background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-krem)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>✓ Odobri</button>
+            <button onClick={odobriProcjenu} style={{ flex: 1, background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 8, padding: 10, cursor: 'pointer', fontWeight: 600 }}>✓ Odobri</button>
             <button onClick={odbijProcjenu} style={{ background: 'transparent', border: '1px solid var(--ct-greska)', color: 'var(--ct-greska)', borderRadius: 8, padding: '10px 16px', cursor: 'pointer' }}>Odbij (vrati u nove)</button>
           </div>
         </div>
@@ -229,36 +229,36 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
       {prijava.procjena_status === 'odobrena' && prijava.procjena && (
         <div style={{ ...s.card, marginBottom: 12 }}>
           <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-uspjeh)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>PROCJENA SARADNIKA (odobrena)</div>
-          <div style={{ fontSize: 13, color: 'var(--ct-krem-negativ)' }}>{prijava.procjena}</div>
+          <div style={{ fontSize: 13, color: 'var(--ct-tekst)' }}>{prijava.procjena}</div>
         </div>
       )}
 
       {/* Montaža zahtjev */}
       {prijava.kategorija === 'montaza' && montazaZahtjev && (
-        <div style={{ ...s.card, marginBottom: 12, border: '1px solid var(--ct-svijetli-bakar)' }}>
-          <div style={{ color: 'var(--ct-svijetli-bakar)', fontWeight: 700, fontSize: 13, marginBottom: 14 }}>
+        <div style={{ ...s.card, marginBottom: 12, border: '1px solid var(--ct-akcent)' }}>
+          <div style={{ color: 'var(--ct-akcent)', fontWeight: 700, fontSize: 13, marginBottom: 14 }}>
             🔧 ZAHTJEV ZA MONTAŽU — čeka potvrdu
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
-            <div style={{ background: 'var(--ct-espresso)', borderRadius: 8, padding: 12 }}>
-              <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-siva-kafa-negativ)', fontSize: 10, fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>STARI PODACI</div>
+            <div style={{ background: 'var(--ct-pozadina)', borderRadius: 8, padding: 12 }}>
+              <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-prigusen)', fontSize: 10, fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>STARI PODACI</div>
               {stariPodaci ? (
                 <>
-                  <div style={{ fontSize: 12, marginBottom: 4 }}><span style={{ color: 'var(--ct-siva-kafa-negativ)' }}>Lokal: </span>{stariPodaci.lokal || '—'}</div>
-                  <div style={{ fontSize: 12 }}><span style={{ color: 'var(--ct-siva-kafa-negativ)' }}>Adresa: </span>{stariPodaci.adresa || '—'}</div>
+                  <div style={{ fontSize: 12, marginBottom: 4 }}><span style={{ color: 'var(--ct-prigusen)' }}>Lokal: </span>{stariPodaci.lokal || '—'}</div>
+                  <div style={{ fontSize: 12 }}><span style={{ color: 'var(--ct-prigusen)' }}>Adresa: </span>{stariPodaci.adresa || '—'}</div>
                 </>
-              ) : <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>Nema podataka</div>}
+              ) : <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>Nema podataka</div>}
             </div>
             <div style={{ background: 'var(--ct-uspjeh-pozadina)', border: '1px solid var(--ct-uspjeh)', borderRadius: 8, padding: 12 }}>
               <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-uspjeh)', fontSize: 10, fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>NOVI PODACI</div>
-              <div style={{ fontSize: 11, color: 'var(--ct-siva-kafa-negativ)', marginBottom: 3 }}>LOKAL</div>
+              <div style={{ fontSize: 11, color: 'var(--ct-prigusen)', marginBottom: 3 }}>LOKAL</div>
               <input value={editLokal} onChange={e => setEditLokal(e.target.value)}
-                maxLength={150} style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-uspjeh)', color: 'var(--ct-krem-negativ)', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
-              <div style={{ fontSize: 11, color: 'var(--ct-siva-kafa-negativ)', marginBottom: 3 }}>ADRESA</div>
+                maxLength={150} style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-uspjeh)', color: 'var(--ct-tekst)', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
+              <div style={{ fontSize: 11, color: 'var(--ct-prigusen)', marginBottom: 3 }}>ADRESA</div>
               <input value={editAdresa} onChange={e => setEditAdresa(e.target.value)}
-                maxLength={200} style={{ width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-uspjeh)', color: 'var(--ct-krem-negativ)', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
-              <div style={{ fontSize: 11, color: 'var(--ct-siva-kafa-negativ)', marginBottom: 4 }}>
+                maxLength={200} style={{ width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-uspjeh)', color: 'var(--ct-tekst)', borderRadius: 6, padding: '6px 8px', fontSize: 12, marginBottom: 8, boxSizing: 'border-box' }} />
+              <div style={{ fontSize: 11, color: 'var(--ct-prigusen)', marginBottom: 4 }}>
                 GPS: {Number(montazaZahtjev.novi_lat).toFixed(5)}, {Number(montazaZahtjev.novi_lng).toFixed(5)}
               </div>
               <div ref={mapaRef} style={{ height: 200, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--ct-uspjeh)' }} />
@@ -275,7 +275,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={potvrdiMontazu} disabled={saljem} style={{
-              flex: 1, background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-krem)',
+              flex: 1, background: 'var(--ct-uspjeh)', border: 'none', color: 'var(--ct-dugme-tekst)',
               borderRadius: 8, padding: 12, fontWeight: 700, cursor: 'pointer', fontSize: 14
             }}>
               ✓ Potvrdi i ažuriraj aparat
@@ -301,9 +301,9 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
                 <button key={h} onClick={() => setHitnost(h)}
                   style={{
                     flex: 1,
-                    background: hitnost === h ? 'var(--ct-odabrano)' : 'var(--ct-espresso)',
-                    border: `1px solid ${hitnost === h ? 'var(--ct-svijetli-bakar)' : 'var(--ct-rub)'}`,
-                    color: 'var(--ct-krem-negativ)', borderRadius: 6, padding: '8px 4px',
+                    background: hitnost === h ? 'var(--ct-odabrano)' : 'var(--ct-pozadina)',
+                    border: `1px solid ${hitnost === h ? 'var(--ct-akcent)' : 'var(--ct-rub)'}`,
+                    color: 'var(--ct-tekst)', borderRadius: 6, padding: '8px 4px',
                     fontSize: 10, cursor: 'pointer', fontWeight: 600
                   }}>
                   {h.toUpperCase()}
@@ -313,30 +313,30 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
           </div>
           <div style={{ marginBottom: 16 }}>
             <label style={s.label}>ODABERI RADNIKA</label>
-            {radnici.length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13 }}>Nema radnika.</div>}
+            {radnici.length === 0 && <div style={{ color: 'var(--ct-prigusen)', fontSize: 13 }}>Nema radnika.</div>}
             {radnici.filter(r => r.uloga !== 'magacioner').map(r => (
               <div key={r.id} onClick={() => setOdabraniRadnik(r.id)}
                 style={{
-                  background: odabraniRadnik === r.id ? 'var(--ct-odabrano)' : 'var(--ct-espresso)',
-                  border: `1px solid ${odabraniRadnik === r.id ? 'var(--ct-svijetli-bakar)' : 'var(--ct-rub)'}`,
+                  background: odabraniRadnik === r.id ? 'var(--ct-odabrano)' : 'var(--ct-pozadina)',
+                  border: `1px solid ${odabraniRadnik === r.id ? 'var(--ct-akcent)' : 'var(--ct-rub)'}`,
                   borderRadius: 8, padding: '10px 12px', marginBottom: 8,
                   cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                 }}>
                 <div>
                   <div style={{ fontWeight: 600 }}>{r.ime}</div>
-                  <div style={{ fontSize: 11, color: 'var(--ct-siva-kafa-negativ)' }}>{r.telefon}</div>
+                  <div style={{ fontSize: 11, color: 'var(--ct-prigusen)' }}>{r.telefon}</div>
                 </div>
                 {odabraniRadnik === r.id && <span style={{ color: 'var(--ct-uspjeh)', fontWeight: 700 }}>✓</span>}
               </div>
             ))}
           </div>
           {poruka && (
-            <div style={{ background: 'var(--ct-uspjeh)', color: 'var(--ct-krem)', borderRadius: 8, padding: 10, marginBottom: 10, textAlign: 'center', fontWeight: 700 }}>
+            <div style={{ background: 'var(--ct-uspjeh)', color: 'var(--ct-dugme-tekst)', borderRadius: 8, padding: 10, marginBottom: 10, textAlign: 'center', fontWeight: 700 }}>
               {poruka}
             </div>
           )}
           {montazaOdbijena && (
-            <div style={{ background: 'var(--ct-upozorenje)', color: 'var(--ct-espresso)', borderRadius: 8, padding: 10, marginBottom: 10, fontSize: 13, fontWeight: 600 }}>
+            <div style={{ background: 'var(--ct-upozorenje)', color: 'var(--ct-dugme-tekst)', borderRadius: 8, padding: 10, marginBottom: 10, fontSize: 13, fontWeight: 600 }}>
               Montaža odbijena. Pošalji ponovo istom radniku ili izaberi drugog.
             </div>
           )}
@@ -350,8 +350,8 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
             return (
               <button onClick={dodijeliRadnika} disabled={!aktivno || saljem}
                 style={{
-                  width: '100%', background: aktivno ? 'var(--ct-bakar)' : 'var(--ct-rub)',
-                  border: 'none', color: 'var(--ct-krem)', borderRadius: 10, padding: 14,
+                  width: '100%', background: aktivno ? 'var(--ct-dugme)' : 'var(--ct-rub)',
+                  border: 'none', color: aktivno ? 'var(--ct-dugme-tekst)' : 'var(--ct-prigusen)', borderRadius: 10, padding: 14,
                   fontSize: 14, fontWeight: 700, cursor: aktivno ? 'pointer' : 'not-allowed'
                 }}>
                 {saljem ? 'Šaljem...' : label}
@@ -364,7 +364,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
       {/* Napomena radnika */}
       {prijava.napomena_radnika && (
         <div style={{ ...s.card, marginTop: 12 }}>
-          <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>NAPOMENA RADNIKA</div>
+          <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 4 }}>NAPOMENA RADNIKA</div>
           <div style={{ fontSize: 14 }}>{prijava.napomena_radnika}</div>
           {prijava.ishod && (
             <div style={{ marginTop: 8, fontSize: 12 }}>
@@ -380,7 +380,7 @@ export default function PrijavaDetalj({ prijava, radnici, onNazad, onAzuriraj })
 }
 
 const s = {
-  card: { background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 16 },
-  label: { fontFamily: 'var(--ct-font-mono)', textTransform: 'uppercase', letterSpacing: 1, color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, display: 'block', marginBottom: 8 },
-  nazadBtn: { background: 'transparent', border: 'none', color: 'var(--ct-svijetli-bakar)', cursor: 'pointer', fontSize: 13, marginBottom: 16, padding: 0 }
+  card: { background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 16 },
+  label: { fontFamily: 'var(--ct-font-mono)', textTransform: 'uppercase', letterSpacing: 1, color: 'var(--ct-prigusen)', fontSize: 11, display: 'block', marginBottom: 8 },
+  nazadBtn: { background: 'transparent', border: 'none', color: 'var(--ct-akcent)', cursor: 'pointer', fontSize: 13, marginBottom: 16, padding: 0 }
 }

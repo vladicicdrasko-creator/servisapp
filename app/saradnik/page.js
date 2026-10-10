@@ -166,7 +166,7 @@ export default function SaradnikPage() {
   })
   const dodajRed = (id) => setRadovi(prev => ({ ...prev, [id]: [...(prev[id] || [{ opis: '', cijena: '' }]), { opis: '', cijena: '' }] }))
 
-  if (ucitava) return <div style={s.centar}><div style={{ color: 'var(--ct-siva-kafa-negativ)' }}>Učitavam...</div></div>
+  if (ucitava) return <div style={s.centar}><div style={{ color: 'var(--ct-prigusen)' }}>Učitavam...</div></div>
 
   // Login
   if (!saradnik && !nemaPristup) return (
@@ -191,7 +191,7 @@ export default function SaradnikPage() {
     <div style={s.centar}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ color: 'var(--ct-greska)', fontWeight: 700, marginBottom: 8 }}>Nemate pristup</div>
-        <p style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13 }}>Ovaj nalog nije saradnik.</p>
+        <p style={{ color: 'var(--ct-prigusen)', fontSize: 13 }}>Ovaj nalog nije saradnik.</p>
         <button onClick={odjava} style={{ ...s.btn, marginTop: 12, width: 'auto', padding: '10px 24px' }}>Odjava</button>
       </div>
     </div>
@@ -208,8 +208,8 @@ export default function SaradnikPage() {
       </div>
 
       <div style={{ padding: 16, maxWidth: 600, margin: '0 auto' }}>
-        <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>MOJI NALOZI</div>
-        {aktivni.length === 0 && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 13, marginBottom: 16 }}>Nema aktivnih naloga.</div>}
+        <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-prigusen)', fontSize: 11, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>MOJI NALOZI</div>
+        {aktivni.length === 0 && <div style={{ color: 'var(--ct-prigusen)', fontSize: 13, marginBottom: 16 }}>Nema aktivnih naloga.</div>}
 
         {aktivni.map(n => {
           const jeOtvoren = otvoren === n.id
@@ -217,28 +217,28 @@ export default function SaradnikPage() {
             <div key={n.id} style={s.card}>
               <div onClick={() => setOtvoren(jeOtvoren ? null : n.id)} style={{ cursor: 'pointer' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                  <span style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
-                  {n.procjena_status === 'poslata' && <span style={{ background: 'var(--ct-upozorenje)', color: 'var(--ct-espresso)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ČEKA ODOBRENJE</span>}
-                  {n.procjena_status === 'odobrena' && <span style={{ background: 'var(--ct-uspjeh)', color: 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ODOBRENO — ZAVRŠI</span>}
-                  {!n.procjena_status && <span style={{ background: 'var(--ct-bakar)', color: 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>NOVO</span>}
+                  <span style={{ color: 'var(--ct-akcent)', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
+                  {n.procjena_status === 'poslata' && <span style={{ background: 'var(--ct-upozorenje)', color: 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ČEKA ODOBRENJE</span>}
+                  {n.procjena_status === 'odobrena' && <span style={{ background: 'var(--ct-uspjeh)', color: 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ODOBRENO — ZAVRŠI</span>}
+                  {!n.procjena_status && <span style={{ background: 'var(--ct-dugme)', color: 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>NOVO</span>}
                 </div>
                 <div style={{ fontWeight: 700, fontSize: 15 }}>{n.lokal || n.vrsta || n.kategorija}</div>
-                {n.adresa && <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }}>📍 {n.adresa}</div>}
+                {n.adresa && <div style={{ color: 'var(--ct-prigusen)', fontSize: 12 }}>📍 {n.adresa}</div>}
               </div>
 
               {jeOtvoren && (
                 <div style={{ marginTop: 12, borderTop: '1px solid var(--ct-rub)', paddingTop: 12 }}>
-                  <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>OPIS POSLA</div>
+                  <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 4 }}>OPIS POSLA</div>
                   <div style={{ fontSize: 14, marginBottom: 12 }}>{n.opis || '—'}</div>
 
-                  <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, marginBottom: 4 }}>LOKACIJA</div>
+                  <div style={{ color: 'var(--ct-prigusen)', fontSize: 11, marginBottom: 4 }}>LOKACIJA</div>
                   <div style={{ fontSize: 14, marginBottom: 6 }}>{n.lokal || '—'}{n.adresa ? ` · ${n.adresa}` : ''}</div>
                   {(n.lat && n.lng) || n.adresa || n.lokal ? (
                     <a href={(n.lat && n.lng)
                         ? `https://www.google.com/maps?q=${n.lat},${n.lng}`
                         : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([n.lokal, n.adresa].filter(Boolean).join(' '))}`}
                       target="_blank" rel="noreferrer"
-                      style={{ display: 'inline-block', background: 'var(--ct-odabrano)', color: 'var(--ct-krem)', borderRadius: 8, padding: '8px 14px', fontSize: 13, textDecoration: 'none', marginBottom: 12 }}>
+                      style={{ display: 'inline-block', background: 'var(--ct-odabrano)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '8px 14px', fontSize: 13, textDecoration: 'none', marginBottom: 12 }}>
                       📍 Otvori u Google Maps
                     </a>
                   ) : null}
@@ -256,9 +256,9 @@ export default function SaradnikPage() {
 
                   {/* FAZA 1 — čeka */}
                   {n.procjena_status === 'poslata' && (
-                    <div style={{ background: 'var(--ct-espresso)', borderRadius: 8, padding: 12 }}>
+                    <div style={{ background: 'var(--ct-pozadina)', borderRadius: 8, padding: 12 }}>
                       <div style={{ color: 'var(--ct-upozorenje)', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>Procjena poslata — čeka odobrenje</div>
-                      <div style={{ fontSize: 13, color: 'var(--ct-krem-negativ)' }}>{n.procjena}</div>
+                      <div style={{ fontSize: 13, color: 'var(--ct-tekst)' }}>{n.procjena}</div>
                     </div>
                   )}
 
@@ -266,7 +266,7 @@ export default function SaradnikPage() {
                   {n.procjena_status === 'odobrena' && (
                     <>
                       <div style={{ color: 'var(--ct-uspjeh)', fontSize: 12, marginBottom: 10 }}>✓ Procjena odobrena — unesi obračun i sliku.</div>
-                      <div style={{ display: 'flex', gap: 8, marginBottom: 6, fontSize: 11, color: 'var(--ct-siva-kafa-negativ)' }}>
+                      <div style={{ display: 'flex', gap: 8, marginBottom: 6, fontSize: 11, color: 'var(--ct-prigusen)' }}>
                         <div style={{ flex: 3 }}>Opis</div><div style={{ flex: 1 }}>Cijena €</div>
                       </div>
                       {(radovi[n.id] || [{ opis: '', cijena: '' }]).map((r, i) => (
@@ -275,10 +275,10 @@ export default function SaradnikPage() {
                           <input value={r.cijena} onChange={e => setRed(n.id, i, 'cijena', e.target.value)} placeholder="0" inputMode="decimal" maxLength={10} style={{ ...s.input, flex: 1, margin: 0 }} />
                         </div>
                       ))}
-                      <button onClick={() => dodajRed(n.id)} style={{ background: 'none', border: 'none', color: 'var(--ct-svijetli-bakar)', cursor: 'pointer', fontSize: 13, padding: '4px 0' }}>+ Dodaj red</button>
+                      <button onClick={() => dodajRed(n.id)} style={{ background: 'none', border: 'none', color: 'var(--ct-akcent)', cursor: 'pointer', fontSize: 13, padding: '4px 0' }}>+ Dodaj red</button>
                       <div style={{ marginTop: 8 }}>
                         <label style={s.label}>SLIKA (opciono)</label>
-                        <input type="file" accept="image/*" onChange={e => setSlike(prev => ({ ...prev, [n.id]: e.target.files[0] }))} style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12 }} />
+                        <input type="file" accept="image/*" onChange={e => setSlike(prev => ({ ...prev, [n.id]: e.target.files[0] }))} style={{ color: 'var(--ct-prigusen)', fontSize: 12 }} />
                       </div>
                       <button onClick={() => zavrsiNalog(n)} disabled={slanje} style={{ ...s.btn, marginTop: 12 }}>{slanje ? 'Slanje...' : 'Završi i pošalji obračun'}</button>
                     </>
@@ -291,12 +291,12 @@ export default function SaradnikPage() {
 
         {gotovi.length > 0 && (
           <>
-            <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-siva-kafa-negativ)', fontSize: 11, fontWeight: 700, letterSpacing: 1, margin: '16px 0 8px' }}>ZAVRŠENI</div>
+            <div style={{ fontFamily: 'var(--ct-font-mono)', color: 'var(--ct-prigusen)', fontSize: 11, fontWeight: 700, letterSpacing: 1, margin: '16px 0 8px' }}>ZAVRŠENI</div>
             {gotovi.map(n => (
               <div key={n.id} style={{ ...s.card, opacity: 0.7 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--ct-svijetli-bakar)', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
-                  <span style={{ background: 'var(--ct-uspjeh)', color: 'var(--ct-krem)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ZAVRŠENO</span>
+                  <span style={{ color: 'var(--ct-akcent)', fontSize: 12, fontWeight: 700 }}>{n.id}</span>
+                  <span style={{ background: 'var(--ct-uspjeh)', color: 'var(--ct-dugme-tekst)', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>ZAVRŠENO</span>
                 </div>
                 <div style={{ fontWeight: 600, fontSize: 14 }}>{n.lokal || n.vrsta || n.kategorija}</div>
               </div>
@@ -309,14 +309,14 @@ export default function SaradnikPage() {
 }
 
 const s = {
-  wrapper: { background: 'var(--ct-espresso)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-krem-negativ)' },
+  wrapper: { background: 'var(--ct-pozadina)', minHeight: '100vh', fontFamily: 'var(--ct-font-sans)', color: 'var(--ct-tekst)' },
   centar: forma.centar,
   header: zaglavljeStil,
   loginCard: forma.kartica,
   label: forma.label,
-  input: { width: '100%', background: 'var(--ct-espresso)', border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)', borderRadius: 8, padding: '10px 12px', fontSize: 14, outline: 'none', boxSizing: 'border-box' },
+  input: { width: '100%', background: 'var(--ct-pozadina)', border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)', borderRadius: 8, padding: '10px 12px', fontSize: 14, outline: 'none', boxSizing: 'border-box' },
   oko: forma.oko,
-  btn: { width: '100%', background: 'var(--ct-bakar)', border: 'none', color: 'var(--ct-krem)', borderRadius: 10, padding: 13, fontSize: 15, fontWeight: 700, cursor: 'pointer' },
-  odjavaBtn: { background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-siva-kafa-negativ)', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 13 },
-  card: { background: 'var(--ct-tamno-braon)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 16, marginBottom: 12 },
+  btn: { width: '100%', background: 'var(--ct-dugme)', border: 'none', color: 'var(--ct-dugme-tekst)', borderRadius: 10, padding: 13, fontSize: 15, fontWeight: 700, cursor: 'pointer' },
+  odjavaBtn: { background: 'transparent', border: '1px solid var(--ct-rub)', color: 'var(--ct-prigusen)', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 13 },
+  card: { background: 'var(--ct-povrsina)', border: '1px solid var(--ct-rub)', borderRadius: 12, padding: 16, marginBottom: 12 },
 }

@@ -11,7 +11,7 @@ export default function PrijaveList({ prijave, onOdaberi }) {
   const hitnostBoja = {
     'kritična': 'var(--ct-greska)',
     'visoka': 'var(--ct-upozorenje)',
-    'srednja': 'var(--ct-svijetli-bakar)',
+    'srednja': 'var(--ct-akcent)',
     'niska': 'var(--ct-uspjeh)'
   }
 
@@ -27,27 +27,27 @@ export default function PrijaveList({ prijave, onOdaberi }) {
         <h2 style={{ fontSize: 18, margin: 0 }}>Prijave</h2>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <button onClick={() => setFilter('danas')} style={{
-            background: filter === 'danas' ? 'var(--ct-bakar)' : 'transparent',
-            border: '1px solid var(--ct-svijetli-bakar)', color: filter === 'danas' ? 'var(--ct-krem)' : 'var(--ct-svijetli-bakar)',
+            background: filter === 'danas' ? 'var(--ct-dugme)' : 'transparent',
+            border: '1px solid var(--ct-akcent)', color: filter === 'danas' ? 'var(--ct-dugme-tekst)' : 'var(--ct-akcent)',
             padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
           }}>Danas</button>
           <button onClick={() => setFilter('sve')} style={{
-            background: filter === 'sve' ? 'var(--ct-bakar)' : 'transparent',
-            border: '1px solid var(--ct-rub)', color: filter === 'sve' ? 'var(--ct-krem)' : 'var(--ct-siva-kafa-negativ)',
+            background: filter === 'sve' ? 'var(--ct-dugme)' : 'transparent',
+            border: '1px solid var(--ct-rub)', color: filter === 'sve' ? 'var(--ct-dugme-tekst)' : 'var(--ct-prigusen)',
             padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
           }}>Sve</button>
           <input type="date" value={datum}
             onChange={e => { setDatum(e.target.value); setFilter('datum') }}
             style={{
-              background: filter === 'datum' ? 'var(--ct-bakar)' : 'var(--ct-tamno-braon)',
-              border: '1px solid var(--ct-rub)', color: 'var(--ct-krem-negativ)',
+              background: filter === 'datum' ? 'var(--ct-dugme)' : 'var(--ct-povrsina)',
+              border: '1px solid var(--ct-rub)', color: 'var(--ct-tekst)',
               padding: '6px 10px', borderRadius: 8, fontSize: 12, cursor: 'pointer'
             }} />
         </div>
       </div>
 
       {filtrirane.length === 0 && (
-        <div style={{ color: 'var(--ct-siva-kafa-negativ)', textAlign: 'center', padding: 40 }}>
+        <div style={{ color: 'var(--ct-prigusen)', textAlign: 'center', padding: 40 }}>
           Nema prijava za odabrani dan.
         </div>
       )}
@@ -55,26 +55,26 @@ export default function PrijaveList({ prijave, onOdaberi }) {
       {filtrirane.map(p => (
         <div key={p.id} onClick={() => onOdaberi(p)}
           style={{
-            background: 'var(--ct-tamno-braon)',
-            border: `1px solid ${p.status === 'nova' ? 'var(--ct-svijetli-bakar)' : 'var(--ct-rub)'}`,
+            background: 'var(--ct-povrsina)',
+            border: `1px solid ${p.status === 'nova' ? 'var(--ct-akcent)' : 'var(--ct-rub)'}`,
             borderRadius: 10, padding: 14, marginBottom: 10, cursor: 'pointer'
           }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <span style={{ color: 'var(--ct-svijetli-bakar)', fontWeight: 700, fontSize: 12 }}>{p.id}</span>
+            <span style={{ color: 'var(--ct-akcent)', fontWeight: 700, fontSize: 12 }}>{p.id}</span>
             <StatusBadge status={p.status} />
           </div>
           <div style={{ fontWeight: 700, marginBottom: 4 }}>{p.lokal}</div>
-          <div style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 12, marginBottom: 8 }}>{p.opis}</div>
+          <div style={{ color: 'var(--ct-prigusen)', fontSize: 12, marginBottom: 8 }}>{p.opis}</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: hitnostBoja[p.hitnost] || 'var(--ct-siva-kafa-negativ)', fontSize: 11, fontWeight: 700 }}>
+            <span style={{ color: hitnostBoja[p.hitnost] || 'var(--ct-prigusen)', fontSize: 11, fontWeight: 700 }}>
               ● {p.hitnost?.toUpperCase()}
             </span>
-            <span style={{ color: 'var(--ct-siva-kafa-negativ)', fontSize: 11 }}>
+            <span style={{ color: 'var(--ct-prigusen)', fontSize: 11 }}>
               {new Date(p.created_at).toLocaleString('bs-BA')}
             </span>
           </div>
           {p.radnik_id && (
-            <div style={{ marginTop: 6, fontSize: 11, color: 'var(--ct-siva-kafa-negativ)' }}>
+            <div style={{ marginTop: 6, fontSize: 11, color: 'var(--ct-prigusen)' }}>
               👷 Dodijeljen radnik
             </div>
           )}
