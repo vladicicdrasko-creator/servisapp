@@ -77,6 +77,7 @@ export async function POST(req) {
             token: radnik.fcm_token,
             notification: { title, body },
             android: { priority: 'high' },
+            apns: { payload: { aps: { sound: 'default' } } }, // iPhone: inače stiže bez zvuka
           },
         }),
       }
