@@ -177,7 +177,7 @@ export default function NalogDetalj({ nalog, onNazad }) {
             ].map(s2 => (
               <button key={s2.val} onClick={() => setNoviStatus(s2.val)}
                 style={{
-                  flex: 1, background: noviStatus === s2.val ? s2.color: 'var(--ct-dugme-tekst)',
+                  flex: 1, background: noviStatus === s2.val ? s2.color : 'var(--ct-pozadina)',
                   border: 'none', color: noviStatus === s2.val ? 'var(--ct-dugme-tekst)' : 'var(--ct-tekst)', borderRadius: 8,
                   padding: '8px 4px', cursor: 'pointer', fontSize: 10, fontWeight: 700
                 }}>
